@@ -59,6 +59,7 @@ export default function Home({ data }) {
       },
     ],
   };
+  const [params, setParams] = useState(initValues);
 
   return (
     <div
@@ -125,9 +126,12 @@ export default function Home({ data }) {
           </div>
           <div className="mx-10">
             <Formik
-              initialValues={initValues}
+              initialValues={params}
               enableReinitialize
-              onSubmit={async (vs) => getPDF(vs)}
+              onSubmit={async (vs) => {
+                getPDF(vs);
+                setParams(vs);
+              }}
               render={({ values }) => (
                 <Form>
                   <div className="bg-slate-100 p-14">
