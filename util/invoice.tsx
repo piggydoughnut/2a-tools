@@ -1,7 +1,6 @@
 import { InvoiceProps } from "components/InvoiceTable";
 import PDFDocument from "pdfkit";
-const getStream = require("get-stream");
-// import { createWriteStream } from "fs";
+import { pEvent } from "p-event";
 
 const MARGIN = 40;
 // const A4_HEIGHT = 841.89;
@@ -15,89 +14,55 @@ const FONT_TEXT = 12;
 const FONT_H1 = 40;
 const FONT_H2 = 18;
 const FONT_H3 = 16;
+const mainDir = __dirname + "/../../../../util/";
+// const mainDir =
+// "/Users/dariamikhailova/Dev/clients/2adesign/invoice-proposal-generator/";
+const INRIA_BOLD = mainDir + "fonts/InriaSans-Bold.ttf";
+const ROBOTO_MONO = mainDir + "fonts/RobotoMono-VariableFont_wght.ttf";
+const INRIA_REGULAR = mainDir + "fonts/InriaSans-Regular.ttf";
 
-const INRIA_BOLD = "public/fonts/InriaSans-Bold.ttf";
-const ROBOTO_MONO = "public/fonts/RobotoMono-VariableFont_wght.ttf";
-const INRIA_REGULAR = "public/fonts/InriaSans-Regular.ttf";
-
-/** PARAMETERS  */
-// const invoiceNumber = 10232; // year+month++day+projectnumber
-// const fields = [
-//   {
-//     desc: "Deposit received as per engagement letter",
-//     price: 1000,
-//     qty: 2,
-//   },
-//   {
-//     desc: "Architectural concepts based on the brief provided by the client.",
-//     price: 500,
-//     qty: 1,
-//   },
-//   {
-//     desc: "Adjustments to the Building Consent.",
-//     price: 500,
-//     qty: 1,
-//   },
-// ];
-
-export const generatePDF = async ({
+export const generatePdf = async ({
   invoiceNumber,
   issueDate,
   dueDate,
   billto,
   items,
   paymentValues,
-}: InvoiceProps): Promise<Buffer | undefined> => {
+}: InvoiceProps): Promise<Buffer | undefined | string> => {
   try {
-    // console.log("-------");
-    // console.log(invoiceNumber);
-    // console.log(items);
-    // console.log(paymentValues);
-    // // Passing size to the constructor
-    // console.log(PDFDocument);
-    const doc = new PDFDocument({
-      size: "A4",
-      bufferPages: true,
-      margins: {
-        top: MARGIN,
-        bottom: MARGIN,
-        left: MARGIN,
-        right: MARGIN,
-      },
+    let doc = new PDFDocument();
+    let bufferChunks: Array<string | Buffer> = [];
+
+    doc.on("readable", function () {
+      // Store buffer chunk to array
+      bufferChunks.push(doc.read());
     });
 
-    const buffers: Array<Buffer> = [];
-    doc.on("data", (b) => {
-      console.log(buffers);
-      console.log("ii");
-      return buffers.push.bind(b);
-    });
-    // doc.on("end", () => {
-    //   // let pdfData =
-    //   return Buffer.concat(buffers);
-    //   // return pdfData;
-    // });
-
-    // doc.pipe(createWriteStream(OUT_FOLDER)); // write to PDF
     doc.opacity(0.02).rect(0, 0, A4_WIDTH, 240).fill(BLACK);
     doc.fill(BLACK).opacity(1);
 
+    // doc.image(mainDir + "public/logo.svg", MARGIN, MARGIN, {
+    //   width: 100,
+    // });
     const writeBold = (fontSize: number) => {
-      doc.fontSize(fontSize);
-      doc.font(INRIA_BOLD);
+      try {
+        doc.fontSize(fontSize);
+        // doc.font(font);
+        // doc.font(INRIA_BOLD);
+      } catch (e) {
+        console.log(e);
+      }
     };
 
     const writeNumbers = (fontSize: number) => {
       doc.fontSize(fontSize);
-      doc.font(ROBOTO_MONO);
+      // doc.font(ROBOTO_MONO);
     };
 
     const writeText = (fontSize: number) => {
       doc.fontSize(fontSize);
-      doc.font(INRIA_REGULAR);
+      // doc.font(INRIA_REGULAR);
     };
-
-    doc.image("public/logo.png", MARGIN, MARGIN, { width: 100 });
 
     writeBold(FONT_H1);
     doc.text("INVOICE", MARGIN, 180, {
@@ -273,11 +238,11 @@ export const generatePDF = async ({
     });
 
     doc.end();
-    console.log("buffers");
-    console.log(buffers);
-    // return Buffer.concat(buffers);
-    return getStream.buffer(doc);
+
+    await pEvent(doc, "end");
+    var pdfBuffer = Buffer.concat(bufferChunks);
+    return pdfBuffer.toString("base64");
   } catch (e) {
-    console.error(e);
+    console.log(e);
   }
 };

@@ -1,5 +1,8 @@
 import { Field, FieldArray, Form, Formik } from "formik";
 
+import Image from "next/image";
+import { generatePDF } from "util/invoice";
+
 const c = require("../config");
 
 // const dotProp = require("dot-prop-immutable");
@@ -29,7 +32,7 @@ const getTotal = (items: Array<valueType>): number => {
       total + currentValue.qty * currentValue.price,
     0
   );
-  console.log(a);
+  console.log("invoice total is ", a);
   return a;
 };
 
@@ -83,15 +86,18 @@ function InvoiceTable({}: InvoiceTableProps) {
         initialValues={initValues}
         enableReinitialize
         onSubmit={async (vs) => {
-          axios;
+          console.log(vs);
+          const r = await generatePDF(vs);
+          console.log("response", r);
         }}
         render={({ values }) => (
           <Form>
             <div className="bg-slate-100 p-14">
               <div className="flex flex-row justify-between">
-                <img
+                <Image
                   src="/logo.svg"
                   width="250"
+                  height="100"
                   alt="2aLogo"
                   className="-ml-3"
                 />
