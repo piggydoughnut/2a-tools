@@ -1,7 +1,7 @@
 import { Field, FieldArray, Form, Formik } from "formik";
 
 import Image from "next/image";
-import { generatePDF } from "util/invoice";
+import { generatePdf } from "util/invoice";
 
 const c = require("../config");
 
@@ -41,6 +41,7 @@ export type InvoiceProps = {
   issueDate: Date;
   dueDate: Date;
   billto: string;
+  totalInvoice?: number;
   items: Array<{
     item: string;
     qty: number;
@@ -87,7 +88,7 @@ function InvoiceTable({}: InvoiceTableProps) {
         enableReinitialize
         onSubmit={async (vs) => {
           console.log(vs);
-          const r = await generatePDF(vs);
+          const r = await generatePdf(vs);
           console.log("response", r);
         }}
         render={({ values }) => (

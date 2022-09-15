@@ -1,7 +1,8 @@
 import { InvoiceProps } from "components/InvoiceTable";
 import PDFDocument from "pdfkit";
 import { pEvent } from "p-event";
-
+import path from "path";
+import { readFileSync } from "fs";
 const MARGIN = 40;
 // const A4_HEIGHT = 841.89;
 const A4_WIDTH = 595.28;
@@ -14,12 +15,16 @@ const FONT_TEXT = 12;
 const FONT_H1 = 40;
 const FONT_H2 = 18;
 const FONT_H3 = 16;
-const mainDir = __dirname + "/../../../../util/";
-// const mainDir =
-// "/Users/dariamikhailova/Dev/clients/2adesign/invoice-proposal-generator/";
-const INRIA_BOLD = mainDir + "fonts/InriaSans-Bold.ttf";
-const ROBOTO_MONO = mainDir + "fonts/RobotoMono-VariableFont_wght.ttf";
-const INRIA_REGULAR = mainDir + "fonts/InriaSans-Regular.ttf";
+
+const mainPath = path.join(process.cwd(), "public");
+const fontsPath = path.join(mainPath, "fonts");
+const INRIA_BOLD = path.join(fontsPath, "InriaSans-Bold.ttf");
+const ROBOTO_MONO = path.join(fontsPath, "RobotoMono-VariableFont_wght.ttf");
+const INRIA_REGULAR = path.join(fontsPath, "InriaSans-Regular.ttf");
+const logoImage = path.join(process.cwd(), "/public", "logo.png");
+const font1 = readFileSync(INRIA_BOLD);
+const font2 = readFileSync(ROBOTO_MONO);
+const font3 = readFileSync(INRIA_REGULAR);
 
 export const generatePdf = async ({
   invoiceNumber,
@@ -30,9 +35,17 @@ export const generatePdf = async ({
   paymentValues,
 }: InvoiceProps): Promise<Buffer | undefined | string> => {
   try {
-    let doc = new PDFDocument();
-    let bufferChunks: Array<string | Buffer> = [];
-
+    const doc = new PDFDocument({
+      bufferPages: true,
+      size: "A4",
+      margins: {
+        top: MARGIN,
+        bottom: MARGIN,
+        left: MARGIN,
+        right: MARGIN,
+      },
+    });
+    let bufferChunks: any = [];
     doc.on("readable", function () {
       // Store buffer chunk to array
       bufferChunks.push(doc.read());
@@ -41,14 +54,13 @@ export const generatePdf = async ({
     doc.opacity(0.02).rect(0, 0, A4_WIDTH, 240).fill(BLACK);
     doc.fill(BLACK).opacity(1);
 
-    // doc.image(mainDir + "public/logo.svg", MARGIN, MARGIN, {
-    //   width: 100,
-    // });
+    doc.image(logoImage, MARGIN, MARGIN, {
+      width: 150,
+    });
     const writeBold = (fontSize: number) => {
       try {
         doc.fontSize(fontSize);
-        // doc.font(font);
-        // doc.font(INRIA_BOLD);
+        doc.font(font1);
       } catch (e) {
         console.log(e);
       }
@@ -56,15 +68,16 @@ export const generatePdf = async ({
 
     const writeNumbers = (fontSize: number) => {
       doc.fontSize(fontSize);
-      // doc.font(ROBOTO_MONO);
+      doc.font(font2);
     };
 
     const writeText = (fontSize: number) => {
       doc.fontSize(fontSize);
-      // doc.font(INRIA_REGULAR);
+      doc.font(font3);
     };
 
     writeBold(FONT_H1);
+    console.log("omg");
     doc.text("INVOICE", MARGIN, 180, {
       align: "left",
       characterSpacing: 6,
@@ -129,7 +142,7 @@ export const generatePdf = async ({
         height: rowHeight,
         align: "right",
       });
-      doc.text(field.qty, 370, y, {
+      doc.text(field.qty.toString(), 370, y, {
         width: 50,
         height: rowHeight,
         align: "right",
@@ -147,7 +160,7 @@ export const generatePdf = async ({
       .lineTo(555, y + MARGIN)
       .stroke();
 
-    const SUBTOTAL_Y = 410;
+    const SUBTOTAL_Y = 330;
 
     writeBold(FONT_TEXT);
     doc.text("Subtotal", 330, SUBTOTAL_Y);
@@ -194,7 +207,7 @@ export const generatePdf = async ({
     );
 
     ////////// FOOTER /////////////
-    const FOOTER_HEIGHT = 685;
+    const FOOTER_HEIGHT = 680;
     writeBold(FONT_H2);
     doc.text("Thank you", MARGIN, FOOTER_HEIGHT);
     doc
@@ -229,17 +242,18 @@ export const generatePdf = async ({
       "office@2adesign.co.nz",
       "0812-898-389",
     ];
-    doc.fillColor(GRAY).text("CONTACT", 440, FOOTER_HEIGHT + LINE_HEIGHT * 2);
+    doc.fillColor(GRAY).text("CONTACT", 400, FOOTER_HEIGHT + LINE_HEIGHT * 2);
     writeText(FONT_TEXT);
     doc.fillColor(BLACK);
     contact.map((val, index) => {
       let height = FOOTER_HEIGHT + LINE_HEIGHT * (index * COEF + 3);
-      doc.text(val, 440, height);
+      doc.text(val, 400, height);
     });
 
     doc.end();
 
     await pEvent(doc, "end");
+    bufferChunks = bufferChunks.filter((a: any) => a);
     var pdfBuffer = Buffer.concat(bufferChunks);
     return pdfBuffer.toString("base64");
   } catch (e) {

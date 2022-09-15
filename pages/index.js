@@ -1,7 +1,7 @@
 import { Field, FieldArray, Form, Formik } from "formik";
 
-import Iframe from "react-iframe";
 import Image from "next/image";
+import InvoicePreview from "./InvoicePreview";
 import axios from "axios";
 import { useState } from "react";
 
@@ -20,7 +20,7 @@ const getTotal = (items) => {
   console.log("invoice total is ", a);
   return a;
 };
-export default function Home({ data }) {
+export default function Home() {
   const [urll, setUrll] = useState(null);
 
   const getPDF = (params) =>
@@ -73,33 +73,7 @@ export default function Home({ data }) {
       </div>
 
       {urll ? (
-        <div>
-          <div className="flex flex-row justify-between align-baseline mt-20 ">
-            <button
-              className="font-inriaSans border-0 w-44 h-12  rounded-sm mb-10 bg-gray-100"
-              onClick={() => setUrll(null)}
-            >
-              Edit The Invoice
-            </button>
-            <h3>202212-projectName-12</h3>
-            <button
-              className="font-inriaSans border-0 w-44 h-12 rounded-sm mb-10 bg-green-100"
-              onClick={() => setUrll(null)}
-            >
-              Save to Google Drive
-            </button>
-          </div>
-
-          <Iframe
-            url={urll}
-            width="100%"
-            height="800px"
-            id="myId"
-            className="myClassname"
-            display="initial"
-            position="relative"
-          />
-        </div>
+        <InvoicePreview setUrll={(s) => setUrll(s)} urll={urll} />
       ) : (
         <div className="flex flex-col mt-12">
           <div className="flex flex-col mb-20">
