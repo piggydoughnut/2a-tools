@@ -1,11 +1,10 @@
 import { Field, FieldArray, Form, Formik } from "formik";
 
 import Image from "next/image";
-import InvoicePreview from "./InvoicePreview";
+import InvoicePreview from "../components/InvoicePreview";
 import axios from "axios";
+import { paymentValues } from "../config";
 import { useState } from "react";
-
-const c = require("../config");
 
 const newValue = {
   item: "item description",
@@ -17,20 +16,19 @@ const getTotal = (items) => {
     (total, currentValue) => total + currentValue.qty * currentValue.price,
     0
   );
-  console.log("invoice total is ", a);
   return a;
 };
 export default function Home() {
-  const [urll, setUrll] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState(null);
 
-  const getPDF = (params) =>
-    axios
-      .post("/api/generatePdf", { ...params })
-      .then((data) => {
-        console.log(data);
-        setUrll("data:application/pdf;base64," + data.data);
-      })
-      .catch((e) => console.log(e));
+  const getPDF = async (params) => {
+    try {
+      const data = await axios.post("/api/generatePdf", { ...params });
+      setPdfUrl("data:application/pdf;base64," + data.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const initValues = {
     invoiceNumber: 12345,
@@ -38,33 +36,14 @@ export default function Home() {
     dueDate: new Date(),
     billto: "",
     items: [{ ...newValue }],
-    paymentValues: [
-      {
-        label: "Bank",
-        value: c.payableTo.bankName,
-      },
-      {
-        label: "Account Name",
-        value: c.payableTo.accountName,
-      },
-      {
-        label: "Account Number",
-        value: c.payableTo.accountNumber,
-        number: true,
-      },
-      {
-        label: "Gst",
-        value: c.payableTo.gst,
-        number: true,
-      },
-    ],
+    paymentValues,
   };
   const [params, setParams] = useState(initValues);
 
   return (
     <div
       id="content"
-      className="flex flex-col justify-center font-inriaSans text-midnight-black mx-60 mt-10 mb-10"
+      className="flex flex-col justify-center font-inriaSans text-midnight-black mx-20 mt-10 mb-10"
     >
       <div className="flex flex-row">
         <h1 className="font-inriaSans uppercase text-lg">
@@ -72,8 +51,8 @@ export default function Home() {
         </h1>
       </div>
 
-      {urll ? (
-        <InvoicePreview setUrll={(s) => setUrll(s)} urll={urll} />
+      {pdfUrl ? (
+        <InvoicePreview setPdfUrl={(s) => setPdfUrl(s)} pdfUrl={pdfUrl} />
       ) : (
         <div className="flex flex-col mt-12">
           <div className="flex flex-col mb-20">
@@ -82,7 +61,7 @@ export default function Home() {
                 Project number
               </label>
               <input
-                className="w-20 bg-yellowy mb-2 border-0 rounded-sm"
+                className="w-44 bg-yellowy mb-2 border-0 rounded-sm"
                 name="projectnumber"
                 type="text"
               />
@@ -98,13 +77,13 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className="mx-10">
+          <div>
             <Formik
               initialValues={params}
               enableReinitialize
               onSubmit={async (vs) => {
-                getPDF(vs);
                 setParams(vs);
+                await getPDF(vs);
               }}
               render={({ values }) => (
                 <Form>
@@ -136,13 +115,18 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-row align-bottom mt-20">
+                    <div className="flex flex-row align-baseline mt-20">
                       <h1 className="text-xl font-InriaSans tracking-widest">
                         INVOICE
                       </h1>
-                      <h3 className="text-lg self-align-bottom">
-                        <Field name="invoicenumber" type="text" />
-                      </h3>
+                      <div className="text-lg self-align-baseline pt-8 ml-4 w-20">
+                        <Field
+                          name="invoicenumber"
+                          type="text"
+                          placeholder="number"
+                          className="w-24"
+                        />
+                      </div>
                     </div>
                   </div>
                   <FieldArray
@@ -193,12 +177,14 @@ export default function Home() {
                               <div className="flex-1  w-10  border-0  justify-self-end">
                                 ${val.qty * val.price}
                               </div>
-                              <div
-                                className="underline cursor-pointer"
-                                onClick={() => arrayHelpers.remove(idx)}
-                              >
-                                Remove item
-                              </div>
+                              {values.items.length > 1 && (
+                                <div
+                                  className="underline cursor-pointer"
+                                  onClick={() => arrayHelpers.remove(idx)}
+                                >
+                                  Remove item
+                                </div>
+                              )}
                             </div>
                           ))}
                         <button
@@ -208,52 +194,45 @@ export default function Home() {
                         >
                           Add item
                         </button>
-                        x
                       </div>
                     )}
                   ></FieldArray>
-                  <hr></hr>
+                  <hr />
                   <p>{values.totalInvoice}</p>
-                  <div className="flex flex-col justify-end mx-14">
+                  <div className="flex flex-col justify-end">
                     <div className="flex flex-row justify-end">
                       <h3 className="w-32">Subtotal</h3>
                       <h3>${getTotal(values.items)}</h3>
                     </div>
-                    <div className="flex flex-row justify-end">
+                    <div className="flex flex-row justify-end mt-2">
                       <h3 className="w-32">Discount</h3>
-                      <h3>$0.00</h3>
+                      <h3>$0</h3>
                     </div>
-                    <div className="flex flex-row justify-end">
+                    <div className="flex flex-row justify-end mt-2">
                       <h3 className="w-32">GST (15%)</h3>
                       <h3>${(getTotal(values.items) * 0.15).toFixed()}</h3>
                     </div>
-                    <hr></hr>
-                    <div className="flex flex-row justify-end">
-                      <h1 className="w-32">Amount due</h1>
-                      <h1>${(getTotal(values.items) * 1.15).toFixed()}</h1>
+                    <div className="flex flex-row justify-end mt-4">
+                      <div className="w-64 border-t-2 border-black"></div>
+                    </div>
+                    <div className="flex flex-row justify-end  mt-4">
+                      <h1 className="w-44 text-lg">Amount due</h1>
+                      <h1 className="text-lg">
+                        ${(getTotal(values.items) * 1.15).toFixed()}
+                      </h1>
                     </div>
                   </div>
-                  <h1 className="mt-20 text-lg">Thank you</h1>
-                  <hr />
+                  <h1 className="mt-20 text-lg mb-6">Thank you</h1>
+                  <hr className="mb-6" />
                   <div className="flex flex-row justify-between">
                     <div className="flex flex-col">
                       <h3>PAYABLE TO</h3>
-                      <div className="flex flex-row">
-                        <p className="w-32">Bank</p>
-                        <p>KiwiBank</p>
-                      </div>
-                      <div className="flex flex-row">
-                        <p className="w-32">Account name</p>
-                        <p>2A Design</p>
-                      </div>
-                      <div className="flex flex-row">
-                        <p className="w-32">Account number</p>
-                        <p>38-9023-0249205-00</p>
-                      </div>
-                      <div className="flex flex-row">
-                        <p className="w-32">GST</p>
-                        <p>134-555-726</p>
-                      </div>
+                      {paymentValues.map((v) => (
+                        <div key={v.value} className="flex flex-row">
+                          <p className="w-32">{v.label}</p>
+                          <p>{v.value}</p>
+                        </div>
+                      ))}
                     </div>
                     <div className="flex flex-col">
                       <h3 className="text-gray">CONTACT</h3>
@@ -270,10 +249,6 @@ export default function Home() {
                       CREATE INVOICE
                     </button>
                   </div>
-
-                  {/* <a download="gello.pdf" href={urll}>
-                    get me
-                  </a> */}
                 </Form>
               )}
             ></Formik>

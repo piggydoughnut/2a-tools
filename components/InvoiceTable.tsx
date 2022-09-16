@@ -2,8 +2,7 @@ import { Field, FieldArray, Form, Formik } from "formik";
 
 import Image from "next/image";
 import { generatePdf } from "util/invoice";
-
-const c = require("../config");
+import { paymentValues } from "../config";
 
 // const dotProp = require("dot-prop-immutable");
 
@@ -60,26 +59,7 @@ function InvoiceTable({}: InvoiceTableProps) {
     dueDate: new Date(),
     billto: "",
     items: [{ ...newValue }],
-    paymentValues: [
-      {
-        label: "Bank",
-        value: c.payableTo.bankName,
-      },
-      {
-        label: "Account Name",
-        value: c.payableTo.accountName,
-      },
-      {
-        label: "Account Number",
-        value: c.payableTo.accountNumber,
-        number: true,
-      },
-      {
-        label: "Gst",
-        value: c.payableTo.gst,
-        number: true,
-      },
-    ],
+    paymentValues,
   };
   return (
     <div className="mx-10">
