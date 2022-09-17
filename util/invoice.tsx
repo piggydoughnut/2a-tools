@@ -1,5 +1,5 @@
-import { InvoiceProps } from "components/InvoiceTable";
 import PDFDocument from "pdfkit";
+import { contact } from "config";
 import { pEvent } from "p-event";
 import path from "path";
 import { readFileSync } from "fs";
@@ -11,7 +11,7 @@ const BLACK = "#000000";
 const GRAY = "#6F6E70";
 const LINE_HEIGHT = 20;
 
-const FONT_TEXT = 12;
+const FONT_TEXT = 10;
 const FONT_H1 = 40;
 const FONT_H2 = 18;
 const FONT_H3 = 16;
@@ -22,17 +22,44 @@ const INRIA_BOLD = path.join(fontsPath, "InriaSans-Bold.ttf");
 const ROBOTO_MONO = path.join(fontsPath, "RobotoMono-VariableFont_wght.ttf");
 const INRIA_REGULAR = path.join(fontsPath, "InriaSans-Regular.ttf");
 const logoImage = path.join(process.cwd(), "/public", "logo.png");
+
 const font1 = readFileSync(INRIA_BOLD);
 const font2 = readFileSync(ROBOTO_MONO);
 const font3 = readFileSync(INRIA_REGULAR);
 
+const drawLine = () => {};
+
+export type InvoiceProps = {
+  invoiceNumberFull: number;
+  issueDate: Date;
+  dueDate: Date;
+  billto: string;
+  totalInvoice?: number;
+  items: Array<{
+    item: string;
+    qty: number;
+    price: number;
+  }>;
+  paymentValues: Array<{
+    label: string;
+    value: string;
+    number?: boolean;
+  }>;
+  subtotal?: number;
+  gst?: number;
+  amountDue?: number;
+};
+
 export const generatePdf = async ({
-  invoiceNumber,
+  invoiceNumberFull,
   issueDate,
   dueDate,
   billto,
   items,
   paymentValues,
+  gst,
+  subtotal,
+  amountDue,
 }: InvoiceProps): Promise<Buffer | undefined | string> => {
   try {
     const doc = new PDFDocument({
@@ -57,6 +84,7 @@ export const generatePdf = async ({
     doc.image(logoImage, MARGIN, MARGIN, {
       width: 150,
     });
+
     const writeBold = (fontSize: number) => {
       try {
         doc.fontSize(fontSize);
@@ -76,15 +104,30 @@ export const generatePdf = async ({
       doc.font(font3);
     };
 
+    const HEADER_X = 400;
+
+    writeBold(FONT_TEXT);
+    doc.text("ISSUE DATE", HEADER_X, MARGIN);
+    writeText(FONT_TEXT);
+    doc.text(issueDate.toString(), HEADER_X, MARGIN + LINE_HEIGHT * 0.75);
+
+    writeBold(FONT_TEXT);
+    doc.text("DUE DATE", HEADER_X, MARGIN + LINE_HEIGHT * 2);
+    writeText(FONT_TEXT);
+    doc.text(dueDate.toString(), HEADER_X, MARGIN + LINE_HEIGHT * 2.75);
+
+    doc.text(billto, HEADER_X + 70, MARGIN, {
+      align: "right",
+    });
+
     writeBold(FONT_H1);
-    console.log("omg");
     doc.text("INVOICE", MARGIN, 180, {
       align: "left",
-      characterSpacing: 6,
+      characterSpacing: 8,
     });
 
     writeNumbers(FONT_H2);
-    doc.text(`#${invoiceNumber}`, MARGIN + 200, 200);
+    doc.text(`${invoiceNumberFull}`, MARGIN + 200, 200);
 
     doc.lineWidth(1);
     const length = A4_WIDTH - 2 * MARGIN;
@@ -119,15 +162,15 @@ export const generatePdf = async ({
       align: "right",
     });
 
-    let y = 280;
+    let Y_START = 280;
     items.forEach((field, index) => {
-      if (y > 40 + 842) {
-        // need new page
-      }
+      // if (y > 40 + 842) {
+      //   // need new page
+      // }
       const rowHeight = 20 * Math.ceil(field.item.length / 57);
-      y += rowHeight * index;
-      console.log(rowHeight);
-      console.log(y);
+      let y = Y_START + rowHeight * index;
+      console.log("rowHeight ", rowHeight);
+      console.log("y ", y);
 
       writeText(FONT_TEXT);
       doc.text(field.item, MARGIN, y, {
@@ -154,27 +197,22 @@ export const generatePdf = async ({
       });
     });
 
+    const SUBTOTAL_Y = 340 + (items.length - 1) * LINE_HEIGHT;
+    const SUBTOTAL_X = 330;
     doc
       .lineCap("butt")
-      .moveTo(330, y + MARGIN)
-      .lineTo(555, y + MARGIN)
+      .moveTo(SUBTOTAL_X, SUBTOTAL_Y - LINE_HEIGHT / 2)
+      .lineTo(SUBTOTAL_X + 225, SUBTOTAL_Y - LINE_HEIGHT / 2)
       .stroke();
-
-    const SUBTOTAL_Y = 330;
 
     writeBold(FONT_TEXT);
     doc.text("Subtotal", 330, SUBTOTAL_Y);
-    const subtotal = items.reduce(
-      (total, current) => total + current.qty * current.price,
-      0
-    );
 
     writeNumbers(FONT_TEXT);
     doc.text(`$${subtotal}`, 505, SUBTOTAL_Y, { align: "right" });
 
     writeBold(FONT_TEXT);
     doc.text("GST (15%)", 330, SUBTOTAL_Y + LINE_HEIGHT);
-    const gst = subtotal * 0.15;
 
     writeNumbers(FONT_TEXT);
     doc.text(`$${gst}`, 505, SUBTOTAL_Y + LINE_HEIGHT, { align: "right" });
@@ -183,7 +221,7 @@ export const generatePdf = async ({
     doc.text("Total", 330, SUBTOTAL_Y + LINE_HEIGHT * 2);
 
     writeNumbers(FONT_TEXT);
-    doc.text(`$${subtotal + gst}`, 505, SUBTOTAL_Y + LINE_HEIGHT * 2, {
+    doc.text(`$${amountDue}`, 505, SUBTOTAL_Y + LINE_HEIGHT * 2, {
       align: "right",
     });
 
@@ -198,7 +236,7 @@ export const generatePdf = async ({
 
     writeNumbers(FONT_H3);
     doc.text(
-      `$${subtotal + gst}`, // ${CURRENCY}`,
+      `$${amountDue}`, // ${CURRENCY}`,
       400,
       SUBTOTAL_Y + LINE_HEIGHT * 3.5,
       {
@@ -236,18 +274,13 @@ export const generatePdf = async ({
     });
 
     writeBold(FONT_TEXT);
-    const contact = [
-      "2A Design Studio",
-      "709 Rolleston St, Thames",
-      "office@2adesign.co.nz",
-      "0812-898-389",
-    ];
-    doc.fillColor(GRAY).text("CONTACT", 400, FOOTER_HEIGHT + LINE_HEIGHT * 2);
+
+    doc.fillColor(GRAY).text("CONTACT", 430, FOOTER_HEIGHT + LINE_HEIGHT * 2);
     writeText(FONT_TEXT);
     doc.fillColor(BLACK);
     contact.map((val, index) => {
       let height = FOOTER_HEIGHT + LINE_HEIGHT * (index * COEF + 3);
-      doc.text(val, 400, height);
+      doc.text(val, 430, height);
     });
 
     doc.end();
