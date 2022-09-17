@@ -1,6 +1,6 @@
 export const payableTo = {
   bankName: "Kiwi Bank",
-  accountName: "2A Design",
+  accountName: "2A Design ltd",
   accountNumber: "38-9023-0249205-00",
   gst: "134-555-726",
 };
@@ -24,4 +24,11 @@ export const paymentValues = [
     value: payableTo.gst,
     number: true,
   },
+];
+
+export const contact = [
+  "2A Design Studio",
+  "709 Rolleston St, Thames",
+  "office@2adesign.co.nz",
+  "0812-898-389",
 ];
