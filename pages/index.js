@@ -1,9 +1,10 @@
 import { Field, FieldArray, Form, Formik } from "formik";
-import { contact, paymentValues } from "../config";
+import { getInvoiceNumber, getTotal, processNumber } from "../util/helpers";
 
 import Image from "next/image";
 import InvoicePreview from "../components/InvoicePreview";
 import axios from "axios";
+import { paymentValues } from "../config";
 import { useState } from "react";
 
 const newValue = {
@@ -24,48 +25,38 @@ const initValues = {
   paymentValues,
 };
 
-const processNumber = (num) =>
-  num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const getPDF = async (params) => {
+  try {
+    const data = await axios.post("/api/generatePdf", { ...params });
+    return "data:application/pdf;base64," + data.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 export default function Home() {
   const [pdfUrl, setPdfUrl] = useState(null);
-
-  const getPDF = async (params) => {
-    try {
-      const data = await axios.post("/api/generatePdf", { ...params });
-      setPdfUrl("data:application/pdf;base64," + data.data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const [params, setParams] = useState(initValues);
-
   const [gst, setGST] = useState(0);
   const [amountDue, setAmountDue] = useState(initValues);
   const [subtotal, setSubtotal] = useState(initValues);
 
   const getGST = (items) => {
-    const gst = processNumber((getSubtotal(items) * 0.15).toFixed(2));
+    const gst = (getTotal(items) * 0.15).toFixed(2);
     setGST(gst);
-    return gst;
+    return processNumber(gst);
   };
 
   const getAmountDue = (items) => {
-    const due = processNumber((getSubtotal(items) * 1.15).toFixed(2));
+    const due = (getTotal(items) * 1.15).toFixed(2);
     setAmountDue(due);
-    return due;
+    return processNumber(due);
   };
 
   const getSubtotal = (items) => {
-    let tot = processNumber(
-      items.reduce(
-        (total, currentValue) => total + currentValue.qty * currentValue.price,
-        0
-      )
-    );
+    const tot = getTotal(items);
     setSubtotal(tot);
-    return tot;
+    return processNumber(tot);
   };
 
   return (
@@ -86,15 +77,18 @@ export default function Home() {
           initialValues={params}
           enableReinitialize
           onSubmit={async (vs) => {
-            console.log(vs);
+            // @todo explore if you can make these fields Hidden form fields in Formik
             vs.amountDue = amountDue;
             vs.subtotal = subtotal;
             vs.gst = gst;
-            vs.invoiceNumberFull = `#${new Date().getFullYear()}-${
-              vs.projectNumber ? vs.projectNumber + "-" : null
-            }${vs.invoiceNumber}`;
+            vs.invoiceNumberFull = getInvoiceNumber(
+              vs.projectName,
+              vs.projectNumber,
+              vs.invoiceNumber
+            );
             setParams(vs);
-            await getPDF(vs);
+            const pdfData = await getPDF(vs);
+            setPdfUrl(pdfData);
           }}
           render={({ values }) => (
             <Form>
