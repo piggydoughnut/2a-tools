@@ -78,7 +78,7 @@ export const generatePdf = async ({
       bufferChunks.push(doc.read());
     });
 
-    doc.opacity(0.02).rect(0, 0, A4_WIDTH, 240).fill(BLACK);
+    doc.opacity(0.05).rect(0, 0, A4_WIDTH, 240).fill(BLACK);
     doc.fill(BLACK).opacity(1);
 
     doc.image(logoImage, MARGIN, MARGIN, {
@@ -107,14 +107,14 @@ export const generatePdf = async ({
     const HEADER_X = 400;
 
     writeBold(FONT_TEXT);
-    doc.text("ISSUE DATE", HEADER_X, MARGIN);
+    doc.text("DUE DATE", HEADER_X, MARGIN);
     writeText(FONT_TEXT);
-    doc.text(issueDate.toString(), HEADER_X, MARGIN + LINE_HEIGHT * 0.75);
+    doc.text(dueDate.toString(), HEADER_X, MARGIN + LINE_HEIGHT * 0.75);
 
     writeBold(FONT_TEXT);
-    doc.text("DUE DATE", HEADER_X, MARGIN + LINE_HEIGHT * 2);
+    doc.text("ISSUE DATE", HEADER_X, MARGIN + LINE_HEIGHT * 2);
     writeText(FONT_TEXT);
-    doc.text(dueDate.toString(), HEADER_X, MARGIN + LINE_HEIGHT * 2.75);
+    doc.text(issueDate.toString(), HEADER_X, MARGIN + LINE_HEIGHT * 2.75);
 
     doc.text(billto, HEADER_X + 70, MARGIN, {
       align: "right",
