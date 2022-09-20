@@ -3,10 +3,12 @@ import * as Yup from "yup";
 import { Field, FieldArray, Form, Formik, yupToFormErrors } from "formik";
 import { getInvoiceNumber, getTotal, processNumber } from "../util/helpers";
 
+import Header from "../components/Header";
 import Image from "next/image";
 import InvoicePreview from "../components/InvoicePreview";
 import axios from "axios";
 import { paymentValues } from "../config";
+import router from "next/router";
 import { useState } from "react";
 
 const ItemSchema = Yup.object().shape({
@@ -101,11 +103,7 @@ export default function InvoiceGeneratorPage() {
       id="content"
       className="flex flex-col justify-center font-inriaSans text-midnight-black mx-20 mt-10 mb-10"
     >
-      <div className="flex flex-row">
-        <h1 className="font-inriaSans uppercase text-lg">
-          2A Design Invoice Generator
-        </h1>
-      </div>
+      <Header goTo="/" title="New invoice" />
 
       {pdfUrl ? (
         <InvoicePreview
