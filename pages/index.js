@@ -29,7 +29,7 @@ export default function Home() {
         </button>
         <button
           className="pt-2 pl-4 pr-4 pb-2 bg-blue-300  border rounded-sm text-md hover:scale-110 ease-in-out duration-300"
-          onClick={() => router.push("invoice")}
+          onClick={() => router.push("proposal")}
         >
           Create a Proposal{" "}
         </button>

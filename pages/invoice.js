@@ -185,6 +185,7 @@ export default function InvoiceGeneratorPage() {
                             <label htmlFor={"billto"}>{"Bill to"}</label>
                           </div>
                           <Field name="billto" as="textarea" rows={4} />
+                          {showErrors(errors, touched, "billto")}
                         </div>
                       </div>
                     </div>
@@ -315,6 +316,11 @@ export default function InvoiceGeneratorPage() {
                     >
                       CREATE INVOICE
                     </button>
+                    {/* {errors && (
+                      <div>
+                        Please check that all the required field have values
+                      </div>
+                    )} */}
                   </div>
                 </div>
               </div>

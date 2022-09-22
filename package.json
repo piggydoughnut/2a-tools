@@ -16,6 +16,7 @@
     "next": "12.2.5",
     "p-event": "^5.0.1",
     "pdfkit": "^0.13.0",
+    "pdfkit-table": "^0.1.99",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-iframe": "^1.8.0",

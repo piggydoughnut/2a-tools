@@ -1,8 +1,11 @@
-import PDFDocument from "pdfkit";
+import { format, parseISO } from "date-fns";
+import { readFileSync, write } from "fs";
+
+import PDFDocument from "pdfkit-table";
 import { contact } from "config";
 import { pEvent } from "p-event";
 import path from "path";
-import { readFileSync } from "fs";
+
 const MARGIN = 40;
 // const A4_HEIGHT = 841.89;
 const A4_WIDTH = 595.28;
@@ -72,6 +75,7 @@ export const generatePdf = async ({
         right: MARGIN,
       },
     });
+
     let bufferChunks: any = [];
     doc.on("readable", function () {
       // Store buffer chunk to array
@@ -109,12 +113,20 @@ export const generatePdf = async ({
     writeBold(FONT_TEXT);
     doc.text("DUE DATE", HEADER_X, MARGIN);
     writeText(FONT_TEXT);
-    doc.text(dueDate.toString(), HEADER_X, MARGIN + LINE_HEIGHT * 0.75);
+    doc.text(
+      format(parseISO(dueDate.toString()), "yyyy-MM-dd"),
+      HEADER_X,
+      MARGIN + LINE_HEIGHT * 0.75
+    );
 
     writeBold(FONT_TEXT);
     doc.text("ISSUE DATE", HEADER_X, MARGIN + LINE_HEIGHT * 2);
     writeText(FONT_TEXT);
-    doc.text(issueDate.toString(), HEADER_X, MARGIN + LINE_HEIGHT * 2.75);
+    doc.text(
+      format(parseISO(issueDate.toString()), "yyyy-MM-dd"),
+      HEADER_X,
+      MARGIN + LINE_HEIGHT * 2.75
+    );
 
     doc.text(billto, HEADER_X + 70, MARGIN, {
       align: "right",
@@ -129,120 +141,109 @@ export const generatePdf = async ({
     writeNumbers(FONT_H2);
     doc.text(`${invoiceNumberFull}`, MARGIN + 200, 200);
 
-    doc.lineWidth(1);
-    const length = A4_WIDTH - 2 * MARGIN;
-    doc
-      .lineCap("butt")
-      .moveTo(MARGIN, 265)
-      .lineTo(length + MARGIN, 270)
-      .stroke();
-
     writeText(FONT_TEXT);
 
     const HEADER_LINE_Y = 250;
-    doc.text("Item", MARGIN, HEADER_LINE_Y, {
-      width: 245,
-      height: 20,
-      align: "left",
-    });
 
-    doc.text("Price", 320, HEADER_LINE_Y, {
-      width: 50,
-      height: 20,
-      align: "right",
-    });
-    doc.text("Qty", 370, HEADER_LINE_Y, {
-      width: 50,
-      height: 40,
-      align: "right",
-    });
-    doc.text("Total", 505, HEADER_LINE_Y, {
-      width: 50,
-      height: 40,
-      align: "right",
-    });
+    const tableData = [];
 
-    let Y_START = 280;
     items.forEach((field, index) => {
-      // if (y > 40 + 842) {
-      //   // need new page
-      // }
-      const rowHeight = 20 * Math.ceil(field.item.length / 57);
-      let y = Y_START + rowHeight * index;
-      console.log("rowHeight ", rowHeight);
-      console.log("y ", y);
-
-      writeText(FONT_TEXT);
-      doc.text(field.item, MARGIN, y, {
-        width: 245,
-        height: rowHeight,
-        align: "left",
-      });
-
-      writeNumbers(FONT_TEXT);
-      doc.text(`$${field.price}`, 320, y, {
-        width: 50,
-        height: rowHeight,
-        align: "right",
-      });
-      doc.text(field.qty.toString(), 370, y, {
-        width: 50,
-        height: rowHeight,
-        align: "right",
-      });
-      doc.text(`$${field.qty * field.price}`, 505, y, {
-        width: 50,
-        height: rowHeight,
-        align: "right",
-      });
+      tableData.push([
+        field.item,
+        `$${field.price}`,
+        field.qty,
+        `$${field.qty * field.price}`,
+      ]);
     });
-
-    const SUBTOTAL_Y = 340 + (items.length - 1) * LINE_HEIGHT;
-    const SUBTOTAL_X = 330;
-    doc
-      .lineCap("butt")
-      .moveTo(SUBTOTAL_X, SUBTOTAL_Y - LINE_HEIGHT / 2)
-      .lineTo(SUBTOTAL_X + 225, SUBTOTAL_Y - LINE_HEIGHT / 2)
-      .stroke();
-
-    writeBold(FONT_TEXT);
-    doc.text("Subtotal", 330, SUBTOTAL_Y);
-
-    writeNumbers(FONT_TEXT);
-    doc.text(`$${subtotal}`, 505, SUBTOTAL_Y, { align: "right" });
-
-    writeBold(FONT_TEXT);
-    doc.text("GST (15%)", 330, SUBTOTAL_Y + LINE_HEIGHT);
-
-    writeNumbers(FONT_TEXT);
-    doc.text(`$${gst}`, 505, SUBTOTAL_Y + LINE_HEIGHT, { align: "right" });
-
-    writeBold(FONT_TEXT);
-    doc.text("Total", 330, SUBTOTAL_Y + LINE_HEIGHT * 2);
-
-    writeNumbers(FONT_TEXT);
-    doc.text(`$${amountDue}`, 505, SUBTOTAL_Y + LINE_HEIGHT * 2, {
-      align: "right",
-    });
-
-    doc
-      .lineCap("butt")
-      .moveTo(330, SUBTOTAL_Y + LINE_HEIGHT * 3)
-      .lineTo(555, SUBTOTAL_Y + LINE_HEIGHT * 3)
-      .stroke();
-
-    writeBold(FONT_H3);
-    doc.text(`Amount due`, 330, SUBTOTAL_Y + LINE_HEIGHT * 3.5);
-
-    writeNumbers(FONT_H3);
-    doc.text(
-      `$${amountDue}`, // ${CURRENCY}`,
-      400,
-      SUBTOTAL_Y + LINE_HEIGHT * 3.5,
-      {
-        align: "right",
-      }
+    tableData.push(
+      ["", "", "", ""],
+      ["", "", "", ""],
+      ["", "Subtotal", "", `$${subtotal}`],
+      ["", "GST", "", `$${gst}`],
+      ["", "Amount Due", "", `$${amountDue}`]
     );
+    const table = {
+      columnSpacing: 10,
+      headers: [
+        {
+          label: "Item",
+          name: "item",
+          align: "left",
+          headerAlign: "left",
+          headerColor: "white",
+        },
+        {
+          label: "Price",
+          name: "price",
+          align: "right",
+          headerAlign: "right",
+          headerColor: "white",
+        },
+        {
+          label: "Qty",
+          name: "qty",
+          align: "right",
+          headerAlign: "right",
+          headerColor: "white",
+        },
+        {
+          label: "Total",
+          name: "total",
+          align: "right",
+          headerAlign: "right",
+          headerColor: "white",
+        },
+      ],
+      padding: 2,
+      rows: tableData,
+    };
+
+    doc.text("", MARGIN, HEADER_LINE_Y);
+    await doc.table(table, {
+      columnsSize: [260, 120, 50, 80],
+      prepareHeader: () => {
+        doc.font(font1);
+        return doc;
+      },
+      prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => {
+        doc.font(font3);
+        if (indexColumn != 0) {
+          doc.font(font2);
+        }
+        console.log("indexRow ", indexRow);
+        console.log("rows ", table.rows.length - 1);
+        if (indexRow === table.rows.length - 1) {
+          writeBold(FONT_H3);
+        }
+        if (indexRow === table.rows.length - 4 && indexColumn !== 0) {
+          if (indexColumn === 1) {
+            doc.font(font2);
+          } else {
+            doc.font(font2);
+          }
+          const offset = 30;
+          if (indexColumn === 1) {
+            doc.text("", { align: "left" });
+            doc
+              .lineCap("butt")
+              .moveTo(rectCell.x + offset, rectCell.y)
+              .lineTo(rectCell.x + rectCell.width, rectCell.y)
+              .stroke();
+          } else {
+            doc
+              .lineCap("butt")
+              .moveTo(rectCell.x, rectCell.y)
+              .lineTo(rectCell.x + rectCell.width, rectCell.y)
+              .stroke();
+          }
+        }
+        return doc;
+      },
+      divider: {
+        header: { disabled: false, width: 1, opacity: 0.5 },
+        horizontal: { disabled: true, width: 0.5, opacity: 0.5 },
+      },
+    });
 
     ////////// FOOTER /////////////
     const FOOTER_HEIGHT = 680;

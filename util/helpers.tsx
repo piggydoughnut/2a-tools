@@ -18,3 +18,5 @@ export const getInvoiceNumber = (
   `#${new Date().getFullYear()}-${
     pName ? pNumber + "-" : null
   }${invoiceNumber}`;
+
+export const prepareTheTable = () => {};
