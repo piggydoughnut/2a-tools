@@ -3,6 +3,7 @@ import {
   FontSize,
   Fonts,
   LOGO_IMAGE,
+  Labels,
   PageParams,
 } from "./pdfStyleConfig";
 import { format, parseISO } from "date-fns";
@@ -30,6 +31,7 @@ export type InvoiceProps = {
   subtotal?: number;
   gst?: number;
   amountDue?: number;
+  discount?: number;
 };
 
 export const generatePdf = async ({
@@ -42,6 +44,7 @@ export const generatePdf = async ({
   gst,
   subtotal,
   amountDue,
+  discount = 0,
 }: InvoiceProps): Promise<Buffer | undefined | string> => {
   try {
     const doc = new PDFDocument({
@@ -147,53 +150,49 @@ export const generatePdf = async ({
       ["", "", "", ""],
       ["", "", "", ""],
       ["", "Subtotal", "", `$${subtotal}`],
-      ["", "GST", "", `$${gst}`],
+      ["", "GST(15%)", "", `$${gst}`],
+      ["", "Discount", "", `$${discount}`],
+      ["", "Total", "", `$${amountDue}`],
       ["", "", "Amount Due", `$${amountDue}`]
     );
 
-    const renderPriceCol = (
-      value,
-      indexColumn,
-      indexRow,
-      row,
-      rectRow,
-      rectCell
-    ) => {
-      const { x, y, width, height } = rectCell;
-      const padding = 5;
-      const labels = ["Subtotal", "GST", "Discount"];
-      if (labels.includes(value)) {
-        doc.text(value, x + 32, y + padding, {
-          align: "left",
-          width: width,
-          continued: true,
-        });
-      } else {
-        doc.text(value, x, y + padding, {
-          width: width,
-          align: "right",
-          continued: true,
-        });
-      }
+    type specs = {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
     };
-
-    const renderAmountDue = (
-      value,
-      indexColumn,
-      indexRow,
-      row,
-      rectRow,
-      rectCell
+    const renderCol = (
+      value: string,
+      indexColumn: number,
+      indexRow: number,
+      row: Array<string | number>,
+      rectRow: specs,
+      rectCell: specs
     ) => {
-      const { x, y, width, height } = rectCell;
+      let { x, y, width, height } = rectCell;
       const padding = 5;
-      if (value == "Amount Due") {
-        doc.text(value, x - 70, y + padding, {
-          width: width * 2,
-          align: "right",
-          continued: true,
-        });
+      const labels = [
+        Labels.SUBTOTAL,
+        Labels.GST,
+        Labels.DISCOUNT,
+        Labels.TOTAL,
+      ];
+      let offset = 0;
+      let align = "right";
+
+      if (labels.includes(value)) {
+        offset = 32;
+        align = "left";
+      } else if (value == Labels.AMOUNT_DUE) {
+        offset = -90;
+        width = width * 2;
       }
+      doc.text(value, x + offset, y + padding, {
+        align: align,
+        width: width,
+        continued: true,
+      });
     };
 
     const table = {
@@ -212,7 +211,7 @@ export const generatePdf = async ({
           align: "right",
           headerAlign: "right",
           headerColor: "white",
-          renderer: renderPriceCol,
+          renderer: renderCol,
         },
         {
           label: "Qty",
@@ -220,7 +219,7 @@ export const generatePdf = async ({
           align: "right",
           headerAlign: "right",
           headerColor: "white",
-          renderer: renderAmountDue,
+          renderer: renderCol,
         },
         {
           label: "Total",
@@ -230,7 +229,6 @@ export const generatePdf = async ({
           headerColor: "white",
         },
       ],
-      padding: 2,
       datas: [
         {
           price: {
@@ -244,7 +242,7 @@ export const generatePdf = async ({
 
     doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
     await doc.table(table, {
-      columnsSize: [270, 90, 50, 80],
+      columnsSize: [270, 70, 70, 80],
       prepareHeader: () => {
         writeText();
         return doc;
@@ -260,7 +258,21 @@ export const generatePdf = async ({
         if (indexRow === table.rows.length - 1) {
           writeBold(FontSize.H3);
         }
-        if (indexRow === table.rows.length - 4 && indexColumn !== 0) {
+        if (
+          indexRow === table.rows.length - Object.keys(Labels).length &&
+          indexColumn !== 0
+        ) {
+          let offset = 0;
+          if (indexColumn === 1) {
+            offset = 32;
+          }
+          doc
+            .lineCap("butt")
+            .moveTo(rectCell.x + offset, rectCell.y)
+            .lineTo(rectCell.x + rectCell.width, rectCell.y)
+            .stroke();
+        }
+        if (indexRow === table.rows.length - 1 && indexColumn !== 0) {
           let offset = 0;
           if (indexColumn === 1) {
             offset = 32;
