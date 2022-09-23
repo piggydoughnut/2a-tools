@@ -19,6 +19,7 @@ export const FontSize = {
   H1: 40,
   H2: 18,
   H3: 16,
+  H4: 12,
 };
 
 const mainPath = path.join(process.cwd(), "public");
@@ -41,3 +42,5 @@ export const Labels = {
   DISCOUNT: "Discount",
   AMOUNT_DUE: "Amount due",
 };
+
+export const DATE_FORMAT = "do MMM yyyy";

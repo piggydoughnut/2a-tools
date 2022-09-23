@@ -1,5 +1,6 @@
 import {
   Colors,
+  DATE_FORMAT,
   FontSize,
   Fonts,
   LOGO_IMAGE,
@@ -32,6 +33,7 @@ export type InvoiceProps = {
   gst?: number;
   amountDue?: number;
   discount?: number;
+  jobTitle: string;
 };
 
 export const generatePdf = async ({
@@ -45,6 +47,7 @@ export const generatePdf = async ({
   subtotal,
   amountDue,
   discount = 0,
+  jobTitle,
 }: InvoiceProps): Promise<Buffer | undefined | string> => {
   try {
     const doc = new PDFDocument({
@@ -63,8 +66,11 @@ export const generatePdf = async ({
       // Store buffer chunk to array
       bufferChunks.push(doc.read());
     });
-
-    doc.opacity(0.05).rect(0, 0, PageParams.A4_WIDTH, 240).fill(Colors.BLACK);
+    const Y_OFFSET_CONDITION = jobTitle ? 15 : 0;
+    doc
+      .opacity(0.05)
+      .rect(0, 0, PageParams.A4_WIDTH, 240 + Y_OFFSET_CONDITION)
+      .fill(Colors.BLACK);
     doc.fill(Colors.BLACK).opacity(1);
 
     doc.image(LOGO_IMAGE, PageParams.MARGIN, PageParams.MARGIN, {
@@ -96,45 +102,58 @@ export const generatePdf = async ({
     };
 
     const HEADER_X = 400;
+    const HEADER_Y = PageParams.MARGIN + PageParams.LINE_HEIGHT * 0.75;
 
-    writeBold();
+    writeBold(8);
     doc.text("DUE DATE", HEADER_X, PageParams.MARGIN);
-    writeText();
+    writeText(8);
     doc.text(
-      format(parseISO(dueDate.toString()), "yyyy-MM-dd"),
+      format(parseISO(dueDate.toString()), DATE_FORMAT),
       HEADER_X,
-      PageParams.MARGIN + PageParams.LINE_HEIGHT * 0.75
+      HEADER_Y
     );
 
-    writeBold();
+    writeBold(8);
     doc.text(
       "ISSUE DATE",
       HEADER_X,
-      PageParams.MARGIN + PageParams.LINE_HEIGHT * 2
+      PageParams.MARGIN + PageParams.LINE_HEIGHT * 1.5
     );
-    writeText();
+    writeText(8);
     doc.text(
-      format(parseISO(issueDate.toString()), "yyyy-MM-dd"),
+      format(parseISO(issueDate.toString()), DATE_FORMAT),
       HEADER_X,
-      PageParams.MARGIN + PageParams.LINE_HEIGHT * 2.75
+      PageParams.MARGIN + PageParams.LINE_HEIGHT * 2.1
     );
 
-    doc.text(billto, HEADER_X + 70, PageParams.MARGIN, {
+    writeBold(8);
+    doc.text("BILL TO", HEADER_X + 90, PageParams.MARGIN, { align: "right" });
+
+    writeText(8);
+    doc.text(billto, HEADER_X, HEADER_Y, {
+      align: "right",
+      lineGap: 2,
+    });
+
+    //230
+    writeNumbers(FontSize.H4);
+    doc.text(`${invoiceNumberFull}`, PageParams.MARGIN + 230, 210, {
       align: "right",
     });
 
     writeBold(FontSize.H1);
     doc.text("INVOICE", PageParams.MARGIN, 180, {
       align: "left",
-      characterSpacing: 8,
+      characterSpacing: 10,
     });
-
-    writeNumbers(FontSize.H2);
-    doc.text(`${invoiceNumberFull}`, PageParams.MARGIN + 200, 200);
+    if (jobTitle) {
+      writeNumbers(FontSize.P);
+      doc.text(`for ${jobTitle}`, PageParams.MARGIN, 230);
+    }
 
     writeText();
 
-    const HEADER_LINE_Y = 250;
+    const HEADER_LINE_Y = 250 + Y_OFFSET_CONDITION;
 
     const tableData = [];
 
@@ -182,7 +201,7 @@ export const generatePdf = async ({
 
       //// Amount Due and the value
       if (value == Labels.AMOUNT_DUE) {
-        offset = -90;
+        offset = -105;
         width = width * 2;
         padding = padding * 2;
       }
@@ -195,7 +214,7 @@ export const generatePdf = async ({
       }
       //// Subtotal block alignment
       if (labels.includes(value)) {
-        offset = 32;
+        offset = 18;
         align = "left";
       }
       if (indexColumn === 0) {
@@ -252,7 +271,7 @@ export const generatePdf = async ({
 
     doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
     await doc.table(table, {
-      columnsSize: [270, 70, 70, 80],
+      columnsSize: [290, 70, 70, 80],
       columnSpacing: 5,
       prepareHeader: () => {
         writeBold();
@@ -294,9 +313,10 @@ export const generatePdf = async ({
           ) {
             const padding = 15;
             const y = rectCell.y + padding;
+            const lineOffset = 18;
             doc
               .lineCap("butt")
-              .moveTo(rectCell.x + (indexColumn === 1 ? 32 : 0), y)
+              .moveTo(rectCell.x + (indexColumn === 1 ? lineOffset : 0), y)
               .lineTo(rectCell.x + rectCell.width, y)
               .stroke();
           }
