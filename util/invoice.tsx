@@ -180,6 +180,7 @@ export const generatePdf = async ({
       width: number;
       height: number;
     };
+    // @ts-ignore
     const renderCol = (
       value: string,
       indexColumn: number,
@@ -218,7 +219,8 @@ export const generatePdf = async ({
         align = "left";
       }
       if (indexColumn === 0) {
-        console.log("lets see");
+        console.log("/n");
+        console.log("-----------");
         console.log("value ", value);
         console.log("padding ", padding);
         console.log("y ", y);
@@ -270,6 +272,7 @@ export const generatePdf = async ({
     };
 
     doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
+    // @ts-ignore
     await doc.table(table, {
       columnsSize: [290, 70, 70, 80],
       columnSpacing: 5,
@@ -282,11 +285,12 @@ export const generatePdf = async ({
         writeText();
 
         if (indexRow === 0) {
-          doc
-            .lineCap("butt")
-            .moveTo(rectCell.x, rectCell.y + 5)
-            .lineTo(rectCell.x + rectCell.width, rectCell.y + 5)
-            .stroke();
+          rectCell &&
+            doc
+              .lineCap("butt")
+              .moveTo(rectCell.x, rectCell.y + 5)
+              .lineTo(rectCell.x + rectCell.width, rectCell.y + 5)
+              .stroke();
         }
 
         if (indexColumn !== 0) {
@@ -312,13 +316,14 @@ export const generatePdf = async ({
             indexRow === lastRowIndex
           ) {
             const padding = 15;
-            const y = rectCell.y + padding;
+            const y = rectCell ? rectCell.y + padding : 0;
             const lineOffset = 18;
-            doc
-              .lineCap("butt")
-              .moveTo(rectCell.x + (indexColumn === 1 ? lineOffset : 0), y)
-              .lineTo(rectCell.x + rectCell.width, y)
-              .stroke();
+            rectCell &&
+              doc
+                .lineCap("butt")
+                .moveTo(rectCell.x + (indexColumn === 1 ? lineOffset : 0), y)
+                .lineTo(rectCell.x + rectCell.width, y)
+                .stroke();
           }
         }
         return doc;

@@ -4,7 +4,7 @@ type newValueType = {
   price: number;
 };
 
-export const processNumber = (n) =>
+export const processNumber = (n: string | number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 export const getTotal = (val: any) =>
