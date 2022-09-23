@@ -39,5 +39,5 @@ export const Labels = {
   GST: "GST(15%)",
   TOTAL: "Total",
   DISCOUNT: "Discount",
-  AMOUNT_DUE: "Amount Due",
+  AMOUNT_DUE: "Amount due",
 };

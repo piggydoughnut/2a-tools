@@ -143,17 +143,16 @@ export const generatePdf = async ({
         field.item,
         `$${field.price}`,
         field.qty,
-        `$${field.qty * field.price}`,
+        `$${Number((field.qty * field.price).toFixed(2))}`,
       ]);
     });
     tableData.push(
       ["", "", "", ""],
       ["", "", "", ""],
-      ["", "Subtotal", "", `$${subtotal}`],
-      ["", "GST(15%)", "", `$${gst}`],
-      ["", "Discount", "", `$${discount}`],
-      ["", "Total", "", `$${amountDue}`],
-      ["", "", "Amount Due", `$${amountDue}`]
+      ["", Labels.SUBTOTAL, "", `$${subtotal}`],
+      ["", Labels.GST, "", `$${gst}`],
+      ["", Labels.DISCOUNT, "", `$${discount}`],
+      ["", "", Labels.AMOUNT_DUE, `$${amountDue}`]
     );
 
     type specs = {
@@ -171,7 +170,7 @@ export const generatePdf = async ({
       rectCell: specs
     ) => {
       let { x, y, width, height } = rectCell;
-      const padding = 5;
+      let padding = 15;
       const labels = [
         Labels.SUBTOTAL,
         Labels.GST,
@@ -181,22 +180,39 @@ export const generatePdf = async ({
       let offset = 0;
       let align = "right";
 
+      //// Amount Due and the value
+      if (value == Labels.AMOUNT_DUE) {
+        offset = -90;
+        width = width * 2;
+        padding = padding * 2;
+      }
+      if (indexRow === tableData.length - 1 && indexColumn === 3) {
+        padding = padding * 2;
+      }
+      //// Item value aligned left
+      if (indexColumn === 0) {
+        align = "left";
+      }
+      //// Subtotal block alignment
       if (labels.includes(value)) {
         offset = 32;
         align = "left";
-      } else if (value == Labels.AMOUNT_DUE) {
-        offset = -90;
-        width = width * 2;
       }
+      if (indexColumn === 0) {
+        console.log("lets see");
+        console.log("value ", value);
+        console.log("padding ", padding);
+        console.log("y ", y);
+      }
+
       doc.text(value, x + offset, y + padding, {
         align: align,
         width: width,
-        continued: true,
+        // continued: true,
       });
     };
 
     const table = {
-      columnSpacing: 10,
       headers: [
         {
           label: "Item",
@@ -204,6 +220,7 @@ export const generatePdf = async ({
           align: "left",
           headerAlign: "left",
           headerColor: "white",
+          renderer: renderCol,
         },
         {
           label: "Price",
@@ -227,14 +244,7 @@ export const generatePdf = async ({
           align: "right",
           headerAlign: "right",
           headerColor: "white",
-        },
-      ],
-      datas: [
-        {
-          price: {
-            label: "price",
-            options: { fontSize: 20, fontFamily: "Courier-Bold" },
-          },
+          renderer: renderCol,
         },
       ],
       rows: tableData,
@@ -243,51 +253,59 @@ export const generatePdf = async ({
     doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
     await doc.table(table, {
       columnsSize: [270, 70, 70, 80],
+      columnSpacing: 5,
       prepareHeader: () => {
-        writeText();
+        writeBold();
         return doc;
       },
       prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => {
         //regular text
         writeText();
-        // numbers
-        if (indexColumn != 0) {
-          writeNumbers();
-        }
-        // invoice subtotal block
-        if (indexRow === table.rows.length - 1) {
-          writeBold(FontSize.H3);
-        }
-        if (
-          indexRow === table.rows.length - Object.keys(Labels).length &&
-          indexColumn !== 0
-        ) {
-          let offset = 0;
-          if (indexColumn === 1) {
-            offset = 32;
-          }
+
+        if (indexRow === 0) {
           doc
             .lineCap("butt")
-            .moveTo(rectCell.x + offset, rectCell.y)
-            .lineTo(rectCell.x + rectCell.width, rectCell.y)
+            .moveTo(rectCell.x, rectCell.y + 5)
+            .lineTo(rectCell.x + rectCell.width, rectCell.y + 5)
             .stroke();
         }
-        if (indexRow === table.rows.length - 1 && indexColumn !== 0) {
-          let offset = 0;
-          if (indexColumn === 1) {
-            offset = 32;
+
+        if (indexColumn !== 0) {
+          const allRows = table.rows.length;
+          const subtotalSectionRowIndex = allRows - Object.keys(Labels).length;
+          const lastRowIndex = allRows - 1;
+          // text
+          if (
+            indexRow &&
+            indexRow >= subtotalSectionRowIndex &&
+            indexRow < lastRowIndex &&
+            indexColumn === 1
+          ) {
+            writeBold();
+          } else {
+            writeNumbers();
           }
-          doc
-            .lineCap("butt")
-            .moveTo(rectCell.x + offset, rectCell.y)
-            .lineTo(rectCell.x + rectCell.width, rectCell.y)
-            .stroke();
+          if (indexRow == lastRowIndex) {
+            writeBold(FontSize.H3);
+          }
+          if (
+            indexRow === subtotalSectionRowIndex ||
+            indexRow === lastRowIndex
+          ) {
+            const padding = 15;
+            const y = rectCell.y + padding;
+            doc
+              .lineCap("butt")
+              .moveTo(rectCell.x + (indexColumn === 1 ? 32 : 0), y)
+              .lineTo(rectCell.x + rectCell.width, y)
+              .stroke();
+          }
         }
         return doc;
       },
       divider: {
-        header: { disabled: false, width: 1, opacity: 0.5 },
-        horizontal: { disabled: true, width: 0.5, opacity: 0.5 },
+        header: { disabled: true, width: 1, opacity: 0.5 },
+        horizontal: { disabled: true },
       },
     });
 

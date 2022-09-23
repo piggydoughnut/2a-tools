@@ -81,19 +81,19 @@ export default function InvoiceGeneratorPage() {
   const [subtotal, setSubtotal] = useState(initValues);
 
   const getGST = (items) => {
-    const gst = (getTotal(items) * 0.15).toFixed(2);
+    const gst = Number((getTotal(items) * 0.15).toFixed(2));
     setGST(gst);
     return processNumber(gst);
   };
 
   const getAmountDue = (items) => {
-    const due = (getTotal(items) * 1.15).toFixed(2);
+    const due = Number((getTotal(items) * 1.15).toFixed(2));
     setAmountDue(due);
     return processNumber(due);
   };
 
   const getSubtotal = (items) => {
-    const tot = getTotal(items);
+    const tot = Number(getTotal(items).toFixed(2));
     setSubtotal(tot);
     return processNumber(tot);
   };
@@ -264,7 +264,7 @@ export default function InvoiceGeneratorPage() {
                               value={val.qty ? val.qty : 1}
                             />
                             <div className="w-10 justify-self-end">
-                              ${val.qty * val.price}
+                              ${Number((val.qty * val.price).toFixed(2))}
                             </div>
                             {values.items.length > 1 && (
                               <div
