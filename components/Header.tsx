@@ -14,7 +14,10 @@ export default function Header({
     <div>
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <h1 className="font-inriaSans uppercase text-sm mb-4">
+          <h1
+            className="font-inriaSans uppercase text-sm mb-4 cursor-pointer"
+            onClick={() => router.push("/")}
+          >
             2A Design Studio
           </h1>
           {router.pathname !== "/" && (
