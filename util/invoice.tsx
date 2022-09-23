@@ -160,8 +160,54 @@ export const generatePdf = async ({
       ["", "", "", ""],
       ["", "Subtotal", "", `$${subtotal}`],
       ["", "GST", "", `$${gst}`],
-      ["", "Amount Due", "", `$${amountDue}`]
+      ["", "", "Amount Due", `$${amountDue}`]
     );
+
+    const renderPriceCol = (
+      value,
+      indexColumn,
+      indexRow,
+      row,
+      rectRow,
+      rectCell
+    ) => {
+      const { x, y, width, height } = rectCell;
+      const padding = 5;
+      const labels = ["Subtotal", "GST", "Discount"];
+      if (labels.includes(value)) {
+        doc.text(value, x + 32, y + padding, {
+          align: "left",
+          width: width,
+          continued: true,
+        });
+      } else {
+        doc.text(value, x, y + padding, {
+          width: width,
+          align: "right",
+          continued: true,
+        });
+      }
+    };
+
+    const renderAmountDue = (
+      value,
+      indexColumn,
+      indexRow,
+      row,
+      rectRow,
+      rectCell
+    ) => {
+      const { x, y, width, height } = rectCell;
+      const padding = 5;
+      if (value == "Amount Due") {
+        doc.text(value, x - 70, y + padding, {
+          width: width * 2,
+          align: "right",
+          continued: true,
+        });
+      }
+    };
+
     const table = {
       columnSpacing: 10,
       headers: [
@@ -178,6 +224,7 @@ export const generatePdf = async ({
           align: "right",
           headerAlign: "right",
           headerColor: "white",
+          renderer: renderPriceCol,
         },
         {
           label: "Qty",
@@ -185,6 +232,7 @@ export const generatePdf = async ({
           align: "right",
           headerAlign: "right",
           headerColor: "white",
+          renderer: renderAmountDue,
         },
         {
           label: "Total",
@@ -195,47 +243,49 @@ export const generatePdf = async ({
         },
       ],
       padding: 2,
+      datas: [
+        {
+          price: {
+            label: "price",
+            options: { fontSize: 20, fontFamily: "Courier-Bold" },
+          },
+        },
+      ],
       rows: tableData,
     };
 
     doc.text("", MARGIN, HEADER_LINE_Y);
     await doc.table(table, {
-      columnsSize: [260, 120, 50, 80],
+      columnsSize: [270, 90, 50, 80],
       prepareHeader: () => {
         doc.font(font1);
         return doc;
       },
       prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => {
         doc.font(font3);
+        // numbers
         if (indexColumn != 0) {
           doc.font(font2);
         }
-        console.log("indexRow ", indexRow);
-        console.log("rows ", table.rows.length - 1);
+        // invoice subtotal block
         if (indexRow === table.rows.length - 1) {
           writeBold(FONT_H3);
         }
         if (indexRow === table.rows.length - 4 && indexColumn !== 0) {
           if (indexColumn === 1) {
-            doc.font(font2);
+            doc.font(font3);
           } else {
             doc.font(font2);
           }
-          const offset = 30;
+          let offset = 0;
           if (indexColumn === 1) {
-            doc.text("", { align: "left" });
-            doc
-              .lineCap("butt")
-              .moveTo(rectCell.x + offset, rectCell.y)
-              .lineTo(rectCell.x + rectCell.width, rectCell.y)
-              .stroke();
-          } else {
-            doc
-              .lineCap("butt")
-              .moveTo(rectCell.x, rectCell.y)
-              .lineTo(rectCell.x + rectCell.width, rectCell.y)
-              .stroke();
+            offset = 32;
           }
+          doc
+            .lineCap("butt")
+            .moveTo(rectCell.x + offset, rectCell.y)
+            .lineTo(rectCell.x + rectCell.width, rectCell.y)
+            .stroke();
         }
         return doc;
       },
