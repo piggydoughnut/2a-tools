@@ -24,7 +24,7 @@ export default function Header({
         )}
       </div>
 
-      <h1 className="font-inriaSans text-lg mb-4 text-center">{title}</h1>
+      <h1 className="font-inriaSans text-lg mb-4 text-center mt-24">{title}</h1>
     </div>
   );
 }

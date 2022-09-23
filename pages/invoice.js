@@ -40,7 +40,7 @@ const initValues = {
   invoiceNumber: "",
   projectNumber: "",
   projectName: "",
-  jobTitle: "Architectural services",
+  jobTitle: "",
   issueDate: new Date(),
   dueDate: new Date(),
   billto: "",
@@ -101,9 +101,9 @@ export default function InvoiceGeneratorPage() {
   return (
     <div
       id="content"
-      className="flex flex-col justify-center font-inriaSans text-midnight-black mx-20 mt-10 mb-10"
+      className="flex flex-col justify-center font-inriaSans text-midnight-black mx-4 xl:mx-40 mt-10 mb-10"
     >
-      <Header goTo="/" title="New invoice" />
+      <Header goTo="/" title="Create New invoice" />
 
       {pdfUrl ? (
         <InvoicePreview
@@ -136,6 +136,7 @@ export default function InvoiceGeneratorPage() {
             <Form>
               <div className="flex flex-col mt-12">
                 <div className="flex flex-col mb-20">
+                  <p className="text-sm uppercase mb-4">Project Details</p>
                   <div className="flex flex-row">
                     <label className="w-36" htmlFor="projectNumber">
                       Project number
@@ -174,38 +175,51 @@ export default function InvoiceGeneratorPage() {
                           <div className="w-44">
                             <label htmlFor={"issueDate"}>{"Issue date"}</label>
                           </div>
-                          <Field type="date" name="issueDate" />
-                          <div className="w-44">
+                          <Field
+                            className=" bg-yellowy mb-2 rounded-sm pt-1 pb-1 pl-2"
+                            type="date"
+                            name="issueDate"
+                          />
+                          <div className="w-44 mt-2">
                             <label htmlFor={"dueDate"}>{"Due date"}</label>
                           </div>
-                          <Field name="dueDate" type="date" />
+                          <Field
+                            className=" bg-yellowy mb-2 rounded-sm pt-1 pb-1 pl-2"
+                            name="dueDate"
+                            type="date"
+                          />
                         </div>
                         <div>
                           <div className="w-44">
                             <label htmlFor={"billto"}>{"Bill to"}</label>
                           </div>
-                          <Field name="billto" as="textarea" rows={4} />
+                          <Field
+                            className=" bg-yellowy mb-2 rounded-sm pt-1 pb-1 pl-2"
+                            name="billto"
+                            as="textarea"
+                            rows={4}
+                          />
                           {showErrors(errors, touched, "billto")}
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-row align-baseline mt-20">
+                    <div className="flex flex-row justify-between align-baseline mt-20">
                       <h1 className="text-xl font-InriaSans tracking-widest">
                         INVOICE
                       </h1>
                       <div className="flex flex-row justify-center align-baseline">
-                        <p className="text-lg self-align-baseline pt-8 ml-4">
+                        <p className="text-lg self-align-baseline pt-9 ml-4">
                           #{new Date().getFullYear()}-
                           {values.projectNumber
                             ? values.projectNumber + "-"
                             : null}
                         </p>
-                        <div className="text-lg self-align-baseline pt-8 ml-4 w-42">
+                        <div className="text-lg self-align-baseline align-middle pt-8 ml-4 w-24">
                           <Field
                             name="invoiceNumber"
                             type="text"
                             placeholder="invoice number"
-                            className="w-42"
+                            className=" bg-yellowy mb-2 rounded-sm pt-1 pb-1 pl-2 w-24"
                           />
                         </div>
                         <div className="self-align-baseline mt-10 ml-4">

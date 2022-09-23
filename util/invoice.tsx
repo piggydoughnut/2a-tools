@@ -218,13 +218,6 @@ export const generatePdf = async ({
         offset = 18;
         align = "left";
       }
-      if (indexColumn === 0) {
-        console.log("/n");
-        console.log("-----------");
-        console.log("value ", value);
-        console.log("padding ", padding);
-        console.log("y ", y);
-      }
 
       doc.text(value, x + offset, y + padding, {
         align: align,
