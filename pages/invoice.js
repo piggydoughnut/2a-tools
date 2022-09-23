@@ -137,7 +137,7 @@ export default function InvoiceGeneratorPage() {
               <div className="flex flex-col mt-12">
                 <div className="flex flex-col mb-20">
                   <p className="text-sm uppercase mb-4">Project Details</p>
-                  <div className="flex flex-row">
+                  <div className="flex flex-col sm:flex-row">
                     <label className="w-36" htmlFor="projectNumber">
                       Project number
                     </label>
@@ -148,7 +148,7 @@ export default function InvoiceGeneratorPage() {
                     />
                     {showErrors(errors, touched, "projectNumber")}
                   </div>
-                  <div className="flex flex-row">
+                  <div className="flex flex-col sm:flex-row">
                     <label className="w-36" htmlFor="projectName">
                       Project name
                     </label>
@@ -162,7 +162,7 @@ export default function InvoiceGeneratorPage() {
                 </div>
                 <div>
                   <div className="bg-slate-100 p-14">
-                    <div className="flex flex-row justify-between">
+                    <div className="flex flex-col sm:flex-row justify-between">
                       <Image
                         src="/logo.svg"
                         width="250"
@@ -170,7 +170,7 @@ export default function InvoiceGeneratorPage() {
                         alt="2aLogo"
                         className="-ml-3"
                       />
-                      <div className="flex flex-row gap-4">
+                      <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex flex-col">
                           <div className="w-44">
                             <label htmlFor={"issueDate"}>{"Issue date"}</label>
@@ -203,22 +203,22 @@ export default function InvoiceGeneratorPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-row justify-between align-baseline mt-20">
+                    <div className="flex flex-col sm:flex-row justify-between align-baseline mt-20">
                       <h1 className="text-xl font-InriaSans tracking-widest">
                         INVOICE
                       </h1>
-                      <div className="flex flex-row justify-center align-baseline">
-                        <p className="text-lg self-align-baseline pt-9 ml-4">
+                      <div className="flex flex-row justify-start sm:justify-center align-baseline mt-6 sm:mt-0">
+                        <p className="text-lg self-align-baseline pt-1 sm:pt-9 sm:ml-4">
                           #{new Date().getFullYear()}-
                           {values.projectNumber
                             ? values.projectNumber + "-"
                             : null}
                         </p>
-                        <div className="text-lg self-align-baseline align-middle pt-8 ml-4 w-24">
+                        <div className="text-lg self-align-baseline align-middle sm:pt-8 ml-4 w-24">
                           <Field
                             name="invoiceNumber"
                             type="text"
-                            placeholder="invoice number"
+                            placeholder="number"
                             className=" bg-yellowy mb-2 rounded-sm pt-1 pb-1 pl-2 w-24"
                           />
                         </div>
@@ -229,7 +229,7 @@ export default function InvoiceGeneratorPage() {
                       </div>
                     </div>
                     <Field
-                      className="bg-yellowy border-0 rounded-sm w-96 pt-1 pb-1 pl-2"
+                      className="bg-yellowy border-0 rounded-sm w-64 sm:w-96 pt-1 pb-1 pl-2 mt-10 sm:mt-0"
                       name="jobTitle"
                       type="text"
                       placeholder="job title - optional"
@@ -239,7 +239,7 @@ export default function InvoiceGeneratorPage() {
                     name="items"
                     render={(arrayHelpers) => (
                       <div className="pr-14 pl-14 pt-3">
-                        <div className="grid gap-4 grid-cols-8 mb-4">
+                        <div className="sm:grid sm:gap-4 sm:grid-cols-8 mb-4 hidden">
                           <div className="col-span-4 text-left uppercase max-w-4xl">
                             Item
                           </div>
@@ -255,8 +255,11 @@ export default function InvoiceGeneratorPage() {
                         {values.items?.map((val, idx) => (
                           <div
                             key={idx}
-                            className="grid gap-3 grid-cols-8 mb-4"
+                            className="flex flex-col sm:grid gap-3 sm:grid-cols-8 mb-4"
                           >
+                            <div className="justify-self-end text-right uppercase w-10 sm:hidden">
+                              Item
+                            </div>
                             <Field
                               className="bg-yellowy border-0 rounded-sm pt-1 pb-1 pl-2 col-span-4"
                               name={`items[${idx}].item`}
@@ -264,6 +267,9 @@ export default function InvoiceGeneratorPage() {
                               value={val.item}
                               placeholder={"sevice description"}
                             />
+                            <div className="justify-self-end text-right uppercase w-10 sm:hidden">
+                              Price
+                            </div>
                             <Field
                               className="bg-yellowy border-0 rounded-sm pt-1 pb-1 pl-2 w-20 justify-self-end"
                               name={`items[${idx}].price`}
@@ -271,12 +277,18 @@ export default function InvoiceGeneratorPage() {
                               type="number"
                               value={val.price}
                             />
+                            <div className="justify-self-end text-right uppercase w-10 sm:hidden">
+                              Cost
+                            </div>
                             <Field
                               className="bg-yellowy border-0 rounded-sm pt-1 pb-1 pl-2 w-12 justify-self-end"
                               name={`items[${idx}].qty`}
                               type="number"
                               value={val.qty ? val.qty : 1}
                             />
+                            <div className="justify-self-end text-right uppercase w-10 sm:hidden">
+                              Total
+                            </div>
                             <div className="w-10 justify-self-end">
                               ${Number((val.qty * val.price).toFixed(2))}
                             </div>

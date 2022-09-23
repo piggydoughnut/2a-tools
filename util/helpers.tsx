@@ -1,3 +1,5 @@
+import { DATE_FORMAT } from "util/pdfStyleConfig";
+import { format } from "date-fns";
 type newValueType = {
   item: string;
   qty: number;
@@ -20,3 +22,5 @@ export const getInvoiceNumber = (
   }${invoiceNumber}`;
 
 export const prepareTheTable = () => {};
+
+export const getTodayDate = () => format(new Date(), "do MMM yyyy");
