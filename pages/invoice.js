@@ -127,7 +127,7 @@ export default function InvoiceGeneratorPage() {
                         className="-ml-3"
                       />
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-1">
                           <Input
                             name="issueDate"
                             label="Issue date"
@@ -139,7 +139,7 @@ export default function InvoiceGeneratorPage() {
                           name="billto"
                           label="Bill to"
                           type="textarea"
-                          rows={4}
+                          rows={5}
                           as="textarea"
                         />
                       </div>
