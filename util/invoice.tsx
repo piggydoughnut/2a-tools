@@ -352,11 +352,6 @@ export const generatePdf = async ({
       let height =
         PageParams.FOOTER_HEIGHT + PageParams.LINE_HEIGHT * (index * COEF + 3);
       doc.text(value.label, PageParams.MARGIN, height);
-      if (value.number) {
-        writeNumbers();
-      } else {
-        writeText();
-      }
       doc.text(value.value, PageParams.MARGIN * 4, height);
     });
 

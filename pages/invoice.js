@@ -1,35 +1,16 @@
-import * as Yup from "yup";
-
-import { Field, FieldArray, Form, Formik, yupToFormErrors } from "formik";
+import { FieldArray, Form, Formik } from "formik";
+import { Messages, paymentValues } from "../config";
 import { getInvoiceNumber, getTotal, processNumber } from "../util/helpers";
 
+import { Error } from "../components/Input";
 import Header from "../components/Header";
 import Image from "next/image";
+import { Input } from "../components/Input";
 import InvoicePreview from "../components/InvoicePreview";
-import axios from "axios";
-import { paymentValues } from "../config";
-import router from "next/router";
+import { InvoiceSchema } from "../util/invoiceValidationSchemas";
+import { getPDF } from "../util/helpers";
 import { useState } from "react";
 
-const ItemSchema = Yup.object().shape({
-  item: Yup.string()
-    .required("Required")
-    .max(500, "500 characters max.")
-    .min(1),
-  qty: Yup.number().required("Required").max(1000).min(1, "Minimum 1"),
-  price: Yup.number().required("Required").min(1, "Minimum 1"),
-});
-
-const InvoiceSchema = Yup.object().shape({
-  invoiceNumber: Yup.string().min(0).required("Required"),
-  projectNumber: Yup.number("Must be a number").required("Required"),
-  projectName: Yup.string().required("Required").max(100),
-  jobTitle: Yup.string().max(200),
-  issueDate: Yup.date().required("Required"),
-  dueDate: Yup.date().required("Required"),
-  billto: Yup.string().required("Required").max(300),
-  items: Yup.array().of(ItemSchema).min(1).required("Required"),
-});
 const newValue = {
   item: "",
   qty: 1,
@@ -47,31 +28,6 @@ const initValues = {
   items: [{ ...newValue }],
   paymentValues,
 };
-
-const getPDF = async (params) => {
-  try {
-    const data = await axios.post("/api/generatePdf", { ...params });
-    return "data:application/pdf;base64," + data.data;
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-const Error = ({ children }) => (
-  <p className="text-sm text-red-400">{children}</p>
-);
-
-const showErrors = (errors, touched, fieldName) =>
-  errors[fieldName] && touched[fieldName] ? (
-    <Error>{errors[fieldName]}</Error>
-  ) : null;
-
-const showItemErrors = (touched, errors, idx, fieldName) =>
-  touched.items &&
-  touched.items[idx]?.item &&
-  errors &&
-  errors.items &&
-  errors.items[idx] && <Error>{errors.items[idx][fieldName]}</Error>;
 
 export default function InvoiceGeneratorPage() {
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -132,33 +88,33 @@ export default function InvoiceGeneratorPage() {
             setPdfUrl(pdfData);
           }}
         >
-          {({ values, errors, touched }) => (
+          {({ values, errors }) => (
             <Form>
               <div className="flex flex-col mt-12">
                 <div className="flex flex-col mb-20">
                   <p className="text-sm uppercase mb-4">Project Details</p>
-                  <div className="flex flex-col sm:flex-row">
-                    <label className="w-36" htmlFor="projectNumber">
-                      Project number
-                    </label>
-                    <Field
-                      className="w-44 bg-yellowy mb-2 border-0 rounded-sm pt-1 pb-1 pl-2 focus:outline-none focus:ring focus:border-yellow-700 mr-6"
-                      name="projectNumber"
-                      type="text"
+                  {[
+                    {
+                      fieldName: "projectNumber",
+                      fieldLabel: "Project number",
+                      fieldType: "text",
+                      customstyle: "w-44",
+                    },
+                    {
+                      fieldName: "projectName",
+                      fieldLabel: "Project name",
+                      fieldType: "text",
+                      customstyle: "w-96",
+                    },
+                  ].map((val) => (
+                    <Input
+                      key={val.fieldName}
+                      name={val.fieldName}
+                      label={val.fieldLabel}
+                      type={val.fieldType}
+                      customstyle={val.customstyle}
                     />
-                    {showErrors(errors, touched, "projectNumber")}
-                  </div>
-                  <div className="flex flex-col sm:flex-row">
-                    <label className="w-36" htmlFor="projectName">
-                      Project name
-                    </label>
-                    <Field
-                      className="w-96 bg-yellowy mb-2 border-0 rounded-sm pt-1 pb-1 pl-2 mr-6"
-                      name="projectName"
-                      type="text"
-                    />
-                    {showErrors(errors, touched, "projectName")}
-                  </div>
+                  ))}
                 </div>
                 <div>
                   <div className="bg-slate-100 p-14">
@@ -171,36 +127,21 @@ export default function InvoiceGeneratorPage() {
                         className="-ml-3"
                       />
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex flex-col">
-                          <div className="w-44">
-                            <label htmlFor={"issueDate"}>{"Issue date"}</label>
-                          </div>
-                          <Field
-                            className=" bg-yellowy mb-2 rounded-sm pt-1 pb-1 pl-2"
-                            type="date"
+                        <div className="flex flex-col gap-2">
+                          <Input
                             name="issueDate"
-                          />
-                          <div className="w-44 mt-2">
-                            <label htmlFor={"dueDate"}>{"Due date"}</label>
-                          </div>
-                          <Field
-                            className=" bg-yellowy mb-2 rounded-sm pt-1 pb-1 pl-2"
-                            name="dueDate"
+                            label="Issue date"
                             type="date"
                           />
+                          <Input name="dueDate" label="Due date" type="date" />
                         </div>
-                        <div>
-                          <div className="w-44">
-                            <label htmlFor={"billto"}>{"Bill to"}</label>
-                          </div>
-                          <Field
-                            className=" bg-yellowy mb-2 rounded-sm pt-1 pb-1 pl-2"
-                            name="billto"
-                            as="textarea"
-                            rows={4}
-                          />
-                          {showErrors(errors, touched, "billto")}
-                        </div>
+                        <Input
+                          name="billto"
+                          label="Bill to"
+                          type="textarea"
+                          rows={4}
+                          as="textarea"
+                        />
                       </div>
                     </div>
                     <div className="flex flex-col sm:flex-row justify-between align-baseline mt-20">
@@ -214,25 +155,21 @@ export default function InvoiceGeneratorPage() {
                             ? values.projectNumber + "-"
                             : null}
                         </p>
-                        <div className="text-lg self-align-baseline align-middle sm:pt-8 ml-4 w-24">
-                          <Field
+                        <div className="text-lg self-align-baseline align-middle sm:pt-10 ml-4 w-44">
+                          <Input
                             name="invoiceNumber"
                             type="text"
-                            placeholder="number"
-                            className=" bg-yellowy mb-2 rounded-sm pt-1 pb-1 pl-2 w-24"
+                            placeholder="invoice number"
+                            customstyle="text-base"
                           />
-                        </div>
-                        <div className="self-align-baseline mt-10 ml-4">
-                          {console.log(errors)}
-                          {showErrors(errors, touched, "invoiceNumber")}
                         </div>
                       </div>
                     </div>
-                    <Field
-                      className="bg-yellowy border-0 rounded-sm w-64 sm:w-96 pt-1 pb-1 pl-2 mt-10 sm:mt-0"
+                    <Input
                       name="jobTitle"
                       type="text"
                       placeholder="job title - optional"
+                      customstyle="text-base w-64 sm:w-96"
                     />
                   </div>
                   <FieldArray
@@ -260,30 +197,33 @@ export default function InvoiceGeneratorPage() {
                             <div className="justify-self-end text-right uppercase w-10 sm:hidden">
                               Item
                             </div>
-                            <Field
-                              className="bg-yellowy border-0 rounded-sm pt-1 pb-1 pl-2 col-span-4"
-                              name={`items[${idx}].item`}
-                              type="text"
-                              value={val.item}
-                              placeholder={"sevice description"}
+                            <div className="col-span-4">
+                              <Input
+                                key={`items[${idx}].item`}
+                                name={`items[${idx}].item`}
+                                type="text"
+                                value={val.item}
+                                placeholder={"sevice description"}
+                              />
+                            </div>
+                            <div className="justify-self-end text-right uppercase w-10 sm:hidden">
+                              Price
+                            </div>
+                            <Input
+                              key={`items[${idx}].price`}
+                              name={`items[${idx}].price`}
+                              type="number"
+                              customstyle="justify-self-end w-20"
+                              value={val.price}
                             />
                             <div className="justify-self-end text-right uppercase w-10 sm:hidden">
                               Price
                             </div>
-                            <Field
-                              className="bg-yellowy border-0 rounded-sm pt-1 pb-1 pl-2 w-20 justify-self-end"
-                              name={`items[${idx}].price`}
-                              // pattern="[0-9]*.?[0-9]*"
-                              type="number"
-                              value={val.price}
-                            />
-                            <div className="justify-self-end text-right uppercase w-10 sm:hidden">
-                              Cost
-                            </div>
-                            <Field
-                              className="bg-yellowy border-0 rounded-sm pt-1 pb-1 pl-2 w-12 justify-self-end"
+                            <Input
+                              key={`items[${idx}].qty`}
                               name={`items[${idx}].qty`}
                               type="number"
+                              customstyle="justify-self-end w-20"
                               value={val.qty ? val.qty : 1}
                             />
                             <div className="justify-self-end text-right uppercase w-10 sm:hidden">
@@ -300,15 +240,6 @@ export default function InvoiceGeneratorPage() {
                                 Remove
                               </div>
                             )}
-                            <div className="col-span-4">
-                              {showItemErrors(touched, errors, idx, "item")}
-                            </div>
-                            <div className="col-span-1 justify-self-end">
-                              {showItemErrors(touched, errors, idx, "price")}
-                            </div>
-                            <div className="col-span-1 justify-self-end">
-                              {showItemErrors(touched, errors, idx, "qty")}
-                            </div>
                           </div>
                         ))}
                         <button
@@ -335,18 +266,21 @@ export default function InvoiceGeneratorPage() {
                       ${getAmountDue(values.items)}
                     </h1>
                   </div>
-                  <div className="float-right pr-14">
+                  {Object.keys(errors).length > 0 && (
+                    <div className="text-center mt-20 pb-2">
+                      <Error>
+                        {" "}
+                        {Messages.VALIDATION_MSG(Object.keys(errors))}{" "}
+                      </Error>
+                    </div>
+                  )}
+                  <div className="flex justify-center">
                     <button
                       type="submit"
-                      className="font-inriaSans mt-20 border-0 bg-peachy w-44 h-12 mx-auto rounded-sm"
+                      className="font-inriaSans mt-4 border-0 bg-peachy w-44 h-12 rounded-sm"
                     >
                       CREATE INVOICE
                     </button>
-                    {/* {errors && (
-                      <div>
-                        Please check that all the required field have values
-                      </div>
-                    )} */}
                   </div>
                 </div>
               </div>

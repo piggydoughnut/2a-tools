@@ -1,4 +1,5 @@
 import { DATE_FORMAT } from "util/pdfStyleConfig";
+import axios from "axios";
 import { format } from "date-fns";
 type newValueType = {
   item: string;
@@ -24,3 +25,12 @@ export const getInvoiceNumber = (
 export const prepareTheTable = () => {};
 
 export const getTodayDate = () => format(new Date(), "do MMM yyyy");
+
+export const getPDF = async (params) => {
+  try {
+    const data = await axios.post("/api/generatePdf", { ...params });
+    return "data:application/pdf;base64," + data.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
