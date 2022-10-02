@@ -3,11 +3,11 @@ import { Messages, paymentValues } from "../config";
 import { getInvoiceNumber, getTotal, processNumber } from "../util/helpers";
 
 import { Error } from "../components/Input";
-import Header from "../components/Header";
 import Image from "next/image";
 import { Input } from "../components/Input";
 import InvoicePreview from "../components/InvoicePreview";
 import { InvoiceSchema } from "../util/invoiceValidationSchemas";
+import Layout from "../components/Layout";
 import { getPDF } from "../util/helpers";
 import { useState } from "react";
 
@@ -55,12 +55,7 @@ export default function InvoiceGeneratorPage() {
   };
 
   return (
-    <div
-      id="content"
-      className="flex flex-col justify-center font-inriaSans text-midnight-black mx-4 xl:mx-40 mt-10 mb-10"
-    >
-      <Header goTo="/" title="Create New invoice" />
-
+    <Layout goTo="/" title="Create New invoice">
       {pdfUrl ? (
         <InvoicePreview
           setPdfUrl={(s) => setPdfUrl(s)}
@@ -91,7 +86,7 @@ export default function InvoiceGeneratorPage() {
           {({ values, errors }) => (
             <Form>
               <div className="flex flex-col mt-12">
-                <div className="flex flex-col mb-20">
+                <div className="flex flex-col mb-10">
                   <p className="text-sm uppercase mb-4">Project Details</p>
                   {[
                     {
@@ -289,6 +284,6 @@ export default function InvoiceGeneratorPage() {
         </Formik>
       )}
       <div className="flex flex-row justify-center"></div>
-    </div>
+    </Layout>
   );
 }
