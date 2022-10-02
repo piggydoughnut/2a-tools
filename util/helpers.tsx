@@ -28,7 +28,7 @@ export const getTodayDate = () => format(new Date(), "do MMM yyyy");
 
 export const getDateFormat = () => format(new Date(), "yyyy-MM-dd");
 
-export const getPDF = async (params) => {
+export const getPDF = async (params: any) => {
   try {
     const data = await axios.post("/api/generatePdf", { ...params });
     return "data:application/pdf;base64," + data.data;
