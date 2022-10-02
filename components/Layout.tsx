@@ -1,7 +1,15 @@
 import Footer from "./Footer";
 import Header from "./Header";
 
-export default function Layout({ children, goTo, title }) {
+export default function Layout({
+  children,
+  goTo,
+  title,
+}: {
+  children: any;
+  goTo: string;
+  title: string;
+}) {
   return (
     <div
       id="content"

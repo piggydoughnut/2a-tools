@@ -1,6 +1,6 @@
 import { useField } from "formik";
 
-export const Error = ({ children }) => (
+export const Error = ({ children }: { children: any }) => (
   <p className="text-base text-red-400">{children}</p>
 );
 
