@@ -1,6 +1,11 @@
 import { FieldArray, Form, Formik } from "formik";
 import { Messages, paymentValues } from "../config";
-import { getInvoiceNumber, getTotal, processNumber } from "../util/helpers";
+import {
+  getDateFormat,
+  getInvoiceNumber,
+  getTotal,
+  processNumber,
+} from "../util/helpers";
 
 import { Error } from "../components/Input";
 import Image from "next/image";
@@ -22,12 +27,14 @@ const initValues = {
   projectNumber: "",
   projectName: "",
   jobTitle: "",
-  issueDate: new Date(),
-  dueDate: new Date(),
+  issueDate: getDateFormat(),
+  dueDate: getDateFormat(),
   billto: "",
   items: [{ ...newValue }],
   paymentValues,
 };
+console.log(initValues.dueDate);
+console.log(initValues.issueDate);
 
 export default function InvoiceGeneratorPage() {
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -55,7 +62,7 @@ export default function InvoiceGeneratorPage() {
   };
 
   return (
-    <Layout goTo="/" title="Create New invoice">
+    <Layout goTo="/" title="Create New Invoice">
       {pdfUrl ? (
         <InvoicePreview
           setPdfUrl={(s) => setPdfUrl(s)}
@@ -127,8 +134,16 @@ export default function InvoiceGeneratorPage() {
                             name="issueDate"
                             label="Issue date"
                             type="date"
+                            value={values.issueDate}
+                            placeholder={values.issueDate}
                           />
-                          <Input name="dueDate" label="Due date" type="date" />
+                          <Input
+                            name="dueDate"
+                            label="Due date"
+                            type="date"
+                            value={values.dueDate}
+                            placeholder={values.dueDate}
+                          />
                         </div>
                         <Input
                           name="billto"
@@ -150,12 +165,12 @@ export default function InvoiceGeneratorPage() {
                             ? values.projectNumber + "-"
                             : null}
                         </p>
-                        <div className="text-lg self-align-baseline align-middle sm:pt-10 ml-4 w-44">
+                        <div className="text-md self-align-baseline align-middle sm:pt-10 ml-4 w-44">
                           <Input
                             name="invoiceNumber"
                             type="text"
                             placeholder="invoice number"
-                            customstyle="text-base"
+                            customstyle="text-base mt-2"
                           />
                         </div>
                       </div>
@@ -249,32 +264,36 @@ export default function InvoiceGeneratorPage() {
                   ></FieldArray>
                   <hr />
 
-                  <div className="grid grid-rows-5 grid-cols-5 justify-items-end pr-14 mt-4">
-                    <h3 className="w-32 col-span-4">Subtotal</h3>
+                  <div className="grid grid-rows-4 grid-cols-5 justify-items-end pr-14 mt-4 gap-4">
+                    <h3 className="w-32 col-span-4 text-md">Subtotal</h3>
                     <h3 className="col-span-1">${getSubtotal(values.items)}</h3>
                     <h3 className="w-32 col-span-4">Discount</h3>
                     <h3 className="col-span-1">$0</h3>
                     <h3 className="w-32 col-span-4">GST (15%)</h3>
                     <h3 className="col-span-1">${getGST(values.items)}</h3>
-                    <h1 className="w-44 text-lg col-span-4">Amount due</h1>
-                    <h1 className="text-lg col-span-1">
+                    <h1 className="w-32 text-md col-span-4 font-bold">
+                      Amount due
+                    </h1>
+                    <h1 className="text-md col-span-1 font-bold">
                       ${getAmountDue(values.items)}
                     </h1>
                   </div>
-                  {Object.keys(errors).length > 0 && (
-                    <div className="text-center mt-20 pb-2">
-                      <Error>
-                        {" "}
-                        {Messages.VALIDATION_MSG(Object.keys(errors))}{" "}
-                      </Error>
-                    </div>
-                  )}
+                  <div className="h-12 mt-10">
+                    {Object.keys(errors).length > 0 && (
+                      <div className="text-center pb-2">
+                        <Error>
+                          {" "}
+                          {Messages.VALIDATION_MSG(Object.keys(errors))}{" "}
+                        </Error>
+                      </div>
+                    )}
+                  </div>
                   <div className="flex justify-center">
                     <button
+                      className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
                       type="submit"
-                      className="font-inriaSans mt-4 border-0 bg-peachy w-44 h-12 rounded-sm"
                     >
-                      CREATE INVOICE
+                      Create an Invoice{" "}
                     </button>
                   </div>
                 </div>

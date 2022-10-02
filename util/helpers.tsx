@@ -26,6 +26,8 @@ export const prepareTheTable = () => {};
 
 export const getTodayDate = () => format(new Date(), "do MMM yyyy");
 
+export const getDateFormat = () => format(new Date(), "yyyy-MM-dd");
+
 export const getPDF = async (params) => {
   try {
     const data = await axios.post("/api/generatePdf", { ...params });
