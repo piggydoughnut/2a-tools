@@ -160,9 +160,9 @@ export const generatePdf = async ({
     items.forEach((field, index) => {
       tableData.push([
         field.item,
-        `$${field.price}`,
+        `$${field.priceFormatted}`,
         field.qty,
-        `$${Number((field.qty * field.price).toFixed(2))}`,
+        `$${field.total}`,
       ]);
     });
     tableData.push(

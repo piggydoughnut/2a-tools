@@ -45,19 +45,19 @@ export default function InvoiceGeneratorPage() {
   const [subtotal, setSubtotal] = useState(initValues);
 
   const getGST = (items) => {
-    const gst = Number((getTotal(items) * 0.15).toFixed(2));
+    const gst = Math.ceil(Number(getTotal(items) * 0.15));
     setGST(gst);
     return processNumber(gst);
   };
 
   const getAmountDue = (items) => {
-    const due = Number((getTotal(items) * 1.15).toFixed(2));
+    const due = Math.ceil(Number(getTotal(items) * 1.15));
     setAmountDue(due);
     return processNumber(due);
   };
 
   const getSubtotal = (items) => {
-    const tot = Number(getTotal(items).toFixed(2));
+    const tot = Math.ceil(Number(getTotal(items)));
     setSubtotal(tot);
     return processNumber(tot);
   };
@@ -78,9 +78,14 @@ export default function InvoiceGeneratorPage() {
           validationSchema={InvoiceSchema}
           onSubmit={async (vs) => {
             // @todo explore if you can make these fields Hidden form fields in Formik
-            vs.amountDue = amountDue;
-            vs.subtotal = subtotal;
-            vs.gst = gst;
+            vs.amountDue = processNumber(amountDue);
+            vs.subtotal = processNumber(subtotal);
+            vs.gst = processNumber(gst);
+            vs.items = vs.items.map((item) => {
+              item.priceFormatted = processNumber(item.price);
+              item.total = processNumber(Math.ceil(item.qty * item.price));
+              return item;
+            });
             vs.invoiceNumberFull = getInvoiceNumber(
               vs.projectName,
               vs.projectNumber,
@@ -241,7 +246,10 @@ export default function InvoiceGeneratorPage() {
                               Total
                             </div>
                             <div className="w-10 justify-self-end">
-                              ${Number((val.qty * val.price).toFixed(2))}
+                              $
+                              {processNumber(
+                                Number(Math.ceil(val.qty * val.price))
+                              )}
                             </div>
                             {values.items.length > 1 && (
                               <div
