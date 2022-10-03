@@ -2,6 +2,7 @@ import { FieldArray, Form, Formik } from "formik";
 import { Messages, paymentValues } from "../config";
 import {
   getDateFormat,
+  getDiscount,
   getInvoiceNumber,
   getTotal,
   processNumber,
@@ -33,6 +34,7 @@ const initValues = {
   billto: "",
   items: [{ ...newValue }],
   paymentValues,
+  discount: 0,
 };
 console.log(initValues.dueDate);
 console.log(initValues.issueDate);
@@ -50,8 +52,13 @@ export default function InvoiceGeneratorPage() {
     return processNumber(gst);
   };
 
-  const getAmountDue = (items) => {
-    const due = Math.ceil(Number(getTotal(items) * 1.15));
+  const getAmountDue = (items, discount) => {
+    const total = Math.ceil(Number(getTotal(items) * 1.15));
+
+    const due = Math.ceil(
+      discount ? (1 - Number(discount) / 100) * total : total
+    );
+
     setAmountDue(due);
     return processNumber(due);
   };
@@ -81,6 +88,7 @@ export default function InvoiceGeneratorPage() {
             vs.amountDue = processNumber(amountDue);
             vs.subtotal = processNumber(subtotal);
             vs.gst = processNumber(gst);
+            vs.discountVal = getDiscount(amountDue, vs.discount);
             vs.items = vs.items.map((item) => {
               item.priceFormatted = processNumber(item.price);
               item.total = processNumber(Math.ceil(item.qty * item.price));
@@ -273,18 +281,29 @@ export default function InvoiceGeneratorPage() {
                   ></FieldArray>
                   <hr />
 
-                  <div className="grid grid-rows-4 grid-cols-5 justify-items-end pr-14 mt-4 gap-4">
+                  <div className="grid grid-rows-[1fr 1fr 1fr 1fr] grid-cols-5 justify-items-end pr-14 mt-4 gap-4">
                     <h3 className="w-32 col-span-4 text-md">Subtotal</h3>
                     <h3 className="col-span-1">${getSubtotal(values.items)}</h3>
-                    <h3 className="w-32 col-span-4">Discount</h3>
-                    <h3 className="col-span-1">$0</h3>
                     <h3 className="w-32 col-span-4">GST (15%)</h3>
                     <h3 className="col-span-1">${getGST(values.items)}</h3>
-                    <h1 className="w-32 text-md col-span-4 font-bold">
+                    <h3 className="w-32 col-span-4">Discount</h3>
+                    <div className="flex align-middle gap-2">
+                      <Input
+                        key="discount"
+                        name="discount"
+                        type="text"
+                        customstyle="justify-self-end h-10 text-right h-12 w-10"
+                        value={values.discount}
+                      />{" "}
+                      <p className="mt-2">%</p>
+                    </div>
+
+                    {/* <h3 className="col-span-1">$0</h3> */}
+                    <h1 className="w-54 text-lg col-span-4 font-bold">
                       Amount due
                     </h1>
-                    <h1 className="text-md col-span-1 font-bold">
-                      ${getAmountDue(values.items)}
+                    <h1 className="text-md col-span-1 font-bold text-lg">
+                      ${getAmountDue(values.items, values.discount)}
                     </h1>
                   </div>
                   <div className="h-12 mt-10">

@@ -37,7 +37,7 @@ export const LOGO_IMAGE = path.join(mainPath, "logo.png");
 
 export const Labels = {
   SUBTOTAL: "Subtotal",
-  GST: "GST(15%)",
+  GST: "GST (15%)",
   TOTAL: "Total",
   DISCOUNT: "Discount",
   AMOUNT_DUE: "Amount due",

@@ -47,6 +47,7 @@ export const generatePdf = async ({
   subtotal,
   amountDue,
   discount = 0,
+  discountVal = 0,
   jobTitle,
 }: InvoiceProps): Promise<Buffer | undefined | string> => {
   try {
@@ -170,7 +171,7 @@ export const generatePdf = async ({
       ["", "", "", ""],
       ["", Labels.SUBTOTAL, "", `$${subtotal}`],
       ["", Labels.GST, "", `$${gst}`],
-      ["", Labels.DISCOUNT, "", `$${discount}`],
+      ["", `${Labels.DISCOUNT} (${discount}%)`, "", `$${discountVal}`],
       ["", "", Labels.AMOUNT_DUE, `$${amountDue}`]
     );
 
@@ -202,7 +203,7 @@ export const generatePdf = async ({
 
       //// Amount Due and the value
       if (value == Labels.AMOUNT_DUE) {
-        offset = -96;
+        offset = -156;
         width = width * 2;
         padding = padding * 2;
       }
@@ -213,16 +214,18 @@ export const generatePdf = async ({
       if (indexColumn === 0) {
         align = "left";
       }
-      //// Subtotal block alignment
-      if (labels.includes(value)) {
-        offset = 28;
+      //// Subtotal block alignment;
+      if (
+        labels.includes(value) ||
+        (typeof value === "string" && value.indexOf(Labels.DISCOUNT) !== -1)
+      ) {
+        offset = 30;
         align = "left";
       }
 
       doc.text(value, x + offset, y + padding, {
         align: align,
         width: width,
-        // continued: true,
       });
     };
 
@@ -267,7 +270,7 @@ export const generatePdf = async ({
     doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
     // @ts-ignore
     await doc.table(table, {
-      columnsSize: [290, 70, 70, 80],
+      columnsSize: [290, 70, 100, 80],
       columnSpacing: 5,
       prepareHeader: () => {
         writeBold();
@@ -308,7 +311,7 @@ export const generatePdf = async ({
             indexRow === subtotalSectionRowIndex ||
             indexRow === lastRowIndex
           ) {
-            const padding = 15;
+            const padding = 10;
             const y = rectCell ? rectCell.y + padding : 0;
             const lineOffset = 28;
             rectCell &&

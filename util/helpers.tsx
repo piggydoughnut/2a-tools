@@ -13,6 +13,7 @@ export const processNumber = (n: string | number) =>
 export const getTotal = (val: any) =>
   val.reduce((t: number, curr: newValueType) => t + curr.qty * curr.price, 0);
 
+export const getDiscount = (total, disc) => Math.ceil(total * (disc / 100));
 export const getInvoiceNumber = (
   pName: string,
   pNumber: number,
