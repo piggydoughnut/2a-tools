@@ -1,13 +1,7 @@
 import { getTodayDate } from "util/helpers";
 import { useRouter } from "next/router";
 
-export default function Header({
-  goTo,
-  title,
-}: {
-  goTo: string;
-  title: string;
-}) {
+export default function Header({ title }: { title: string }) {
   const router = useRouter();
   const d = getTodayDate();
   return (
@@ -20,10 +14,10 @@ export default function Header({
           >
             2A Design Studio
           </h1>
-          {router.pathname !== "/" && (
+          {router.pathname !== "/" && title !== "New Invoice Preview" && (
             <button
               className="underline rounded-sm text-sm hover:scale-110 ease-in-out duration-300 text-blue-400 text-left"
-              onClick={() => router.push(goTo)}
+              onClick={() => router.back()}
             >
               Go back
             </button>

@@ -6,6 +6,7 @@ import {
   getTotal,
   processNumber,
 } from "../util/helpers";
+import { useEffect, useRef, useState } from "react";
 
 import { Error } from "../components/Input";
 import Image from "next/image";
@@ -14,7 +15,7 @@ import InvoicePreview from "../components/InvoicePreview";
 import { InvoiceSchema } from "../util/invoiceValidationSchemas";
 import Layout from "../components/Layout";
 import { getPDF } from "../util/helpers";
-import { useState } from "react";
+import { useRouter } from "next/router";
 
 const newValue = {
   item: "",
@@ -62,7 +63,7 @@ export default function InvoiceGeneratorPage() {
   };
 
   return (
-    <Layout goTo="/" title="Create New Invoice">
+    <Layout title={pdfUrl ? "New Invoice Preview" : "Create New Invoice"}>
       {pdfUrl ? (
         <InvoicePreview
           setPdfUrl={(s) => setPdfUrl(s)}

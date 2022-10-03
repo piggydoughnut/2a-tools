@@ -6,7 +6,7 @@ export default function paidInvoice() {
       id="content"
       className="flex flex-col justify-center font-inriaSans text-midnight-black mx-20 mt-10 mb-10"
     >
-      <Header goTo="/" title="Coming soon..." />
+      <Header title="Coming soon..." />
     </div>
   );
 }
