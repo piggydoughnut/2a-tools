@@ -202,7 +202,7 @@ export const generatePdf = async ({
 
       //// Amount Due and the value
       if (value == Labels.AMOUNT_DUE) {
-        offset = -105;
+        offset = -96;
         width = width * 2;
         padding = padding * 2;
       }
@@ -215,7 +215,7 @@ export const generatePdf = async ({
       }
       //// Subtotal block alignment
       if (labels.includes(value)) {
-        offset = 18;
+        offset = 28;
         align = "left";
       }
 
@@ -310,7 +310,7 @@ export const generatePdf = async ({
           ) {
             const padding = 15;
             const y = rectCell ? rectCell.y + padding : 0;
-            const lineOffset = 18;
+            const lineOffset = 28;
             rectCell &&
               doc
                 .lineCap("butt")
