@@ -103,10 +103,11 @@ export const generatePdf = async ({
     };
 
     const HEADER_X = 400;
-    const HEADER_Y = PageParams.MARGIN + PageParams.LINE_HEIGHT * 0.75;
+    const HEADER_YY = PageParams.MARGIN + 2;
+    const HEADER_Y = HEADER_YY + PageParams.LINE_HEIGHT * 0.75;
 
     writeBold(8);
-    doc.text("DUE DATE", HEADER_X, PageParams.MARGIN);
+    doc.text("DUE DATE", HEADER_X, HEADER_YY);
     writeText(8);
     doc.text(
       format(parseISO(dueDate.toString()), DATE_FORMAT),
@@ -115,20 +116,16 @@ export const generatePdf = async ({
     );
 
     writeBold(8);
-    doc.text(
-      "ISSUE DATE",
-      HEADER_X,
-      PageParams.MARGIN + PageParams.LINE_HEIGHT * 1.5
-    );
+    doc.text("ISSUE DATE", HEADER_X, HEADER_YY + PageParams.LINE_HEIGHT * 1.75);
     writeText(8);
     doc.text(
       format(parseISO(issueDate.toString()), DATE_FORMAT),
       HEADER_X,
-      PageParams.MARGIN + PageParams.LINE_HEIGHT * 2.1
+      HEADER_YY + PageParams.LINE_HEIGHT * 2.5
     );
 
     writeBold(8);
-    doc.text("BILL TO", HEADER_X + 90, PageParams.MARGIN, { align: "right" });
+    doc.text("BILL TO", HEADER_X + 90, HEADER_YY, { align: "right" });
 
     writeText(8);
     doc.text(billto, HEADER_X, HEADER_Y, {
@@ -138,8 +135,8 @@ export const generatePdf = async ({
 
     //230
     writeNumbers(FontSize.H4);
-    doc.text(`${invoiceNumberFull}`, PageParams.MARGIN + 230, 210, {
-      align: "right",
+    doc.text(`${invoiceNumberFull}`, 250, 206, {
+      align: "left",
     });
 
     writeBold(FontSize.H1);
@@ -199,27 +196,31 @@ export const generatePdf = async ({
         Labels.TOTAL,
       ];
       let offset = 0;
-      let align = "right";
+      let align = "left";
 
       //// Amount Due and the value
       if (value == Labels.AMOUNT_DUE) {
-        offset = -156;
+        offset = -88;
         width = width * 2;
         padding = padding * 2;
       }
       if (indexRow === tableData.length - 1 && indexColumn === 3) {
         padding = padding * 2;
       }
-      //// Item value aligned left
-      if (indexColumn === 0) {
-        align = "left";
+      // align qty center
+      if (indexColumn === 2) {
+        align = "center";
+      }
+      // align total right
+      if (indexColumn === 3) {
+        align = "right";
       }
       //// Subtotal block alignment;
       if (
         labels.includes(value) ||
         (typeof value === "string" && value.indexOf(Labels.DISCOUNT) !== -1)
       ) {
-        offset = 30;
+        offset = 0;
         align = "left";
       }
 
@@ -242,16 +243,16 @@ export const generatePdf = async ({
         {
           label: "Price",
           name: "price",
-          align: "right",
-          headerAlign: "right",
+          align: "left",
+          headerAlign: "left",
           headerColor: "white",
           renderer: renderCol,
         },
         {
           label: "Qty",
           name: "qty",
-          align: "right",
-          headerAlign: "right",
+          align: "center",
+          headerAlign: "center",
           headerColor: "white",
           renderer: renderCol,
         },
@@ -270,7 +271,7 @@ export const generatePdf = async ({
     doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
     // @ts-ignore
     await doc.table(table, {
-      columnsSize: [290, 70, 100, 80],
+      columnsSize: [300, 65, 65, 85],
       columnSpacing: 5,
       prepareHeader: () => {
         writeBold();
@@ -313,11 +314,10 @@ export const generatePdf = async ({
           ) {
             const padding = 10;
             const y = rectCell ? rectCell.y + padding : 0;
-            const lineOffset = 28;
             rectCell &&
               doc
                 .lineCap("butt")
-                .moveTo(rectCell.x + (indexColumn === 1 ? lineOffset : 0), y)
+                .moveTo(rectCell.x, y)
                 .lineTo(rectCell.x + rectCell.width, y)
                 .stroke();
           }

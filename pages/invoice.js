@@ -136,7 +136,7 @@ export default function InvoiceGeneratorPage() {
                   <div className="bg-slate-100 p-14">
                     <div className="flex flex-col sm:flex-row justify-between">
                       <Image
-                        src="/logo.svg"
+                        src="/logov2-1.svg"
                         width="250"
                         height="100"
                         alt="2aLogo"

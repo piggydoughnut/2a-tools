@@ -33,7 +33,7 @@ export const Fonts = {
   inriaRegular: readFileSync(path.join(fontsPath, "InriaSans-Regular.ttf")),
 };
 
-export const LOGO_IMAGE = path.join(mainPath, "logo.png");
+export const LOGO_IMAGE = path.join(mainPath, "logov2.png");
 
 export const Labels = {
   SUBTOTAL: "Subtotal",
