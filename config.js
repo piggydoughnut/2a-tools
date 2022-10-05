@@ -30,7 +30,7 @@ export const contact = [
   "2A Design Studio",
   "709 Rolleston St, Thames",
   "office@2adesign.co.nz",
-  "0812-898-389",
+  "021 780 989",
 ];
 
 export const inputKeysMap = {
