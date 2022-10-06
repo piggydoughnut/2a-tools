@@ -16,6 +16,7 @@ import { Input } from "../components/Input";
 import InvoicePreview from "../components/InvoicePreview";
 import { InvoiceSchema } from "../util/invoiceValidationSchemas";
 import Layout from "../components/Layout";
+import { Rings } from "react-loader-spinner";
 import { getPDF } from "../util/helpers";
 import { useState } from "react";
 
@@ -105,7 +106,7 @@ export default function InvoiceGeneratorPage() {
             setPdfUrl(pdfData);
           }}
         >
-          {({ values, errors }) => (
+          {({ values, errors, isSubmitting }) => (
             <Form>
               <div className="flex flex-col mt-12">
                 <div className="flex flex-col mb-10">
@@ -242,7 +243,7 @@ export default function InvoiceGeneratorPage() {
                               value={val.price}
                             />
                             <div className="justify-self-end text-right uppercase w-10 sm:hidden">
-                              Price
+                              Quantity
                             </div>
                             <Input
                               key={`items[${idx}].qty`}
@@ -328,12 +329,28 @@ export default function InvoiceGeneratorPage() {
                     )}
                   </div>
                   <div className="flex justify-center">
-                    <button
-                      className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
-                      type="submit"
-                    >
-                      Create an Invoice{" "}
-                    </button>
+                    {!isSubmitting ? (
+                      <button
+                        className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
+                        type="submit"
+                      >
+                        Create an Invoice{" "}
+                      </button>
+                    ) : (
+                      <div>
+                        <p>Generating pdf</p>
+                        <Rings
+                          height="80"
+                          width="80"
+                          color="#4fa94d"
+                          radius="6"
+                          wrapperStyle={{}}
+                          wrapperClass=""
+                          visible={true}
+                          ariaLabel="rings-loading"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
