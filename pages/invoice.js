@@ -45,6 +45,7 @@ export default function InvoiceGeneratorPage() {
   const [gst, setGST] = useState(0);
   const [amountDue, setAmountDue] = useState(initValues);
   const [subtotal, setSubtotal] = useState(initValues);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const setGSTValue = (items, discount) => {
     const gst = getGSTValue(items, discount);
@@ -68,7 +69,10 @@ export default function InvoiceGeneratorPage() {
     <Layout title={pdfUrl ? "New Invoice Preview" : "Create New Invoice"}>
       {pdfUrl ? (
         <InvoicePreview
-          setPdfUrl={(s) => setPdfUrl(s)}
+          setPdfUrl={(s) => {
+            setShowSpinner(false);
+            setPdfUrl(s);
+          }}
           pdfUrl={pdfUrl}
           projectName={params.projectName}
           invoiceNumber={params.invoiceNumberFull}
@@ -79,6 +83,7 @@ export default function InvoiceGeneratorPage() {
           enableReinitialize
           validationSchema={InvoiceSchema}
           onSubmit={async (vs) => {
+            setShowSpinner(true);
             // @todo explore if you can make these fields Hidden form fields in Formik
             vs.amountDue = processNumber(amountDue);
             vs.subtotal = processNumber(subtotal);
@@ -103,7 +108,7 @@ export default function InvoiceGeneratorPage() {
             setPdfUrl(pdfData);
           }}
         >
-          {({ values, errors, isSubmitting, isValidating }) => (
+          {({ values, errors }) => (
             <Form>
               <div className="flex flex-col mt-12">
                 <div className="flex flex-col mb-10">
@@ -326,19 +331,14 @@ export default function InvoiceGeneratorPage() {
                     )}
                   </div>
                   <div className="flex justify-center">
-                    {console.log("isSubmitting ", isSubmitting)}
-                    {console.log("pdfUrl ", pdfUrl)}
-                    {console.log("showButton ", !pdfUrl && !isSubmitting)}
-                    {console.log("showSpinner ", !pdfUrl && isSubmitting)}
-                    {!isSubmitting && (
+                    {!showSpinner ? (
                       <button
                         className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
                         type="submit"
                       >
                         Create an Invoice{" "}
                       </button>
-                    )}
-                    {isSubmitting && (
+                    ) : (
                       <div>
                         <p>Generating pdf</p>
                         <Rings
