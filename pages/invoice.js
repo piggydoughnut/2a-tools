@@ -242,7 +242,7 @@ export default function InvoiceGeneratorPage() {
                               key={`items[${idx}].price`}
                               name={`items[${idx}].price`}
                               type="number"
-                              customstyle="justify-self-end w-20"
+                              customstyle="justify-self-end w-20 h-8"
                               value={val.price}
                             />
                             <div className="justify-self-end text-right uppercase w-10 sm:hidden">
@@ -252,7 +252,7 @@ export default function InvoiceGeneratorPage() {
                               key={`items[${idx}].qty`}
                               name={`items[${idx}].qty`}
                               type="number"
-                              customstyle="justify-self-end w-20"
+                              customstyle="justify-self-end w-20 h-8"
                               value={val.qty ? val.qty : 1}
                             />
                             <div className="justify-self-end text-right uppercase w-10 sm:hidden">
@@ -294,15 +294,15 @@ export default function InvoiceGeneratorPage() {
 
                     <div className="flex flex-row col-span-4 mt-2 w-32 gap-2">
                       <h3 className="mt-2">Discount</h3>
-                      <p className="mt-2">%</p>
                       <Input
                         key="discount"
                         name="discount"
                         type="number"
-                        customstyle="justify-self-end h-10 text-right h-10 w-14"
+                        customstyle="justify-self-end text-right h-7 w-14 mt-1"
                         value={values.discount}
                         shownoerr={true}
                       />{" "}
+                      <p className="mt-2">%</p>
                     </div>
 
                     <div className="flex align-middle gap-2 mt-3">
