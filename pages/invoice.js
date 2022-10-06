@@ -38,8 +38,6 @@ const initValues = {
   paymentValues,
   discount: 0,
 };
-console.log(initValues.dueDate);
-console.log(initValues.issueDate);
 
 export default function InvoiceGeneratorPage() {
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -332,7 +330,7 @@ export default function InvoiceGeneratorPage() {
                     {console.log("pdfUrl ", pdfUrl)}
                     {console.log("showButton ", !pdfUrl && !isSubmitting)}
                     {console.log("showSpinner ", !pdfUrl && isSubmitting)}
-                    {!pdfUrl && !isSubmitting && (
+                    {!isSubmitting && (
                       <button
                         className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
                         type="submit"
@@ -340,7 +338,7 @@ export default function InvoiceGeneratorPage() {
                         Create an Invoice{" "}
                       </button>
                     )}
-                    {!pdfUrl && isSubmitting && (
+                    {isSubmitting && (
                       <div>
                         <p>Generating pdf</p>
                         <Rings
