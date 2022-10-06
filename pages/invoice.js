@@ -56,7 +56,6 @@ export default function InvoiceGeneratorPage() {
 
   const setAmountDueValue = (items, discount) => {
     const due = getTotalInvoiceValue(items, discount);
-    console.log("dues is ", due);
     setAmountDue(due);
     return processNumber(due);
   };
@@ -106,7 +105,7 @@ export default function InvoiceGeneratorPage() {
             setPdfUrl(pdfData);
           }}
         >
-          {({ values, errors, isSubmitting }) => (
+          {({ values, errors, isSubmitting, isValidating }) => (
             <Form>
               <div className="flex flex-col mt-12">
                 <div className="flex flex-col mb-10">
@@ -329,6 +328,10 @@ export default function InvoiceGeneratorPage() {
                     )}
                   </div>
                   <div className="flex justify-center">
+                    {console.log("isSubmitting ", isSubmitting)}
+                    {console.log("pdfUrl ", pdfUrl)}
+                    {console.log("showButton ", !pdfUrl && !isSubmitting)}
+                    {console.log("showSpinner ", !pdfUrl && isSubmitting)}
                     {!pdfUrl && !isSubmitting && (
                       <button
                         className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
