@@ -2,12 +2,13 @@ import { FieldArray, Form, Formik } from "formik";
 import { Messages, paymentValues } from "../config";
 import {
   getDateFormat,
-  getDiscount,
+  getDiscountValue,
+  getGSTValue,
   getInvoiceNumber,
   getTotal,
+  getTotalInvoiceValue,
   processNumber,
 } from "../util/helpers";
-import { useEffect, useRef, useState } from "react";
 
 import { Error } from "../components/Input";
 import Image from "next/image";
@@ -16,7 +17,7 @@ import InvoicePreview from "../components/InvoicePreview";
 import { InvoiceSchema } from "../util/invoiceValidationSchemas";
 import Layout from "../components/Layout";
 import { getPDF } from "../util/helpers";
-import { useRouter } from "next/router";
+import { useState } from "react";
 
 const newValue = {
   item: "",
@@ -46,27 +47,23 @@ export default function InvoiceGeneratorPage() {
   const [amountDue, setAmountDue] = useState(initValues);
   const [subtotal, setSubtotal] = useState(initValues);
 
-  const getGST = (items) => {
-    const gst = Math.ceil(Number(getTotal(items) * 0.15));
+  const setGSTValue = (items, discount) => {
+    const gst = getGSTValue(items, discount);
     setGST(gst);
     return processNumber(gst);
   };
 
-  const getAmountDue = (items, discount) => {
-    const total = Math.ceil(Number(getTotal(items) * 1.15));
-
-    const due = Math.ceil(
-      discount ? (1 - Number(discount) / 100) * total : total
-    );
-
+  const setAmountDueValue = (items, discount) => {
+    const due = getTotalInvoiceValue(items, discount);
+    console.log("dues is ", due);
     setAmountDue(due);
     return processNumber(due);
   };
 
-  const getSubtotal = (items) => {
-    const tot = Math.ceil(Number(getTotal(items)));
-    setSubtotal(tot);
-    return processNumber(tot);
+  const setSubtotalValue = (items) => {
+    const total = getTotal(items);
+    setSubtotal(total);
+    return processNumber(total);
   };
 
   return (
@@ -88,7 +85,11 @@ export default function InvoiceGeneratorPage() {
             vs.amountDue = processNumber(amountDue);
             vs.subtotal = processNumber(subtotal);
             vs.gst = processNumber(gst);
-            vs.discountVal = getDiscount(amountDue, vs.discount);
+            if (vs.discount && vs.discount !== "0") {
+              vs.discountVal = getDiscountValue(vs.items, vs.discount);
+            } else {
+              vs.discount = null;
+            }
             vs.items = vs.items.map((item) => {
               item.priceFormatted = processNumber(item.price);
               item.total = processNumber(Math.ceil(item.qty * item.price));
@@ -283,27 +284,37 @@ export default function InvoiceGeneratorPage() {
 
                   <div className="grid grid-rows-[1fr 1fr 1fr 1fr] grid-cols-5 justify-items-end pr-14 mt-4 gap-4">
                     <h3 className="w-32 col-span-4 text-md">Subtotal</h3>
-                    <h3 className="col-span-1">${getSubtotal(values.items)}</h3>
-                    <h3 className="w-32 col-span-4">GST (15%)</h3>
-                    <h3 className="col-span-1">${getGST(values.items)}</h3>
-                    <h3 className="w-32 col-span-4">Discount</h3>
-                    <div className="flex align-middle gap-2">
+                    <h3 className="col-span-1">
+                      ${setSubtotalValue(values.items)}
+                    </h3>
+
+                    <div className="flex flex-row col-span-4 mt-2 w-32 gap-2">
+                      <h3 className="mt-2">Discount</h3>
+                      <p className="mt-2">%</p>
                       <Input
                         key="discount"
                         name="discount"
-                        type="text"
-                        customstyle="justify-self-end h-10 text-right h-12 w-10"
+                        type="number"
+                        customstyle="justify-self-end h-10 text-right h-10 w-14"
                         value={values.discount}
+                        shownoerr={true}
                       />{" "}
-                      <p className="mt-2">%</p>
                     </div>
 
-                    {/* <h3 className="col-span-1">$0</h3> */}
+                    <div className="flex align-middle gap-2 mt-3">
+                      ${getDiscountValue(values.items, values.discount)}
+                    </div>
+
+                    <h3 className="w-32 col-span-4">GST (15%)</h3>
+                    <h3 className="col-span-1">
+                      ${setGSTValue(values.items, values.discount)}
+                    </h3>
+
                     <h1 className="w-54 text-lg col-span-4 font-bold">
                       Amount due
                     </h1>
                     <h1 className="text-md col-span-1 font-bold text-lg">
-                      ${getAmountDue(values.items, values.discount)}
+                      ${setAmountDueValue(values.items, values.discount)}
                     </h1>
                   </div>
                   <div className="h-12 mt-10">

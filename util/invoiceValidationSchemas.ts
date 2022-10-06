@@ -27,4 +27,5 @@ export const InvoiceSchema = Yup.object().shape({
   dueDate: Yup.date().required("Required"),
   billto: Yup.string().required("Required").max(300),
   items: Yup.array().of(ItemSchema).min(1).required("Required"),
+  discount: Yup.number().max(100),
 });

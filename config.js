@@ -41,6 +41,7 @@ export const inputKeysMap = {
   dueDate: "Due date",
   invoiceNumber: "Invoice number",
   items: "Items",
+  discount: "Discount",
 };
 
 export const Messages = {

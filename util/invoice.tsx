@@ -166,9 +166,20 @@ export const generatePdf = async ({
     tableData.push(
       ["", "", "", ""],
       ["", "", "", ""],
-      ["", Labels.SUBTOTAL, "", `$${subtotal}`],
+      ["", Labels.SUBTOTAL, "", `$${subtotal}`]
+    );
+
+    if (discount && discountVal) {
+      tableData.push([
+        "",
+        `${Labels.DISCOUNT} (${discount}%)`,
+        "",
+        `$${discountVal}`,
+      ]);
+    }
+
+    tableData.push(
       ["", Labels.GST, "", `$${gst}`],
-      ["", `${Labels.DISCOUNT} (${discount}%)`, "", `$${discountVal}`],
       ["", "", Labels.AMOUNT_DUE, `$${amountDue}`]
     );
 
@@ -200,7 +211,7 @@ export const generatePdf = async ({
 
       //// Amount Due and the value
       if (value == Labels.AMOUNT_DUE) {
-        offset = -88;
+        offset = -98;
         width = width * 2;
         padding = padding * 2;
       }
@@ -271,7 +282,7 @@ export const generatePdf = async ({
     doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
     // @ts-ignore
     await doc.table(table, {
-      columnsSize: [300, 65, 65, 85],
+      columnsSize: [290, 75, 65, 85],
       columnSpacing: 5,
       prepareHeader: () => {
         writeBold();

@@ -24,9 +24,11 @@ export const Input = (props: any) => {
         <input className={inputStyle} {...field} {...props} />
       )}
 
-      <div className="h-6">
-        {meta.error && meta.touched && <Error>{meta.error}</Error>}
-      </div>
+      {!props.shownoerr && (
+        <div className="h-6">
+          {meta.error && meta.touched && <Error>{meta.error}</Error>}
+        </div>
+      )}
     </div>
   );
 };
