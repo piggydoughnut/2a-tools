@@ -9,6 +9,7 @@ import {
 } from "./pdfStyleConfig";
 import { format, parseISO } from "date-fns";
 
+import { NewValueType } from "./helpers";
 import PDFDocument from "pdfkit-table";
 import { contact } from "config";
 import { pEvent } from "p-event";
@@ -19,11 +20,7 @@ export type InvoiceProps = {
   dueDate: Date;
   billto: string;
   totalInvoice?: number;
-  items: Array<{
-    item: string;
-    qty: number;
-    price: number;
-  }>;
+  items: Array<NewValueType>;
   paymentValues: Array<{
     label: string;
     value: string;

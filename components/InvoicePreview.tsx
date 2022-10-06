@@ -25,6 +25,7 @@ const InvoicePreview = ({
       <h3 className="text-center">Document filename: {invoiceFileName}</h3>
       <div
         className="flex flex-row justify-center mt-8 mb-6 gap-4"
+        // @ts-ignore
         ref={invoicePreviewRef}
       >
         <InternalButton action={() => setPdfUrl(null)} title={"Edit invoice"} />
@@ -40,8 +41,10 @@ const InvoicePreview = ({
         width="100%"
         height="800px"
         position="relative"
-        onLoad={(e) => {
+        // @ts-ignore
+        onLoad={(e: any) => {
           document?.getElementById(e.target.id)?.blur();
+          // @ts-ignore
           invoicePreviewRef?.current?.focus();
           scrollTo(0, 0);
         }}
