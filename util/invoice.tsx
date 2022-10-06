@@ -65,7 +65,7 @@ export const generatePdf = async ({
       // Store buffer chunk to array
       bufferChunks.push(doc.read());
     });
-    const Y_OFFSET_CONDITION = jobTitle ? 15 : 0;
+    const Y_OFFSET_CONDITION = 17;
     doc
       .opacity(0.05)
       .rect(0, 0, PageParams.A4_WIDTH, 240 + Y_OFFSET_CONDITION)
@@ -131,20 +131,20 @@ export const generatePdf = async ({
       lineGap: 2,
     });
 
-    //230
-    writeNumbers(FontSize.H4);
-    doc.text(`${invoiceNumberFull}`, 250, 206, {
-      align: "left",
-    });
-
     writeBold(FontSize.H1);
     doc.text("INVOICE", PageParams.MARGIN, 180, {
       align: "left",
       characterSpacing: 10,
     });
+    //230
+    writeNumbers(FontSize.H4);
+    doc.text(`${invoiceNumberFull}`, PageParams.MARGIN, 230, {
+      align: "left",
+      continued: true,
+    });
     if (jobTitle) {
-      writeNumbers(FontSize.P);
-      doc.text(`for ${jobTitle}`, PageParams.MARGIN, 230);
+      writeNumbers(FontSize.H4);
+      doc.text(` for ${jobTitle}`, PageParams.MARGIN, 230);
     }
 
     writeText();
