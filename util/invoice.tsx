@@ -33,6 +33,7 @@ export type InvoiceProps = {
   gst?: number;
   amountDue?: number;
   discount?: number;
+  discountVal: number;
   jobTitle: string;
 };
 
@@ -209,12 +210,13 @@ export const generatePdf = async ({
       let offset = 0;
       let align = "left";
 
-      //// Amount Due and the value
+      //// Amount Due label
       if (value == Labels.AMOUNT_DUE) {
         offset = -98;
         width = width * 2;
         padding = padding * 2;
       }
+      //// Amount Due value
       if (indexRow === tableData.length - 1 && indexColumn === 3) {
         padding = padding * 2;
       }
@@ -226,18 +228,11 @@ export const generatePdf = async ({
       if (indexColumn === 3) {
         align = "right";
       }
-      //// Subtotal block alignment;
-      if (
-        labels.includes(value) ||
-        (typeof value === "string" && value.indexOf(Labels.DISCOUNT) !== -1)
-      ) {
-        offset = 0;
-        align = "left";
-      }
 
       doc.text(value, x + offset, y + padding, {
-        align: align,
-        width: width,
+        align,
+        width,
+        height,
       });
     };
 
@@ -282,7 +277,7 @@ export const generatePdf = async ({
     doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
     // @ts-ignore
     await doc.table(table, {
-      columnsSize: [290, 75, 65, 85],
+      columnsSize: [290, 90, 50, 85],
       columnSpacing: 5,
       prepareHeader: () => {
         writeBold();
@@ -303,7 +298,8 @@ export const generatePdf = async ({
 
         if (indexColumn !== 0) {
           const allRows = table.rows.length;
-          const subtotalSectionRowIndex = allRows - Object.keys(Labels).length;
+          const subtotalSectionRowIndex =
+            allRows - Object.keys(Labels).length + (discount ? 0 : 1);
           const lastRowIndex = allRows - 1;
           // text
           if (
@@ -323,7 +319,10 @@ export const generatePdf = async ({
             indexRow === subtotalSectionRowIndex ||
             indexRow === lastRowIndex
           ) {
-            const padding = 10;
+            let padding = 10;
+            if (lastRowIndex) {
+              padding = 15;
+            }
             const y = rectCell ? rectCell.y + padding : 0;
             rectCell &&
               doc

@@ -313,7 +313,7 @@ export default function InvoiceGeneratorPage() {
                     <h1 className="w-54 text-lg col-span-4 font-bold">
                       Amount due
                     </h1>
-                    <h1 className="text-md col-span-1 font-bold text-lg">
+                    <h1 className="col-span-1 font-bold text-lg">
                       ${setAmountDueValue(values.items, values.discount)}
                     </h1>
                   </div>
