@@ -89,7 +89,7 @@ export default function InvoiceGeneratorPage() {
             if (vs.discount && vs.discount !== "0") {
               vs.discountVal = getDiscountValue(vs.items, vs.discount);
             } else {
-              vs.discount = null;
+              vs.discount = 0;
             }
             vs.items = vs.items.map((item) => {
               item.priceFormatted = processNumber(item.price);
@@ -329,7 +329,7 @@ export default function InvoiceGeneratorPage() {
                     )}
                   </div>
                   <div className="flex justify-center">
-                    {!isSubmitting ? (
+                    {!pdfUrl ? (
                       <button
                         className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
                         type="submit"
