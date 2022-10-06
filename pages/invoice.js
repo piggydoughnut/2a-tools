@@ -45,7 +45,7 @@ export default function InvoiceGeneratorPage() {
   const [gst, setGST] = useState(0);
   const [amountDue, setAmountDue] = useState(initValues);
   const [subtotal, setSubtotal] = useState(initValues);
-  const [showSpinner, setShowSpinner] = useState(true);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const setGSTValue = (items, discount) => {
     const gst = getGSTValue(items, discount);
