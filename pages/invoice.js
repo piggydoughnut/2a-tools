@@ -45,7 +45,7 @@ export default function InvoiceGeneratorPage() {
   const [gst, setGST] = useState(0);
   const [amountDue, setAmountDue] = useState(initValues);
   const [subtotal, setSubtotal] = useState(initValues);
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
 
   const setGSTValue = (items, discount) => {
     const gst = getGSTValue(items, discount);
@@ -339,14 +339,14 @@ export default function InvoiceGeneratorPage() {
                         Create an Invoice{" "}
                       </button>
                     ) : (
-                      <div>
-                        <p>Generating pdf</p>
+                      <div className="flex flex-col justify-center">
+                        <p>Generating invoice. Please be patient.</p>
                         <Rings
                           height="80"
                           width="80"
                           color="#fabb92"
                           radius="6"
-                          wrapperStyle={{}}
+                          wrapperStyle={{ margin: "auto" }}
                           wrapperClass=""
                           visible={true}
                           ariaLabel="rings-loading"
