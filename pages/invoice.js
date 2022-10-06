@@ -229,7 +229,8 @@ export default function InvoiceGeneratorPage() {
                               <Input
                                 key={`items[${idx}].item`}
                                 name={`items[${idx}].item`}
-                                type="text"
+                                type="textarea"
+                                rows={2}
                                 value={val.item}
                                 placeholder={"sevice description"}
                               />

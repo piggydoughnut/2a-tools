@@ -105,7 +105,9 @@ export const generatePdf = async ({
     const HEADER_Y = HEADER_YY + PageParams.LINE_HEIGHT * 0.75;
 
     writeBold(8);
+    doc.opacity(0.7);
     doc.text("DUE DATE", HEADER_X, HEADER_YY);
+    doc.opacity(1);
     writeText(8);
     doc.text(
       format(parseISO(dueDate.toString()), DATE_FORMAT),
@@ -114,7 +116,9 @@ export const generatePdf = async ({
     );
 
     writeBold(8);
+    doc.opacity(0.7);
     doc.text("ISSUE DATE", HEADER_X, HEADER_YY + PageParams.LINE_HEIGHT * 1.75);
+    doc.opacity(1);
     writeText(8);
     doc.text(
       format(parseISO(issueDate.toString()), DATE_FORMAT),
@@ -123,7 +127,9 @@ export const generatePdf = async ({
     );
 
     writeBold(8);
+    doc.opacity(0.7);
     doc.text("BILL TO", HEADER_X + 90, HEADER_YY, { align: "right" });
+    doc.opacity(1);
 
     writeText(8);
     doc.text(billto, HEADER_X, HEADER_Y, {
@@ -137,16 +143,18 @@ export const generatePdf = async ({
       characterSpacing: 10,
     });
     //230
-    writeNumbers(FontSize.H4);
+    writeText(FontSize.P);
+    doc.opacity(0.7);
     doc.text(`${invoiceNumberFull}`, PageParams.MARGIN, 230, {
       align: "left",
       continued: true,
     });
     if (jobTitle) {
-      writeNumbers(FontSize.H4);
+      writeText(FontSize.P);
       doc.text(` for ${jobTitle}`, PageParams.MARGIN, 230);
     }
 
+    doc.opacity(1);
     writeText();
 
     const HEADER_LINE_Y = 250 + Y_OFFSET_CONDITION;
