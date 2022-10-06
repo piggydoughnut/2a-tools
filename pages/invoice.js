@@ -344,7 +344,7 @@ export default function InvoiceGeneratorPage() {
                         <Rings
                           height="80"
                           width="80"
-                          color="#4fa94d"
+                          color="#fabb92"
                           radius="6"
                           wrapperStyle={{}}
                           wrapperClass=""
