@@ -329,14 +329,15 @@ export default function InvoiceGeneratorPage() {
                     )}
                   </div>
                   <div className="flex justify-center">
-                    {!pdfUrl ? (
+                    {!pdfUrl && !isSubmitting && (
                       <button
                         className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
                         type="submit"
                       >
                         Create an Invoice{" "}
                       </button>
-                    ) : (
+                    )}
+                    {!pdfUrl && isSubmitting && (
                       <div>
                         <p>Generating pdf</p>
                         <Rings
