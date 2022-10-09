@@ -17,14 +17,16 @@ export default function Header({ title }: { title: string }) {
             width="200px"
             className="hover:cursor-pointer"
           />
-          {router.pathname !== "/" && title !== "New Invoice Preview" && (
-            <button
-              className="underline rounded-sm text-sm hover:scale-110 ease-in-out duration-300 text-blue-400 text-left ml-1"
-              onClick={() => router.back()}
-            >
-              Go back
-            </button>
-          )}
+          {router.pathname !== "/" &&
+            router.pathname !== "/tools" &&
+            title !== "New Invoice Preview" && (
+              <button
+                className="underline rounded-sm text-sm hover:scale-110 ease-in-out duration-300 text-blue-400 text-left ml-1"
+                onClick={() => router.back()}
+              >
+                Go to Tools
+              </button>
+            )}
         </div>
         <div className="mt-2">Today is {d}</div>
       </div>
