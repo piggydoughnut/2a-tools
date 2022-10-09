@@ -1,35 +1,35 @@
-import Header from "../components/Header";
-import Layout from "../components/Layout";
-import { useRouter } from "next/router";
+import * as c from "../config";
+
+import Footer from "../components/Footer";
+import Image from "next/image";
+import logo from "../public/logov2-1.svg";
 
 export default function Home() {
-  const router = useRouter();
   return (
-    <Layout>
-      <h3 className="text-lg text-center mt-24">
-        {" "}
-        What would you like to do today?
-      </h3>
-      <div className="flex flex-col gap-8 mt-16 justify-center">
-        <button
-          className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
-          onClick={() => router.push("invoice")}
-        >
-          Create an Invoice{" "}
-        </button>
-        <button
-          className="p-4 bg-orange-500 border rounded-md text-md ease-in-out duration-30 w-64 mx-auto hover:bg-transparent hover:text-orange-800 hover:border-orange-800"
-          onClick={() => router.push("paidInvoice")}
-        >
-          Mark Invoice Paid{" "}
-        </button>
-        <button
-          className="p-4 bg-blue-300  border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-blue-800 hover:border-blue-800"
-          onClick={() => router.push("proposal")}
-        >
-          Create a Proposal{" "}
-        </button>
+    <div
+      id="content"
+      className="flex flex-col justify-center font-inriaSans text-midnight-black mx-4 xl:mx-40 mt-10 mb-10"
+    >
+      <Image
+        alt="2aLogo"
+        src={logo}
+        onClick={() => router.push("/")}
+        width="200px"
+        className="hover:cursor-pointer"
+      />
+
+      {/* <h1 className="mx-auto mt-10 text-md">Coming soon...</h1> */}
+      <div className="mx-auto">
+        <h1 className="text-md mt-10 mb-4">
+          Website is coming soon <br /> For now please contact us at
+        </h1>
+        {c.contact.map((val) => (
+          <p className="text-sm" key={val}>
+            {val}
+          </p>
+        ))}
       </div>
-    </Layout>
+      {/* <Footer /> */}
+    </div>
   );
 }

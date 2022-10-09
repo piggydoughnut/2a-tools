@@ -9,7 +9,7 @@ module.exports = {
       tiny: "12px",
       base: "16px",
       sm: "18px",
-      md: "24",
+      md: "24px",
       lg: "36px",
       xl: "60px",
     },
