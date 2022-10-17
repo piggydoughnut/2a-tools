@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@grammarly/editor-sdk-react": "^2.0.2",
+    "@tinymce/tinymce-react": "^4.2.0",
     "axios": "^0.27.2",
     "base64-stream": "^1.0.0",
     "date-fns": "^2.29.3",
