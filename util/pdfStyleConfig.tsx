@@ -1,3 +1,4 @@
+import PDFDocument from "pdfkit-table";
 import path from "path";
 import { readFileSync } from "fs";
 
@@ -44,3 +45,27 @@ export const Labels = {
 };
 
 export const DATE_FORMAT = "do MMM yyyy";
+
+export const writeBold = (doc: PDFDocument, fontSize?: number | null) => {
+  if (!fontSize) {
+    fontSize = FontSize.P;
+  }
+  doc.fontSize(fontSize);
+  doc.font(Fonts.inriaBold);
+};
+
+export const writeNumbers = (doc: PDFDocument, fontSize?: number | null) => {
+  if (!fontSize) {
+    fontSize = FontSize.P;
+  }
+  doc.fontSize(fontSize);
+  doc.font(Fonts.robotoMono);
+};
+
+export const writeText = (doc: PDFDocument, fontSize?: number | null) => {
+  if (!fontSize) {
+    fontSize = FontSize.P;
+  }
+  doc.fontSize(fontSize);
+  doc.font(Fonts.inriaRegular);
+};

@@ -127,13 +127,14 @@ export default function InvoiceGeneratorPage() {
                       customstyle: "w-96",
                     },
                   ].map((val) => (
-                    <Input
-                      key={val.fieldName}
-                      name={val.fieldName}
-                      label={val.fieldLabel}
-                      type={val.fieldType}
-                      customstyle={val.customstyle}
-                    />
+                    <div className={val.customstyle} key={val.fieldName}>
+                      <Input
+                        name={val.fieldName}
+                        label={val.fieldLabel}
+                        type={val.fieldType}
+                        customstyle={val.customstyle}
+                      />
+                    </div>
                   ))}
                 </div>
                 <div>

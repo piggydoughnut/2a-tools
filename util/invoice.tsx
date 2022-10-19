@@ -2,10 +2,12 @@ import {
   Colors,
   DATE_FORMAT,
   FontSize,
-  Fonts,
   LOGO_IMAGE,
   Labels,
   PageParams,
+  writeBold,
+  writeNumbers,
+  writeText,
 } from "./pdfStyleConfig";
 import { format, parseISO } from "date-fns";
 
@@ -76,86 +78,62 @@ export const generatePdf = async ({
       width: 150,
     });
 
-    const writeBold = (fontSize?: number | null) => {
-      if (!fontSize) {
-        fontSize = FontSize.P;
-      }
-      doc.fontSize(fontSize);
-      doc.font(Fonts.inriaBold);
-    };
-
-    const writeNumbers = (fontSize?: number | null) => {
-      if (!fontSize) {
-        fontSize = FontSize.P;
-      }
-      doc.fontSize(fontSize);
-      doc.font(Fonts.robotoMono);
-    };
-
-    const writeText = (fontSize?: number | null) => {
-      if (!fontSize) {
-        fontSize = FontSize.P;
-      }
-      doc.fontSize(fontSize);
-      doc.font(Fonts.inriaRegular);
-    };
-
     const HEADER_X = 400;
     const HEADER_YY = PageParams.MARGIN + 2;
     const HEADER_Y = HEADER_YY + PageParams.LINE_HEIGHT * 0.75;
 
-    writeBold(8);
+    writeBold(doc, 8);
     doc.opacity(0.7);
     doc.text("DUE DATE", HEADER_X, HEADER_YY);
     doc.opacity(1);
-    writeText(8);
+    writeText(doc, 8);
     doc.text(
       format(parseISO(dueDate.toString()), DATE_FORMAT),
       HEADER_X,
       HEADER_Y
     );
 
-    writeBold(8);
+    writeBold(doc, 8);
     doc.opacity(0.7);
     doc.text("ISSUE DATE", HEADER_X, HEADER_YY + PageParams.LINE_HEIGHT * 1.75);
     doc.opacity(1);
-    writeText(8);
+    writeText(doc, 8);
     doc.text(
       format(parseISO(issueDate.toString()), DATE_FORMAT),
       HEADER_X,
       HEADER_YY + PageParams.LINE_HEIGHT * 2.5
     );
 
-    writeBold(8);
+    writeBold(doc, 8);
     doc.opacity(0.7);
     doc.text("BILL TO", HEADER_X + 90, HEADER_YY, { align: "right" });
     doc.opacity(1);
 
-    writeText(8);
+    writeText(doc, 8);
     doc.text(billto, HEADER_X, HEADER_Y, {
       align: "right",
       lineGap: 2,
     });
 
-    writeBold(FontSize.H1);
+    writeBold(doc, FontSize.H1);
     doc.text("INVOICE", PageParams.MARGIN, 180, {
       align: "left",
       characterSpacing: 10,
     });
     //230
-    writeText(FontSize.P);
+    writeText(doc, FontSize.P);
     doc.opacity(0.7);
     doc.text(`${invoiceNumberFull}`, PageParams.MARGIN, 230, {
       align: "left",
       continued: true,
     });
     if (jobTitle) {
-      writeText(FontSize.P);
+      writeText(doc, FontSize.P);
       doc.text(` for ${jobTitle}`, PageParams.MARGIN, 230);
     }
 
     doc.opacity(1);
-    writeText();
+    writeText(doc);
 
     const HEADER_LINE_Y = 250 + Y_OFFSET_CONDITION;
 
@@ -285,12 +263,12 @@ export const generatePdf = async ({
       columnsSize: [290, 90, 50, 85],
       columnSpacing: 5,
       prepareHeader: () => {
-        writeBold();
+        writeBold(doc);
         return doc;
       },
       prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => {
         //regular text
-        writeText();
+        writeText(doc);
 
         if (indexRow === 0) {
           rectCell &&
@@ -313,12 +291,12 @@ export const generatePdf = async ({
             indexRow < lastRowIndex &&
             indexColumn === 1
           ) {
-            writeBold();
+            writeBold(doc);
           } else {
-            writeNumbers();
+            writeNumbers(doc);
           }
           if (indexRow == lastRowIndex) {
-            writeBold(FontSize.H3);
+            writeBold(doc, FontSize.H3);
           }
           if (
             indexRow === subtotalSectionRowIndex ||
@@ -346,7 +324,7 @@ export const generatePdf = async ({
     });
 
     ////////// FOOTER /////////////
-    writeBold(FontSize.H2);
+    writeBold(doc, FontSize.H2);
     doc.text("Thank you", PageParams.MARGIN, PageParams.FOOTER_HEIGHT);
     doc
       .lineCap("butt")
@@ -354,7 +332,7 @@ export const generatePdf = async ({
       .lineTo(555, PageParams.FOOTER_HEIGHT + 30)
       .stroke();
 
-    writeBold();
+    writeBold(doc);
     const COEF = 0.7;
 
     doc
@@ -364,7 +342,7 @@ export const generatePdf = async ({
         PageParams.MARGIN,
         PageParams.FOOTER_HEIGHT + PageParams.LINE_HEIGHT * 2
       );
-    writeText();
+    writeText(doc);
     doc.fillColor(Colors.BLACK);
     paymentValues.map((value, index) => {
       let height =
@@ -373,7 +351,7 @@ export const generatePdf = async ({
       doc.text(value.value, PageParams.MARGIN * 4, height);
     });
 
-    writeBold();
+    writeBold(doc);
 
     doc
       .fillColor(Colors.GRAY)
@@ -382,7 +360,7 @@ export const generatePdf = async ({
         430,
         PageParams.FOOTER_HEIGHT + PageParams.LINE_HEIGHT * 2
       );
-    writeText();
+    writeText(doc);
     doc.fillColor(Colors.BLACK);
     contact.map((val, index) => {
       let height =

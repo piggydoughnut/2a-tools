@@ -1,14 +1,15 @@
 import { GrammarlyEditorPlugin } from "@grammarly/editor-sdk-react";
+import React from "react";
 import { useField } from "formik";
 
-export const Error = ({ children }: { children: any }) => (
+export const Error = ({ children }: { children: React.ReactNode }) => (
   <p className="text-base text-red-400">{children}</p>
 );
 
 export const Input = (props: any) => {
   const [field, meta] = useField(props.name);
   const isMyError = meta.error && meta.touched;
-  const inputStyle = `bg-amber-200 mb-2 border-0 rounded-sm pt-1 pb-1 pl-2 focus:outline focus:outline-offset  focus:outline-indigo-400 ${
+  const inputStyle = `w-full bg-amber-200 mb-2 border-0 rounded-sm pt-1 pb-1 pl-2 focus:outline focus:outline-offset  focus:outline-indigo-400 ${
     props.customstyle
   } ${isMyError ? " outline outline-offset outline-red-400" : ""}`;
 
