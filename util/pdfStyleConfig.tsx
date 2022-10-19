@@ -69,3 +69,15 @@ export const writeText = (doc: PDFDocument, fontSize?: number | null) => {
   doc.fontSize(fontSize);
   doc.font(Fonts.inriaRegular);
 };
+
+export const getNewDoc = () =>
+  new PDFDocument({
+    bufferPages: true,
+    size: "A4",
+    margins: {
+      top: PageParams.MARGIN,
+      // bottom: PageParams.MARGIN,
+      left: PageParams.MARGIN,
+      right: PageParams.MARGIN,
+    },
+  });

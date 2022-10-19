@@ -1,19 +1,16 @@
+import { InvoiceEntryType } from "./defines";
 import axios from "axios";
 import { format } from "date-fns";
-export type NewValueType = {
-  item: string;
-  qty: number;
-  price: number;
-  priceFormatted?: string;
-  total?: number;
-};
 
 export const processNumber = (n: string | number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 export const getTotal = (val: any): number =>
   Math.ceil(
-    val.reduce((t: number, curr: NewValueType) => t + curr.qty * curr.price, 0)
+    val.reduce(
+      (t: number, curr: InvoiceEntryType) => t + curr.qty * curr.price,
+      0
+    )
   );
 
 export const getTotalInvoiceValue = (items: any, discount: number = 0) =>

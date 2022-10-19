@@ -36,7 +36,7 @@ export const contact = [
 export const inputKeysMap = {
   projectNumber: "Project number",
   projectName: "Project name",
-  billto: "Bill to",
+  client: "Client",
   issueDate: "Issue Date",
   dueDate: "Due date",
   invoiceNumber: "Invoice number",

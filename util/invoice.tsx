@@ -5,42 +5,22 @@ import {
   LOGO_IMAGE,
   Labels,
   PageParams,
+  getNewDoc,
   writeBold,
   writeNumbers,
   writeText,
 } from "./pdfStyleConfig";
 import { format, parseISO } from "date-fns";
 
-import { NewValueType } from "./helpers";
-import PDFDocument from "pdfkit-table";
+import { InvoiceType } from "./defines";
 import { contact } from "config";
 import { pEvent } from "p-event";
-
-export type InvoiceProps = {
-  invoiceNumberFull: number;
-  issueDate: Date;
-  dueDate: Date;
-  billto: string;
-  totalInvoice?: number;
-  items: Array<NewValueType>;
-  paymentValues: Array<{
-    label: string;
-    value: string;
-    number?: boolean;
-  }>;
-  subtotal?: number;
-  gst?: number;
-  amountDue?: number;
-  discount?: number;
-  discountVal: number;
-  jobTitle: string;
-};
 
 export const generatePdf = async ({
   invoiceNumberFull,
   issueDate,
   dueDate,
-  billto,
+  client,
   items,
   paymentValues,
   gst,
@@ -49,19 +29,9 @@ export const generatePdf = async ({
   discount = 0,
   discountVal = 0,
   jobTitle,
-}: InvoiceProps): Promise<Buffer | undefined | string> => {
+}: InvoiceType): Promise<Buffer | undefined | string> => {
   try {
-    const doc = new PDFDocument({
-      bufferPages: true,
-      size: "A4",
-      margins: {
-        top: PageParams.MARGIN,
-        bottom: PageParams.MARGIN,
-        left: PageParams.MARGIN,
-        right: PageParams.MARGIN,
-      },
-    });
-
+    const doc = getNewDoc();
     let bufferChunks: any = [];
     doc.on("readable", function () {
       // Store buffer chunk to array
@@ -106,11 +76,11 @@ export const generatePdf = async ({
 
     writeBold(doc, 8);
     doc.opacity(0.7);
-    doc.text("BILL TO", HEADER_X + 90, HEADER_YY, { align: "right" });
+    doc.text("CLIENT", HEADER_X + 90, HEADER_YY, { align: "right" });
     doc.opacity(1);
 
     writeText(doc, 8);
-    doc.text(billto, HEADER_X, HEADER_Y, {
+    doc.text(client, HEADER_X, HEADER_Y, {
       align: "right",
       lineGap: 2,
     });

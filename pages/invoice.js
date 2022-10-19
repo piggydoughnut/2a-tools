@@ -10,6 +10,7 @@ import {
   processNumber,
 } from "../util/helpers";
 
+import { CustomPdfDocumentType } from "../util/defines";
 import { Error } from "../components/Input";
 import Image from "next/image";
 import { Input } from "../components/Input";
@@ -33,7 +34,7 @@ const initValues = {
   jobTitle: "",
   issueDate: getDateFormat(),
   dueDate: getDateFormat(),
-  billto: "",
+  client: "",
   items: [{ ...newValue }],
   paymentValues,
   discount: 0,
@@ -85,6 +86,7 @@ export default function InvoiceGeneratorPage() {
           onSubmit={async (vs) => {
             setShowSpinner(true);
             // @todo explore if you can make these fields Hidden form fields in Formik
+            vs.type = CustomPdfDocumentType.Invoice;
             vs.amountDue = processNumber(amountDue);
             vs.subtotal = processNumber(subtotal);
             vs.gst = processNumber(gst);
@@ -165,8 +167,8 @@ export default function InvoiceGeneratorPage() {
                           />
                         </div>
                         <Input
-                          name="billto"
-                          label="Bill to"
+                          name="client"
+                          label="Client"
                           type="textarea"
                           rows={5}
                           as="textarea"
