@@ -81,3 +81,5 @@ export const getNewDoc = () =>
       right: PageParams.MARGIN,
     },
   });
+
+export const REM = 16;
