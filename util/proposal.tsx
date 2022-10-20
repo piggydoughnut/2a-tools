@@ -1,4 +1,12 @@
-import { PageParams, REM, getNewDoc } from "./pdfStyleConfig";
+import {
+  Colors,
+  FontSize,
+  Labels,
+  PageParams,
+  REM,
+  getNewDoc,
+  writeText,
+} from "./pdfStyleConfig";
 
 import { addFooter } from "./pdfHelpers/addFooter";
 import { addHeader } from "./pdfHelpers/addHeader";
@@ -7,10 +15,22 @@ import { pEvent } from "p-event";
 
 export type ProposalProps = {
   items: any;
+  deliverablesNote: string;
+  subtotal: string;
+  discount: string;
+  discountVal: string;
+  amountDue: string;
+  gst: string;
 };
 
 export const generateProposal = async ({
   items,
+  deliverablesNote,
+  subtotal,
+  discount,
+  discountVal,
+  amountDue,
+  gst,
 }: ProposalProps): Promise<Buffer | undefined | string> => {
   try {
     const doc = getNewDoc();
@@ -33,6 +53,25 @@ export const generateProposal = async ({
         `$${field.fees}`,
       ]);
     });
+    tableData.push(
+      ["", "", "", ""],
+      ["", "", "", ""],
+      ["", "", Labels.SUBTOTAL, `$${subtotal}`]
+    );
+
+    if (discount && discountVal) {
+      tableData.push([
+        "",
+        `${Labels.DISCOUNT} (${discount}%)`,
+        "",
+        `$${discountVal}`,
+      ]);
+    }
+
+    tableData.push(
+      ["", "", Labels.GST, `$${gst}`],
+      ["", "", Labels.AMOUNT_DUE, `$${amountDue}`]
+    );
     console.log(tableData);
     const table = {
       headers: [
@@ -69,6 +108,8 @@ export const generateProposal = async ({
     };
 
     const TOP_SEPARATOR_Y = 5 * REM;
+
+    writeText(doc, FontSize.H2);
     doc.text(
       "PROJECT DELIVERABLES",
       PageParams.MARGIN,
@@ -77,21 +118,34 @@ export const generateProposal = async ({
         align: "left",
       }
     );
-    doc.text("", PageParams.MARGIN, 200);
+    doc.fontSize(FontSize.H4);
+    doc.text("", PageParams.MARGIN, 150);
     // @ts-ignore
     await doc.table(table, {
       columnsSize: [100, 170, 170, 60],
       columnSpacing: 5,
       // prepareHeader: () => {
-      //   return doc;
+
+      // doc
+      //   .opacity(0.05)
+      //   .rect(
+      //     PageParams.MARGIN,
+      //     150,
+      //     PageParams.A4_WIDTH - 2 * PageParams.MARGIN,
+      //     1 * REM
+      //   )
+      //   .fill(Colors.BLACK)
+      //   .opacity(1);
+      // return doc;
       // },
       // prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => doc,
       divider: {
         header: { disabled: false, width: 1, opacity: 0.5 },
-        horizontal: { disabled: false },
+        horizontal: { disabled: true },
       },
     });
 
+    doc.text(deliverablesNote);
     doc.addPage();
     addTermsAndConditionsPage(doc);
     doc.end();

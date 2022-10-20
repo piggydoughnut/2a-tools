@@ -28,7 +28,10 @@ const InvoicePreview = ({
         // @ts-ignore
         ref={invoicePreviewRef}
       >
-        <InternalButton action={() => setPdfUrl(null)} title={"Edit invoice"} />
+        <InternalButton
+          action={() => setPdfUrl(null)}
+          title={"Edit document"}
+        />
         <DownloadLink
           url={pdfUrl}
           fileName={invoiceFileName}

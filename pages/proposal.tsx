@@ -14,11 +14,62 @@ const proposalItem = {
   fees: "",
 };
 
+const predefined = [
+  {
+    description: "Preliminary and Concept Design",
+    workInvolved: `- Confirmation of the scope & brief
+- Preliminary research of TCDC compliance requirements
+- Site visit / physical site research
+- Design checks and evaluation in relation to the brief`,
+    outcome: `- List of relevant building and planning requirements
+- Site plan drawing
+- Concept scheme/s for discussion and approval 
+- Floor plans`,
+    fees: "",
+  },
+  {
+    description: "Developed Design",
+    workInvolved: `- Incorporation of any additional client feedback into scheme
+- Refinement of spatial planning and functional requirements
+- Outline specification of materials and finishes`,
+    outcome: `- Updated plans and details
+- Developed proposal for discussion / approval`,
+    fees: "",
+  },
+  {
+    description: "Architectural Documentation",
+    workInvolved: `- Architectural details & specifications in accordance with NZ Building code
+- Materials - decisions relating to finishes and other aspects
+- Producing and collating all necessary documentation including meetings with TA personnel, engineer or other consultants if required`,
+    outcome: `- Site and services plans
+- Architectural drawings
+- Plans
+- Elevations as required
+- Sections
+- Details
+- Schedules
+- Specification
+- Integration of other consultants’
+information as required
+- Building Consent application
+documents`,
+    fees: "",
+  },
+  {
+    description: "Contract Works Administration",
+    workInvolved: `Site observations
+- 5 site visits are allowed within quote (excluding site visit already made`,
+    outcome: `Administration documents and record-keeping `,
+    fees: "",
+  },
+];
+
 const initialValues = {
   projectName: "",
   client: "",
   projectScope: "",
-  items: [{ ...proposalItem }],
+  items: predefined,
+  deliverablesNote: "",
 };
 export default function Proposal() {
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -29,7 +80,7 @@ export default function Proposal() {
     <Layout title={"New Proposal"}>
       {pdfUrl ? (
         <InvoicePreview
-          setPdfUrl={(s) => {
+          setPdfUrl={(s: string) => {
             setShowSpinner(false);
             setPdfUrl(s);
           }}
@@ -92,7 +143,7 @@ export default function Proposal() {
                 <FieldArray
                   name="items"
                   render={(arrayHelpers) => (
-                    <div className="pr-14 pl-14 pt-3">
+                    <div className="pt-3">
                       <div className="sm:grid sm:gap-4 sm:grid-cols-8 mb-4 hidden">
                         {/* <div className="col-span-2 text-left uppercase max-w-4xl">
                           Item
@@ -105,7 +156,7 @@ export default function Proposal() {
                         ].map((val) => (
                           <div
                             key={val}
-                            className="col-span-2 justify-self-start text-left uppercase "
+                            className="col-span-2 justify-self-start text-left uppercase"
                           >
                             {val}
                           </div>
@@ -124,7 +175,7 @@ export default function Proposal() {
                               key={`items[${idx}].description`}
                               name={`items[${idx}].description`}
                               type="textarea"
-                              rows={2}
+                              rows={3}
                               value={val.description}
                               placeholder={"sevice description"}
                             />
@@ -137,7 +188,7 @@ export default function Proposal() {
                               key={`items[${idx}].workInvolved`}
                               name={`items[${idx}].workInvolved`}
                               type="textarea"
-                              rows={2}
+                              rows={8}
                               value={val.workInvolved}
                             />
                           </div>
@@ -149,7 +200,7 @@ export default function Proposal() {
                               key={`items[${idx}].outcome`}
                               name={`items[${idx}].outcome`}
                               type="textarea"
-                              rows={2}
+                              rows={8}
                               value={val.outcome}
                             />
                           </div>
@@ -184,6 +235,16 @@ export default function Proposal() {
                     </div>
                   )}
                 ></FieldArray>
+                <Input
+                  key={"deliverablesNote"}
+                  name={"deliverablesNote"}
+                  label="Note"
+                  type={"textarea"}
+                  customstyle={
+                    "w-full bg-white border-rounded-lg border-2 border-black"
+                  }
+                  rows={10}
+                />
               </div>
               {!showSpinner ? (
                 <button
