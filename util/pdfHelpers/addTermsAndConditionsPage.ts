@@ -10,24 +10,13 @@ import { contact, paymentValues } from "config";
 
 import PDFDocument from "pdfkit-table";
 import { addFooter } from "./addFooter";
+import { addHeader } from "./addHeader";
 
 export const addTermsAndConditionsPage = (doc: PDFDocument): void => {
   try {
-    doc.image(LOGO_IMAGE, PageParams.MARGIN, PageParams.MARGIN, {
-      width: 5 * REM,
-    });
-
-    writeText(doc);
-    doc.text("DESIGN PROPOSAL", PageParams.MARGIN, PageParams.MARGIN, {
-      align: "right",
-    });
+    addHeader(doc);
 
     const TOP_SEPARATOR_Y = 5 * REM;
-    doc
-      .lineCap("butt")
-      .moveTo(PageParams.MARGIN, TOP_SEPARATOR_Y)
-      .lineTo(PageParams.A4_WIDTH - PageParams.MARGIN, TOP_SEPARATOR_Y)
-      .stroke();
 
     writeText(doc, FontSize.H2);
 
