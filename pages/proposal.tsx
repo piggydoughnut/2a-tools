@@ -1,10 +1,10 @@
 import { FieldArray, Form, Formik } from "formik";
+import { getPDF, processNumber } from "util/helpers";
 
 import { Input } from "components/Input";
 import InvoicePreview from "components/InvoicePreview";
 import Layout from "components/Layout";
 import { Rings } from "react-loader-spinner";
-import { getPDF } from "util/helpers";
 import { useState } from "react";
 
 const proposalItem = {
@@ -42,11 +42,7 @@ const predefined = [
 - Materials - decisions relating to finishes and other aspects
 - Producing and collating all necessary documentation including meetings with TA personnel, engineer or other consultants if required`,
     outcome: `- Site and services plans
-- Architectural drawings
-- Plans
-- Elevations as required
-- Sections
-- Details
+- Architectural drawings, Plans, Elevations as required, Sections, Details
 - Schedules
 - Specification
 - Integration of other consultants’
@@ -69,7 +65,8 @@ const initialValues = {
   client: "",
   projectScope: "",
   items: predefined,
-  deliverablesNote: "",
+  deliverablesNote:
+    "We propose to charge the as-built portion of the services as a fixed fee as it is easy to quantify. We propose an hourly rate for the BC and RC documentation phases as it is unclear just how much documentation work is involved. The estimated fees are based on a rate of $200 / hr and we consider they would be a maximum.",
 };
 export default function Proposal() {
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -97,6 +94,15 @@ export default function Proposal() {
             setShowSpinner(true);
             console.log(vs);
             setParams(vs);
+            vs.total = 0;
+            const tot = vs.items.reduce(
+              (t: number, curr: any) => t + curr.fees,
+              0
+            );
+            const gst = tot * 0.15;
+            vs.subtotal = processNumber(tot);
+            vs.amountDue = processNumber(tot + gst);
+            vs.gst = processNumber(gst);
             const pdfData = await getPDF(vs);
             setPdfUrl(pdfData);
           }}
@@ -140,6 +146,21 @@ export default function Proposal() {
                   }
                   <h1 className="text-lg">Project deliverables</h1>
                 </div>
+                <div className="mt-12 w-3/5">
+                  <h3 className="text-md uppercase">Notes on deliverables</h3>
+                  <p className="mb-4">
+                    Add any notes on the deliverable fees or processes here.
+                    This text will be displayed under the table.
+                  </p>
+                  <Input
+                    key={"deliverablesNote"}
+                    name={"deliverablesNote"}
+                    type={"textarea"}
+                    rows={5}
+                  />
+                </div>
+
+                <h3 className="text-md uppercase mt-10">deliverables table</h3>
                 <FieldArray
                   name="items"
                   render={(arrayHelpers) => (
@@ -165,7 +186,7 @@ export default function Proposal() {
                       {values.items?.map((val, idx) => (
                         <div
                           key={idx}
-                          className="flex flex-col sm:grid gap-3 sm:grid-cols-9 mb-4"
+                          className="flex flex-col sm:grid gap-8 sm:grid-cols-9 mb-4"
                         >
                           {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
                             Description
@@ -207,12 +228,11 @@ export default function Proposal() {
                           {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
                             Fees
                           </div> */}
-
                           <Input
                             key={`items[${idx}].fees`}
                             name={`items[${idx}].fees`}
                             type="number"
-                            customstyle="col"
+                            customstyle="h-12"
                             value={val.fees}
                           />
                           {values.items.length > 1 && (
@@ -226,48 +246,41 @@ export default function Proposal() {
                         </div>
                       ))}
                       <button
-                        className="underline cursor-pointer mt-4 mb-4"
+                        className="underline cursor-pointer mt-4 mb-4 text-md"
                         type="button"
                         onClick={() => arrayHelpers.push({ ...proposalItem })}
                       >
-                        Add item
+                        Add table item
                       </button>
                     </div>
                   )}
                 ></FieldArray>
-                <Input
-                  key={"deliverablesNote"}
-                  name={"deliverablesNote"}
-                  label="Note"
-                  type={"textarea"}
-                  customstyle={
-                    "w-full bg-white border-rounded-lg border-2 border-black"
-                  }
-                  rows={10}
-                />
               </div>
-              {!showSpinner ? (
-                <button
-                  className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
-                  type="submit"
-                >
-                  Create a proposal{" "}
-                </button>
-              ) : (
-                <div className="flex flex-col justify-center">
-                  <p>Generating proposal. Please be patient.</p>
-                  <Rings
-                    height="80"
-                    width="80"
-                    color="#fabb92"
-                    radius="6"
-                    wrapperStyle={{ margin: "auto" }}
-                    wrapperClass=""
-                    visible={true}
-                    ariaLabel="rings-loading"
-                  />
-                </div>
-              )}
+
+              <div className="flex justify-center mt-16">
+                {!showSpinner ? (
+                  <button
+                    className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
+                    type="submit"
+                  >
+                    Create a proposal{" "}
+                  </button>
+                ) : (
+                  <div className="flex flex-col justify-center">
+                    <p>Generating proposal. Please be patient.</p>
+                    <Rings
+                      height="80"
+                      width="80"
+                      color="#fabb92"
+                      radius="6"
+                      wrapperStyle={{ margin: "auto" }}
+                      wrapperClass=""
+                      visible={true}
+                      ariaLabel="rings-loading"
+                    />
+                  </div>
+                )}
+              </div>
             </Form>
           )}
         </Formik>

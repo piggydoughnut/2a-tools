@@ -61,6 +61,7 @@ export const addTermsAndConditionsPage = (doc: PDFDocument): void => {
       }
     );
 
+    doc.fontSize(FontSize.P);
     doc.list(
       [
         "Building Consent lodgement and processing fees.",
@@ -79,16 +80,18 @@ export const addTermsAndConditionsPage = (doc: PDFDocument): void => {
     doc.text(
       "Local TA application fees are not included in our fee.  It is preferred that the client pay this directly to the TA.  Invoices will be directed to the client.",
       PageParams.MARGIN,
-      20 * REM,
+      18 * REM,
       {
         width: 14.5 * REM,
       }
     );
 
+    doc.fontSize(FontSize.H4);
     doc.text("CONSULTANTS", PageParams.MARGIN * 8, 11.5 * REM, {
       align: "left",
     });
 
+    doc.fontSize(FontSize.P);
     doc.text(
       `Structural Engineer Design / Geotech. PS1 / PS4 fees (if required.)
   
@@ -101,7 +104,7 @@ export const addTermsAndConditionsPage = (doc: PDFDocument): void => {
       }
     );
 
-    const SUB_SECTION_Y2 = SUB_SECTION_Y * 3;
+    const SUB_SECTION_Y2 = SUB_SECTION_Y * 2.5;
 
     doc.fontSize(FontSize.H3);
     doc.text(
@@ -122,13 +125,14 @@ export const addTermsAndConditionsPage = (doc: PDFDocument): void => {
         2 * REM
       );
     doc.fill(Colors.BLACK).opacity(1);
-    doc.fontSize(FontSize.H4);
+    doc.fontSize(FontSize.P);
     doc.text(
       "1. Payment terms: 20% required upon acceptance of this proposal. ",
       PageParams.MARGIN,
       SUB_SECTION_Y2 + PageParams.LINE_HEIGHT * 2
     );
 
+    doc.fontSize(FontSize.H4);
     const COEF = 0.7;
     paymentValues.map((value, index) => {
       let height = SUB_SECTION_Y2 + PageParams.LINE_HEIGHT * (index * COEF + 3);
@@ -136,6 +140,7 @@ export const addTermsAndConditionsPage = (doc: PDFDocument): void => {
       doc.text(value.value, PageParams.MARGIN * 4 + 20, height);
     });
 
+    doc.fontSize(FontSize.P);
     doc.list(
       [
         "2. The balance of our fee is invoiced on stage completion and is payable on receipt of the invoice.",
@@ -150,7 +155,7 @@ export const addTermsAndConditionsPage = (doc: PDFDocument): void => {
         bulletRadius: 0.1,
         textIndent: 0,
         bulletIndent: 0,
-        width: 28 * REM,
+        width: 25 * REM,
       }
     );
 

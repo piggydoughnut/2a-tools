@@ -10,9 +10,9 @@ import {
   writeNumbers,
   writeText,
 } from "./pdfStyleConfig";
+import { InvoiceType, specs } from "./defines";
 import { format, parseISO } from "date-fns";
 
-import { InvoiceType } from "./defines";
 import { contact } from "config";
 import { pEvent } from "p-event";
 
@@ -137,12 +137,6 @@ export const generatePdf = async ({
       ["", "", Labels.AMOUNT_DUE, `$${amountDue}`]
     );
 
-    type specs = {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    };
     // @ts-ignore
     const renderCol = (
       value: string,

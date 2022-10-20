@@ -12,6 +12,7 @@ import { addFooter } from "./pdfHelpers/addFooter";
 import { addHeader } from "./pdfHelpers/addHeader";
 import { addTermsAndConditionsPage } from "./pdfHelpers/addTermsAndConditionsPage";
 import { pEvent } from "p-event";
+import { specs } from "./defines";
 
 export type ProposalProps = {
   items: any;
@@ -53,11 +54,7 @@ export const generateProposal = async ({
         `$${field.fees}`,
       ]);
     });
-    tableData.push(
-      ["", "", "", ""],
-      ["", "", "", ""],
-      ["", "", Labels.SUBTOTAL, `$${subtotal}`]
-    );
+    tableData.push(["", "", "", ""], ["", "", Labels.SUBTOTAL, `$${subtotal}`]);
 
     if (discount && discountVal) {
       tableData.push([
@@ -70,9 +67,32 @@ export const generateProposal = async ({
 
     tableData.push(
       ["", "", Labels.GST, `$${gst}`],
-      ["", "", Labels.AMOUNT_DUE, `$${amountDue}`]
+      ["", "", Labels.TOTAL, `$${amountDue}`]
     );
     console.log(tableData);
+    const renderFees = (
+      value: string,
+      indexColumn: number,
+      indexRow: number,
+      row: Array<string | number>,
+      rectRow: specs,
+      rectCell: specs
+    ) => {
+      let { x, y, width, height } = rectCell;
+      let padding = 0;
+      const indexes = [
+        tableData.length - 1,
+        tableData.length - 2,
+        tableData.length - 3,
+      ];
+      if (indexes.indexOf(indexRow) !== -1) {
+        padding = -10;
+      }
+      doc.text(value, x + padding, y + 5, {
+        width,
+        height,
+      });
+    };
     const table = {
       headers: [
         {
@@ -102,6 +122,7 @@ export const generateProposal = async ({
           align: "right",
           headerAlign: "right",
           headerColor: "white",
+          // renderer: renderFees,
         },
       ],
       rows: tableData,
@@ -118,33 +139,51 @@ export const generateProposal = async ({
         align: "left",
       }
     );
-    doc.fontSize(FontSize.H4);
-    doc.text("", PageParams.MARGIN, 150);
+    doc.text("", PageParams.MARGIN, 140);
     // @ts-ignore
     await doc.table(table, {
-      columnsSize: [100, 170, 170, 60],
+      columnsSize: [100, 175, 180, 60],
       columnSpacing: 5,
-      // prepareHeader: () => {
-
-      // doc
-      //   .opacity(0.05)
-      //   .rect(
-      //     PageParams.MARGIN,
-      //     150,
-      //     PageParams.A4_WIDTH - 2 * PageParams.MARGIN,
-      //     1 * REM
-      //   )
-      //   .fill(Colors.BLACK)
-      //   .opacity(1);
-      // return doc;
-      // },
-      // prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => doc,
+      prepareHeader: () => {
+        writeText(doc, FontSize.P);
+        doc
+          .opacity(0.05)
+          .rect(
+            PageParams.MARGIN,
+            140,
+            PageParams.A4_WIDTH - 2 * PageParams.MARGIN,
+            1 * REM
+          )
+          .fill(Colors.BLACK)
+          .opacity(1);
+        return doc;
+      },
+      prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => {
+        writeText(doc, FontSize.P);
+        if (
+          indexRow &&
+          indexRow !== tableData.length - 1 &&
+          indexRow !== tableData.length - 3 &&
+          indexRow % 2 !== 0
+        ) {
+          doc
+            .opacity(0.05)
+            .rect(rectCell.x, rectCell.y, rectCell?.width, rectCell?.height)
+            .fill(Colors.BLACK)
+            .opacity(1);
+        }
+        // return doc;
+      },
       divider: {
-        header: { disabled: false, width: 1, opacity: 0.5 },
+        header: { disabled: true, width: 1, opacity: 0.5 },
         horizontal: { disabled: true },
       },
+      padding: [2, 2],
     });
 
+    doc.fontSize(FontSize.P);
+    doc.text("NOTE");
+    doc.fontSize(FontSize.P);
     doc.text(deliverablesNote);
     doc.addPage();
     addTermsAndConditionsPage(doc);

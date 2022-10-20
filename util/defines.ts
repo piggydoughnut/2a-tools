@@ -40,3 +40,10 @@ export interface InvoiceType extends PdfDocumentData {
 export interface ProposalType extends PdfDocumentData {
   thescope: string;
 }
+
+export type specs = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
