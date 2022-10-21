@@ -251,10 +251,11 @@ export const generateProposal = async ({
       padding: [2, 2],
     });
 
-    doc.fontSize(FontSize.P);
+    doc.moveDown();
+    doc.fontSize(FontSize.P).opacity(0.7);
     doc.text("NOTE");
     doc.fontSize(FontSize.P);
-    doc.text(deliverablesNote);
+    doc.text(deliverablesNote, { width: 400 }).opacity(1);
     doc.addPage();
     addTermsAndConditionsPage(doc, projectName);
     doc.end();

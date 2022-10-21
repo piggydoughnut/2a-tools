@@ -1,10 +1,13 @@
 import { FieldArray, Form, Formik } from "formik";
 import { getPDF, processNumber } from "util/helpers";
 
+import Image from "next/image";
 import { Input } from "components/Input";
 import InvoicePreview from "components/InvoicePreview";
 import Layout from "components/Layout";
 import { Rings } from "react-loader-spinner";
+import add from "../public/icon-add.svg";
+import remove from "../public/icon-remove.svg";
 import { useState } from "react";
 
 const proposalItem = {
@@ -109,152 +112,174 @@ export default function Proposal() {
         >
           {({ values, errors }) => (
             <Form>
-              {console.log(values)}
-              <div>
-                <div className="flex flex-col mb-10">
-                  <h1 className="text-lg mb-4">Project</h1>
-                  <Input
-                    key={"projectName"}
-                    name={"projectName"}
-                    label={"Project name"}
-                    type={"text"}
-                    customstyle={
-                      "w-3/5 bg-white border-rounded-lg border-2 border-black"
-                    }
-                  />
-                  <Input
-                    name="client"
-                    label="Client"
-                    type="textarea"
-                    rows={5}
-                    as="textarea"
-                    customstyle={
-                      "w-3/5 bg-white border-rounded-lg border-2 border-black"
-                    }
-                  />
-                  {
+              <div className="">
+                <div className=" gap-10 bg-orange-100 border-orange-400 border p-4 pl-10 shadow">
+                  <h1 className="text-md  uppercase mb-4">
+                    1. Project Information
+                  </h1>
+                  <div className="w-3/5">
+                    <Input
+                      key={"projectName"}
+                      name={"projectName"}
+                      label={"Project name"}
+                      type={"text"}
+                    />
+                    <Input
+                      name="client"
+                      label="Client name"
+                      type="textarea"
+                      rows={5}
+                      as="textarea"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-12 bg-orange-100 border-orange-400 border p-4 pl-10 shadow">
+                  <h3 className="text-md uppercase">2. Project scope</h3>
+                  <div className="w-3/5">
+                    <p className="mb-4">Describe the project scope.</p>
                     <Input
                       key={"projectScope"}
                       name={"projectScope"}
-                      label="Scope"
                       type={"textarea"}
-                      customstyle={
-                        "w-3/5 bg-white border-rounded-lg border-2 border-black"
-                      }
+                      customstyle={""}
                       rows={10}
                     />
-                  }
-                  <h1 className="text-lg">Project deliverables</h1>
-                </div>
-                <div className="mt-12 w-3/5">
-                  <h3 className="text-md uppercase">Notes on deliverables</h3>
-                  <p className="mb-4">
-                    Add any notes on the deliverable fees or processes here.
-                    This text will be displayed under the table.
-                  </p>
-                  <Input
-                    key={"deliverablesNote"}
-                    name={"deliverablesNote"}
-                    type={"textarea"}
-                    rows={5}
-                  />
+                  </div>
                 </div>
 
-                <h3 className="text-md uppercase mt-10">deliverables table</h3>
-                <FieldArray
-                  name="items"
-                  render={(arrayHelpers) => (
-                    <div className="pt-3">
-                      <div className="sm:grid sm:gap-4 sm:grid-cols-8 mb-4 hidden">
-                        {/* <div className="col-span-2 text-left uppercase max-w-4xl">
+                <div className="bg-orange-100 border-orange-400 border p-4 pl-10 shadow mt-12">
+                  <h3 className="text-md uppercase mb-2 text-left">
+                    3. project deliverables
+                  </h3>
+                  <p className="mb-4">
+                    The table values are prefilled according to most commonly
+                    used values. <br /> Feel free to modify wording or
+                    remove/add new rows.
+                  </p>
+                  <FieldArray
+                    name="items"
+                    render={(arrayHelpers) => (
+                      <div className="pt-3">
+                        <div className="sm:grid sm:gap-8 sm:grid-cols-8 mb-4 hidden">
+                          {/* <div className="col-span-2 text-left uppercase max-w-4xl">
                           Item
                         </div> */}
-                        {[
-                          "DESCRIPTION",
-                          "Work involved",
-                          "OUTCOME",
-                          "Fees",
-                        ].map((val) => (
+                          {["DESCRIPTION", "Work involved", "OUTCOME"].map(
+                            (val) => (
+                              <div
+                                key={val}
+                                className="col-span-2 justify-self-start text-left uppercase"
+                              >
+                                {val}
+                              </div>
+                            )
+                          )}
                           <div
-                            key={val}
-                            className="col-span-2 justify-self-start text-left uppercase"
+                            key={"Fees"}
+                            className="col-span-1 justify-self-start text-left uppercase"
                           >
-                            {val}
+                            Fees
                           </div>
-                        ))}
-                      </div>
-                      {values.items?.map((val, idx) => (
-                        <div
-                          key={idx}
-                          className="flex flex-col sm:grid gap-8 sm:grid-cols-9 mb-4"
-                        >
-                          {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
+                          <div
+                            key={"Action"}
+                            className="col-span-1 justify-self-start text-left uppercase flex gap-2"
+                          >
+                            Action <Image src={remove} alt="remove row" />
+                          </div>
+                        </div>
+                        {values.items?.map((val, idx) => (
+                          <div
+                            key={idx}
+                            className="flex flex-col sm:grid gap-8 sm:grid-cols-8 mb-4"
+                          >
+                            {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
                             Description
                           </div> */}
-                          <div className="col-span-2">
-                            <Input
-                              key={`items[${idx}].description`}
-                              name={`items[${idx}].description`}
-                              type="textarea"
-                              rows={3}
-                              value={val.description}
-                              placeholder={"sevice description"}
-                            />
-                          </div>
-                          {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
+                            <div className="col-span-2">
+                              <Input
+                                key={`items[${idx}].description`}
+                                name={`items[${idx}].description`}
+                                type="textarea"
+                                rows={3}
+                                value={val.description}
+                                placeholder={"sevice description"}
+                              />
+                            </div>
+                            {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
                             Work Involved
                           </div> */}
-                          <div className="col-span-2">
-                            <Input
-                              key={`items[${idx}].workInvolved`}
-                              name={`items[${idx}].workInvolved`}
-                              type="textarea"
-                              rows={8}
-                              value={val.workInvolved}
-                            />
-                          </div>
-                          {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
+                            <div className="col-span-2">
+                              <Input
+                                key={`items[${idx}].workInvolved`}
+                                name={`items[${idx}].workInvolved`}
+                                type="textarea"
+                                rows={8}
+                                value={val.workInvolved}
+                              />
+                            </div>
+                            {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
                             Outcome
                           </div> */}
-                          <div className="col-span-2">
-                            <Input
-                              key={`items[${idx}].outcome`}
-                              name={`items[${idx}].outcome`}
-                              type="textarea"
-                              rows={8}
-                              value={val.outcome}
-                            />
-                          </div>
-                          {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
+                            <div className="col-span-2">
+                              <Input
+                                key={`items[${idx}].outcome`}
+                                name={`items[${idx}].outcome`}
+                                type="textarea"
+                                rows={8}
+                                value={val.outcome}
+                              />
+                            </div>
+                            {/* <div className="justify-self-end text-right uppercase w-10 sm:hidden">
                             Fees
                           </div> */}
-                          <Input
-                            key={`items[${idx}].fees`}
-                            name={`items[${idx}].fees`}
-                            type="number"
-                            customstyle="h-12"
-                            value={val.fees}
-                          />
-                          {values.items.length > 1 && (
-                            <div
-                              className="underline cursor-pointer justify-self-end text-right"
-                              onClick={() => arrayHelpers.remove(idx)}
-                            >
-                              Remove
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      <button
-                        className="underline cursor-pointer mt-4 mb-4 text-md"
-                        type="button"
-                        onClick={() => arrayHelpers.push({ ...proposalItem })}
-                      >
-                        Add table item
-                      </button>
-                    </div>
-                  )}
-                ></FieldArray>
+                            <Input
+                              key={`items[${idx}].fees`}
+                              name={`items[${idx}].fees`}
+                              type="number"
+                              customstyle="h-12"
+                              value={val.fees}
+                            />
+                            {values.items.length > 1 && (
+                              <div
+                                className="underline cursor-pointer justify-self-start text-left hover:text-blue-500 transition-all"
+                                onClick={() => arrayHelpers.remove(idx)}
+                              >
+                                <p>Remove</p>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                        <button
+                          className="underline cursor-pointer mt-4 mb-4 text-md flex align-center gap-3 hover:text-blue-500 transition-all"
+                          type="button"
+                          onClick={() => arrayHelpers.push({ ...proposalItem })}
+                        >
+                          <Image src={add} alt="add row" />
+                          Add new table item
+                        </button>
+                      </div>
+                    )}
+                  ></FieldArray>
+                </div>
+
+                <div className="mt-12   bg-orange-100 border-orange-400 border p-4 pl-10 shadow">
+                  <div className="w-3/5">
+                    <h3 className="text-md uppercase">
+                      4. Notes on deliverables
+                    </h3>
+                    <p className="mb-4">
+                      Add any notes on the deliverable fees or processes here.
+                      This text will be displayed under the table.
+                    </p>
+                    <Input
+                      key={"deliverablesNote"}
+                      name={"deliverablesNote"}
+                      type={"textarea"}
+                      rows={5}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-center mt-16">

@@ -31,7 +31,9 @@ export default function Header({ title }: { title: string }) {
         <div className="mt-2">Today is {d}</div>
       </div>
 
-      <h1 className="font-inriaSans text-lg mb-4 text-center mt-24">{title}</h1>
+      <h1 className="font-inriaSans text-md mb-12 text-center mt-24">
+        {title}
+      </h1>
     </div>
   );
 }

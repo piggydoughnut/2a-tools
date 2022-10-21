@@ -86,14 +86,20 @@ export const addTermsAndConditionsPage = (
 
     doc.fontSize(FontSize.P);
     doc.text(
-      `Structural Engineer Design / Geotech. PS1 / PS4 fees (if required.)
-  
-      You will be advised of the need for any other consultants, as it arises, and fee proposals will be sought by us from them for your consideration before engagement by you.`,
+      `Structural Engineer Design / Geotech. PS1 / PS4 fees (if required.)`,
       PageParams.MARGIN * 8,
-      textLevel,
+      textLevel - Padding.small,
       {
         width: 14.5 * REM,
-        indent: 0,
+      }
+    );
+    doc.text(
+      `You will be advised of the need for any other consultants, as it arises, and fee proposals will be sought by us from them for your consideration before engagement by you.`,
+      PageParams.MARGIN * 8,
+      doc.y + Padding.medium,
+      {
+        width: 14.5 * REM,
+        indent: 1,
       }
     );
 
