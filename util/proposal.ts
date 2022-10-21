@@ -1,10 +1,14 @@
 import {
   Colors,
   FontSize,
+  LOGO_IMAGE,
   Labels,
+  Padding,
   PageParams,
   REM,
+  SIDE_DECORATION,
   getNewDoc,
+  writeBold,
   writeText,
 } from "./pdfStyleConfig";
 
@@ -22,6 +26,9 @@ export type ProposalProps = {
   discountVal: string;
   amountDue: string;
   gst: string;
+  projectName: string;
+  client: string;
+  projectScope: string;
 };
 
 export const generateProposal = async ({
@@ -32,6 +39,9 @@ export const generateProposal = async ({
   discountVal,
   amountDue,
   gst,
+  projectName,
+  client,
+  projectScope,
 }: ProposalProps): Promise<Buffer | undefined | string> => {
   try {
     const doc = getNewDoc();
@@ -41,7 +51,67 @@ export const generateProposal = async ({
       bufferChunks.push(doc.read());
     });
 
-    addHeader(doc);
+    const HEADER_X = 400;
+    const HEADER_YY = PageParams.MARGIN + 2;
+    const HEADER_Y = HEADER_YY + PageParams.LINE_HEIGHT * 0.75;
+
+    doc.image(LOGO_IMAGE, PageParams.MARGIN, PageParams.MARGIN, {
+      width: 150,
+    });
+
+    doc
+      .image(
+        SIDE_DECORATION,
+        PageParams.A4_WIDTH - 2 * PageParams.MARGIN,
+        PageParams.MARGIN * 7,
+        {
+          width: 70,
+        }
+      )
+      .opacity(0.8);
+
+    writeBold(doc, 10);
+    doc.opacity(0.7);
+    doc.text("CLIENT", HEADER_X + 90, HEADER_YY, { align: "right" });
+    doc.opacity(1);
+
+    writeText(doc, 10);
+    doc.text(client, HEADER_X, HEADER_Y, {
+      align: "right",
+      lineGap: 2,
+    });
+
+    doc.rect(0, 170, PageParams.A4_WIDTH, 70).fill(Colors.LIGHT_ORANGE);
+    doc.fill(Colors.BLACK);
+
+    writeBold(doc, FontSize.H1);
+    doc.text("DESIGN PROPOSAL", PageParams.MARGIN, 180, {
+      align: "left",
+      characterSpacing: 10,
+    });
+
+    writeBold(doc, FontSize.H4);
+    doc
+      .opacity(0.7)
+      .text("THE PROJECT", PageParams.MARGIN, 17 * REM)
+      .opacity(1);
+    writeText(doc, FontSize.P);
+    doc.text(projectName, doc.x, doc.y + Padding.small);
+
+    writeBold(doc, FontSize.H4);
+    doc
+      .opacity(0.7)
+      .text("THE SCOPE", doc.x, doc.y + Padding.big)
+      .opacity(1);
+    writeText(doc, FontSize.P);
+    doc.text(projectScope, doc.x, doc.y + Padding.small, { width: 400 });
+
+    doc.moveDown();
+    doc.moveDown();
+    doc.text("Refer to next page for Project Deliverables.");
+    addFooter(doc);
+    doc.addPage();
+    addHeader(doc, projectName);
     addFooter(doc);
     const tableData = [];
 
@@ -186,7 +256,7 @@ export const generateProposal = async ({
     doc.fontSize(FontSize.P);
     doc.text(deliverablesNote);
     doc.addPage();
-    addTermsAndConditionsPage(doc);
+    addTermsAndConditionsPage(doc, projectName);
     doc.end();
 
     await pEvent(doc, "end");

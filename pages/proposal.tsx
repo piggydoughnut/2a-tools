@@ -119,7 +119,7 @@ export default function Proposal() {
                     label={"Project name"}
                     type={"text"}
                     customstyle={
-                      "w-3/4 bg-white border-rounded-lg border-2 border-black"
+                      "w-3/5 bg-white border-rounded-lg border-2 border-black"
                     }
                   />
                   <Input
@@ -129,7 +129,7 @@ export default function Proposal() {
                     rows={5}
                     as="textarea"
                     customstyle={
-                      "w-3/4 bg-white border-rounded-lg border-2 border-black"
+                      "w-3/5 bg-white border-rounded-lg border-2 border-black"
                     }
                   />
                   {
@@ -139,7 +139,7 @@ export default function Proposal() {
                       label="Scope"
                       type={"textarea"}
                       customstyle={
-                        "w-full bg-white border-rounded-lg border-2 border-black"
+                        "w-3/5 bg-white border-rounded-lg border-2 border-black"
                       }
                       rows={10}
                     />

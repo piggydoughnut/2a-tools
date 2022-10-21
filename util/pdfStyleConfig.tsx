@@ -13,6 +13,7 @@ export const PageParams = {
 export const Colors = {
   BLACK: "#000000",
   GRAY: "#6F6E70",
+  LIGHT_ORANGE: "#FAE1CD",
 };
 
 export const FontSize = {
@@ -35,6 +36,8 @@ export const Fonts = {
 };
 
 export const LOGO_IMAGE = path.join(mainPath, "logov2.png");
+
+export const SIDE_DECORATION = path.join(mainPath, "sideDecor.png");
 
 export const Labels = {
   SUBTOTAL: "Subtotal",
@@ -83,3 +86,9 @@ export const getNewDoc = () =>
   });
 
 export const REM = 16;
+
+export const Padding = {
+  small: 4,
+  medium: 8,
+  big: 16,
+};
