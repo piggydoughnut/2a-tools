@@ -21,7 +21,7 @@ export default function Header({ title }: { title: string }) {
             router.pathname !== "/tools" &&
             title !== "New Invoice Preview" && (
               <button
-                className="underline rounded-sm text-sm hover:scale-110 ease-in-out duration-300 text-blue-400 text-left ml-1"
+                className="underline rounded-sm text-sm hover:text-blue-500 transition-all text-left ml-1"
                 onClick={() => router.back()}
               >
                 Go to Tools

@@ -18,7 +18,9 @@ import InvoicePreview from "../components/InvoicePreview";
 import { InvoiceSchema } from "../util/invoiceValidationSchemas";
 import Layout from "../components/Layout";
 import { Rings } from "react-loader-spinner";
+import add from "../public/icon-add.svg";
 import { getPDF } from "../util/helpers";
+import remove from "../public/icon-remove.svg";
 import { useState } from "react";
 
 const newValue = {
@@ -150,7 +152,7 @@ export default function InvoiceGeneratorPage() {
                         className="-ml-3"
                       />
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col">
                           <Input
                             name="issueDate"
                             label="Issue date"
@@ -180,7 +182,7 @@ export default function InvoiceGeneratorPage() {
                         INVOICE
                       </h1>
                       <div className="flex flex-row justify-start sm:justify-center align-baseline mt-6 sm:mt-0">
-                        <p className="text-lg self-align-baseline pt-1 sm:pt-9 sm:ml-4">
+                        <p className="text-lg self-align-baseline mt-1 pt-1 sm:pt-9 sm:ml-4">
                           #{new Date().getFullYear()}-
                           {values.projectNumber
                             ? values.projectNumber + "-"
@@ -191,7 +193,7 @@ export default function InvoiceGeneratorPage() {
                             name="invoiceNumber"
                             type="text"
                             placeholder="invoice number"
-                            customstyle="text-base mt-2"
+                            customstyle="text-base"
                           />
                         </div>
                       </div>
@@ -211,7 +213,7 @@ export default function InvoiceGeneratorPage() {
                           <div className="col-span-4 text-left uppercase max-w-4xl">
                             Item
                           </div>
-                          {["Price", "Qty", "Total", "Action"].map((val) => (
+                          {["Price", "Qty", "Total"].map((val) => (
                             <div
                               key={val}
                               className="justify-self-end text-right uppercase w-10"
@@ -219,6 +221,12 @@ export default function InvoiceGeneratorPage() {
                               {val}
                             </div>
                           ))}
+                          <div
+                            key={"Action"}
+                            className="col-span-1 justify-self-end text-left uppercase flex gap-2"
+                          >
+                            Action <Image src={remove} alt="remove row" />
+                          </div>
                         </div>
                         {values.items?.map((val, idx) => (
                           <div
@@ -269,7 +277,7 @@ export default function InvoiceGeneratorPage() {
                             </div>
                             {values.items.length > 1 && (
                               <div
-                                className="underline cursor-pointer justify-self-end text-right"
+                                className="underline cursor-pointer justify-self-center text-right hover:text-blue-500 transition-all"
                                 onClick={() => arrayHelpers.remove(idx)}
                               >
                                 Remove
@@ -278,11 +286,12 @@ export default function InvoiceGeneratorPage() {
                           </div>
                         ))}
                         <button
-                          className="underline cursor-pointer mt-4 mb-4"
+                          className="underline cursor-pointer mt-4 mb-4 text-sm flex align-center gap-3 hover:text-blue-500 transition-all"
                           type="button"
                           onClick={() => arrayHelpers.push({ ...newValue })}
                         >
-                          Add item
+                          <Image src={add} alt="add row" />
+                          Add new table item
                         </button>
                       </div>
                     )}

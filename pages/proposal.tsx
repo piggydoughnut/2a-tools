@@ -69,7 +69,7 @@ const initialValues = {
   projectScope: "",
   items: predefined,
   deliverablesNote:
-    "We propose to charge the as-built portion of the services as a fixed fee as it is easy to quantify. We propose an hourly rate for the BC and RC documentation phases as it is unclear just how much documentation work is involved. The estimated fees are based on a rate of $200 / hr and we consider they would be a maximum.",
+    "We propose to charge the as-built portion of the services as a fixed fee as it is easy to quantify. We propose an hourly rate for the Building Consent and Resource Consent documentation phases as it is unclear just how much documentation work is involved. The estimated fees are based on a rate of $200 / hr and we consider they would be a maximum.",
 };
 export default function Proposal() {
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -251,7 +251,7 @@ export default function Proposal() {
                           </div>
                         ))}
                         <button
-                          className="underline cursor-pointer mt-4 mb-4 text-md flex align-center gap-3 hover:text-blue-500 transition-all"
+                          className="underline cursor-pointer mt-4 mb-4 text-sm flex align-center gap-3 hover:text-blue-500 transition-all"
                           type="button"
                           onClick={() => arrayHelpers.push({ ...proposalItem })}
                         >
