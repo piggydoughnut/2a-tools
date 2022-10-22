@@ -11,7 +11,7 @@ export const DownloadLink = ({
   fileName: string;
 }) => (
   <a
-    className="pr-4 pl-4 pt-2 pb-2 bg-green-200 border rounded-md text-sm ease-in-out duration-30 w-48 hover:bg-transparent hover:text-green-800 hover:border-green-800 text-center uppercase"
+    className="pr-4 pl-4 pt-2 pb-2 bg-green-200 border rounded-md font-bold text-tiny ease-in-out duration-30 w-48 hover:bg-transparent hover:text-green-800 hover:border-green-800 text-center uppercase"
     href={url}
     download={fileName}
   >
@@ -48,7 +48,7 @@ export const Button = ({
   }
   return (
     <button
-      className={`pr-4 pl-4 pt-2 pb-2 w-48 border rounded-md text-sm ease-in-out duration-300 hover:bg-transparent uppercase ${colorStyle}`}
+      className={`pr-4 pl-4 pt-2 pb-2 w-48 border rounded-md text-tiny font-bold ease-in-out duration-300 hover:bg-transparent uppercase ${colorStyle}`}
       type="submit"
       onClick={() => (onClick ? onClick() : "")}
     >

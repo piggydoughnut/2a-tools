@@ -316,21 +316,24 @@ export default function InvoiceGeneratorPage() {
                   <hr />
 
                   <div className="grid grid-rows-[1fr 1fr 1fr 1fr] grid-cols-5 justify-items-end pr-14 mt-4 gap-4">
-                    <h3 className="w-32 col-span-4 text-md">Subtotal</h3>
+                    <h3 className="w-40 col-span-4 text-sm">Subtotal</h3>
                     <h3 className="col-span-1">
                       ${setSubtotalValue(values.items)}
                     </h3>
 
-                    <div className="flex flex-row col-span-4 mt-2 w-32 gap-2">
+                    <div className="flex flex-row col-span-4 mt-2 w-40 gap-2">
                       <h3 className="mt-2">Discount</h3>
-                      <Input
-                        key="discount"
-                        name="discount"
-                        type="number"
-                        customstyle="justify-self-end text-left h-7 w-24 mt-1"
-                        value={values.discount}
-                        shownoerr={true}
-                      />{" "}
+                      <div className="w-24">
+                        <Input
+                          key="discount"
+                          name="discount"
+                          type="number"
+                          customstyle="justify-self-end text-left h-7 mt-1 w-full"
+                          value={values.discount}
+                          shownoerr={true}
+                        />{" "}
+                      </div>
+
                       <p className="mt-2">%</p>
                     </div>
 
@@ -342,7 +345,7 @@ export default function InvoiceGeneratorPage() {
                       )}
                     </div>
 
-                    <h3 className="w-32 col-span-4">GST (15%)</h3>
+                    <h3 className="w-40 col-span-4">GST (15%)</h3>
                     <h3 className="col-span-1">
                       $
                       {setGSTValue(
