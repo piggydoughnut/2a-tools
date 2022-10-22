@@ -223,13 +223,14 @@ export const generateProposal = async ({
           indexRow !== tableData.length - 3 &&
           indexRow % 2 !== 0
         ) {
-          doc
-            .opacity(0.05)
-            .rect(rectCell.x, rectCell.y, rectCell?.width, rectCell?.height)
-            .fill(Colors.BLACK)
-            .opacity(1);
+          rectCell &&
+            doc
+              .opacity(0.05)
+              .rect(rectCell.x, rectCell.y, rectCell?.width, rectCell?.height)
+              .fill(Colors.BLACK)
+              .opacity(1);
         }
-        // return doc;
+        return doc;
       },
       divider: {
         header: { disabled: true, width: 1, opacity: 0.5 },

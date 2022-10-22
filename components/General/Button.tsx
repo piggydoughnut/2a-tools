@@ -1,19 +1,5 @@
 import { Colors } from "util/defines";
 import Image from "next/image";
-export const InternalButton = ({
-  title,
-  action,
-}: {
-  title: string;
-  action: () => void;
-}) => (
-  <button
-    className="p-4 bg-gray-200 border rounded-md text-sm ease-in-out duration-30 w-48 hover:bg-transparent hover:text-brown-800 hover:border-brown-800"
-    onClick={() => action()}
-  >
-    {title}
-  </button>
-);
 
 export const DownloadLink = ({
   title,
@@ -25,7 +11,7 @@ export const DownloadLink = ({
   fileName: string;
 }) => (
   <a
-    className="p-4 bg-green-200 border rounded-md text-sm ease-in-out duration-30 w-48 hover:bg-transparent hover:text-green-800 hover:border-green-800 text-center uppercase"
+    className="pr-4 pl-4 pt-2 pb-2 bg-green-200 border rounded-md text-sm ease-in-out duration-30 w-48 hover:bg-transparent hover:text-green-800 hover:border-green-800 text-center uppercase"
     href={url}
     download={fileName}
   >

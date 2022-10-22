@@ -18,6 +18,7 @@ export const addTermsAndConditionsPage = (
   projectName: string
 ): void => {
   try {
+    const columnWidth = 15 * REM;
     addHeader(doc, projectName);
     writeText(doc, FontSize.H2);
     const SUB_SECTION_Y = doc.y + Padding.big * 2;
@@ -66,7 +67,7 @@ export const addTermsAndConditionsPage = (
       ],
       {
         bulletRadius: 1,
-        width: 14.5 * REM,
+        width: columnWidth,
       }
     );
 
@@ -75,7 +76,7 @@ export const addTermsAndConditionsPage = (
       "Local TA application fees are not included in our fee.  It is preferred that the client pay this directly to the TA.  Invoices will be directed to the client.",
 
       {
-        width: 14.5 * REM,
+        width: columnWidth,
       }
     );
 
@@ -90,7 +91,7 @@ export const addTermsAndConditionsPage = (
       PageParams.MARGIN * 8,
       textLevel - Padding.small,
       {
-        width: 14.5 * REM,
+        width: columnWidth,
       }
     );
     doc.text(
@@ -98,7 +99,7 @@ export const addTermsAndConditionsPage = (
       PageParams.MARGIN * 8,
       doc.y + Padding.medium,
       {
-        width: 14.5 * REM,
+        width: columnWidth,
         indent: 1,
       }
     );
@@ -128,18 +129,19 @@ export const addTermsAndConditionsPage = (
 
     doc.fontSize(FontSize.P);
     doc.moveDown();
-    doc.text("1. Payment terms: ", PageParams.MARGIN, doc.y + Padding.small, {
+    const termsStartY = doc.y + Padding.medium;
+    doc.text("1. Payment terms: ", PageParams.MARGIN, termsStartY, {
       continued: true,
     });
     writeBold(doc);
-    doc.text("20% required upon acceptance of this proposal. ");
+    doc.text("20% required upon acceptance. ");
     writeText(doc);
     doc.fontSize(FontSize.H4);
     doc.moveDown();
     paymentValues.map((value) => {
       const lineY = doc.y;
-      doc.text(value.label, PageParams.MARGIN + 20, lineY);
-      doc.text(value.value, 200, lineY);
+      doc.text(value.label, PageParams.MARGIN, lineY);
+      doc.text(value.value, 9 * REM, lineY);
     });
 
     doc.fontSize(FontSize.P);
@@ -148,11 +150,9 @@ export const addTermsAndConditionsPage = (
       [
         "2. The balance of our fee is invoiced on stage completion and is payable on receipt of the invoice.",
         "",
-        "3. Any additional design work as a result of a significant change of scope after concept and developed design stages have been signed off and any associated application work is charged at $200 + gst per hr.",
+        "3. Any additional design work as a result of a significant change of scope after concept and developed design stages have been signed off and any associated application work is charged at $160 + gst per hr.",
         "",
         "4. This fee proposal has been prepared based on our previous experience with similar scale, design and documentation projects.",
-        "",
-        "5. Each project is broken down into 4 phases:",
       ],
       PageParams.MARGIN,
       doc.y,
@@ -160,26 +160,31 @@ export const addTermsAndConditionsPage = (
         bulletRadius: 0.1,
         textIndent: 0,
         bulletIndent: 0,
-        width: 400,
+        width: columnWidth,
+        continued: true,
       }
     );
-    doc.moveDown();
     doc.list(
       [
-        "Brief phase - definition of the brief, signing the contract. 5 revisions are allowed during this phase.",
-        "Concept phase - 3 revisions are allowed during this phase.",
-        "Development phase - 3 revisions are allowed during this phase. At this stage the design is agreed upon and the documentation phase will begin.",
-        "Documentation phase - Any significant changes that modify the design will be charged per hour at $200/hr.",
+        "5. Each project is broken down into 4 phases:",
         "",
-        "Additional revisions will be charged per hour at $200/hr",
+        "Brief phase - definition of the brief, signing the contract. 5 revisions are allowed during this phase.",
+        "",
+        "Concept phase - 3 revisions are allowed during this phase.",
+        "",
+        "Development phase - 3 revisions are allowed during this phase. At this stage the design is agreed upon and the documentation phase will begin.",
+        "",
+        "Documentation phase - Any significant changes that modify the design will be charged per hour at $160 + gst per hr.",
+        "",
+        "Additional revisions will be charged per hour at $160 + gst per hr",
       ],
-      PageParams.MARGIN,
-      doc.y,
+      PageParams.MARGIN * 8,
+      termsStartY,
       {
         bulletRadius: 0.1,
-        textIndent: 10,
+        textIndent: 0,
         bulletIndent: 0,
-        width: 400,
+        width: columnWidth,
       }
     );
 

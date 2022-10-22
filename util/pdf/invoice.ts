@@ -4,7 +4,9 @@ import {
   FontSize,
   LOGO_IMAGE,
   Labels,
+  Padding,
   PageParams,
+  REM,
   getNewDoc,
   writeBold,
   writeNumbers,
@@ -36,75 +38,87 @@ export const generatePdf = async ({
       // Store buffer chunk to array
       bufferChunks.push(doc.read());
     });
-    const Y_OFFSET_CONDITION = 17;
     doc
       .opacity(0.05)
-      .rect(0, 0, PageParams.A4_WIDTH, 240 + Y_OFFSET_CONDITION)
-      .fill(Colors.BLACK);
-    doc.fill(Colors.BLACK).opacity(1);
+      .rect(0, 0, PageParams.A4_WIDTH, 240 + Padding.big)
+      .fill(Colors.BLACK)
+      .opacity(1);
 
     doc.image(LOGO_IMAGE, PageParams.MARGIN, PageParams.MARGIN, {
       width: 150,
     });
 
     const HEADER_X = 400;
-    const HEADER_YY = PageParams.MARGIN + 2;
-    const HEADER_Y = HEADER_YY + PageParams.LINE_HEIGHT * 0.75;
+    const HEADER_Y = PageParams.MARGIN + 2;
 
     writeBold(doc, 8);
     doc.opacity(0.7);
-    doc.text("DUE DATE", HEADER_X, HEADER_YY);
+    doc.text("DUE DATE", HEADER_X, HEADER_Y);
     doc.opacity(1);
     writeText(doc, 8);
     doc.text(
       format(parseISO(dueDate.toString()), DATE_FORMAT),
-      HEADER_X,
-      HEADER_Y
+      doc.x,
+      doc.y + Padding.small
     );
 
     writeBold(doc, 8);
-    doc.opacity(0.7);
-    doc.text("ISSUE DATE", HEADER_X, HEADER_YY + PageParams.LINE_HEIGHT * 1.75);
-    doc.opacity(1);
+    doc
+      .opacity(0.7)
+      .text("ISSUE DATE", HEADER_X, doc.y + Padding.big)
+      .opacity(1);
     writeText(doc, 8);
     doc.text(
       format(parseISO(issueDate.toString()), DATE_FORMAT),
-      HEADER_X,
-      HEADER_YY + PageParams.LINE_HEIGHT * 2.5
+      doc.x,
+      doc.y + Padding.small
     );
 
     writeBold(doc, 8);
-    doc.opacity(0.7);
-    doc.text("CLIENT", HEADER_X + 90, HEADER_YY, { align: "right" });
-    doc.opacity(1);
+    doc
+      .opacity(0.7)
+      .text("CLIENT", HEADER_X + 4 * REM, HEADER_Y, {
+        align: "right",
+      })
+      .opacity(1);
 
     writeText(doc, 8);
-    doc.text(client, HEADER_X, HEADER_Y, {
+    doc.text(client, doc.x, doc.y + Padding.small, {
       align: "right",
-      lineGap: 2,
+      lineGap: 3,
     });
 
+    const INVOICE_Y = 180;
+
     writeBold(doc, FontSize.H1);
-    doc.text("INVOICE", PageParams.MARGIN, 180, {
+    doc.text("INVOICE", PageParams.MARGIN, INVOICE_Y, {
       align: "left",
       characterSpacing: 10,
     });
     //230
     writeText(doc, FontSize.P);
-    doc.opacity(0.7);
-    doc.text(`${invoiceNumberFull}`, PageParams.MARGIN, 230, {
-      align: "left",
-      continued: true,
-    });
+    doc
+      .opacity(0.7)
+      .text(
+        `${invoiceNumberFull}`,
+        PageParams.MARGIN,
+        INVOICE_Y + REM * 3.125,
+        {
+          align: "left",
+          continued: true,
+        }
+      );
     if (jobTitle) {
       writeText(doc, FontSize.P);
-      doc.text(` for ${jobTitle}`, PageParams.MARGIN, 230);
+      doc.text(
+        ` for ${jobTitle}`,
+        PageParams.MARGIN + Padding.small,
+        INVOICE_Y + REM * 3.125
+      );
     }
 
     doc.opacity(1);
     writeText(doc);
-
-    const HEADER_LINE_Y = 250 + Y_OFFSET_CONDITION;
 
     const tableData = [];
 
@@ -136,8 +150,7 @@ export const generatePdf = async ({
       ["", "", Labels.AMOUNT_DUE, `$${amountDue}`]
     );
 
-    // @ts-ignore
-    const renderCol = (
+    const renderItem = (
       value: string,
       indexColumn: number,
       indexRow: number,
@@ -146,29 +159,71 @@ export const generatePdf = async ({
       rectCell: specs
     ) => {
       let { x, y, width, height } = rectCell;
-      let padding = 15;
-      const labels = [
-        Labels.SUBTOTAL,
-        Labels.GST,
-        Labels.DISCOUNT,
-        Labels.TOTAL,
-      ];
+      doc.text(value, x, y + Padding.big, {
+        align: "left",
+        width: width - Padding.big,
+        height,
+      });
+    };
+
+    const renderPrice = (
+      value: string,
+      indexColumn: number,
+      indexRow: number,
+      row: Array<string | number>,
+      rectRow: specs,
+      rectCell: specs
+    ) => {
+      let { x, y, width, height } = rectCell;
+      let padding = Padding.big;
+      let offset = 0;
+      doc.text(value, x + offset, y + padding, {
+        align: "left",
+        width: width - Padding.big,
+        height,
+      });
+    };
+    const renderQty = (
+      value: string,
+      indexColumn: number,
+      indexRow: number,
+      row: Array<string | number>,
+      rectRow: specs,
+      rectCell: specs
+    ) => {
+      let { x, y, width, height } = rectCell;
+      let padding = Padding.big;
+      let offset = Padding.small;
+      let align = "center";
+      //// Amount Due label
+      if (value == Labels.AMOUNT_DUE) {
+        offset = -REM * 6.5;
+        width = width * 2.5;
+        padding = padding * 2;
+      }
+      doc.text(value, x + offset, y + padding, {
+        align,
+        width: width - Padding.big,
+        height,
+      });
+    };
+    // @ts-ignore
+    const renderLastCol = (
+      value: string,
+      indexColumn: number,
+      indexRow: number,
+      row: Array<string | number>,
+      rectRow: specs,
+      rectCell: specs
+    ) => {
+      let { x, y, width, height } = rectCell;
+      let padding = Padding.big;
       let offset = 0;
       let align = "left";
 
-      //// Amount Due label
-      if (value == Labels.AMOUNT_DUE) {
-        offset = -98;
-        width = width * 2;
-        padding = padding * 2;
-      }
       //// Amount Due value
       if (indexRow === tableData.length - 1 && indexColumn === 3) {
         padding = padding * 2;
-      }
-      // align qty center
-      if (indexColumn === 2) {
-        align = "center";
       }
       // align total right
       if (indexColumn === 3) {
@@ -190,7 +245,7 @@ export const generatePdf = async ({
           align: "left",
           headerAlign: "left",
           headerColor: "white",
-          renderer: renderCol,
+          renderer: renderItem,
         },
         {
           label: "Price",
@@ -198,7 +253,7 @@ export const generatePdf = async ({
           align: "left",
           headerAlign: "left",
           headerColor: "white",
-          renderer: renderCol,
+          renderer: renderPrice,
         },
         {
           label: "Qty",
@@ -206,7 +261,7 @@ export const generatePdf = async ({
           align: "center",
           headerAlign: "center",
           headerColor: "white",
-          renderer: renderCol,
+          renderer: renderQty,
         },
         {
           label: "Total",
@@ -214,13 +269,13 @@ export const generatePdf = async ({
           align: "right",
           headerAlign: "right",
           headerColor: "white",
-          renderer: renderCol,
+          renderer: renderLastCol,
         },
       ],
       rows: tableData,
     };
 
-    doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
+    doc.text("", PageParams.MARGIN, INVOICE_Y + REM * 5.5);
     // @ts-ignore
     await doc.table(table, {
       columnsSize: [290, 90, 50, 85],
@@ -229,7 +284,7 @@ export const generatePdf = async ({
         writeBold(doc);
         return doc;
       },
-      prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => {
+      prepareRow: (row, indexColumn, indexRow: unknown, rectRow, rectCell) => {
         //regular text
         writeText(doc);
 
@@ -243,32 +298,31 @@ export const generatePdf = async ({
         }
 
         if (indexColumn !== 0) {
-          const allRows = table.rows.length;
           const subtotalSectionRowIndex =
-            allRows - Object.keys(Labels).length + (discount ? 0 : 1);
-          const lastRowIndex = allRows - 1;
+            table.rows.length - Object.keys(Labels).length + (discount ? 0 : 1);
+          const lastRowIndex = table.rows.length - 1;
+          const isLastRow = indexRow === lastRowIndex;
+          const isSubTotalRow = indexRow === subtotalSectionRowIndex;
+          const isInSubtotalSection = indexRow
+            ? indexRow >= subtotalSectionRowIndex
+            : false;
           // text
           if (
             indexRow &&
-            indexRow >= subtotalSectionRowIndex &&
-            indexRow < lastRowIndex &&
+            isInSubtotalSection &&
+            !isLastRow &&
             indexColumn === 1
           ) {
             writeBold(doc);
           } else {
             writeNumbers(doc);
           }
-          if (indexRow == lastRowIndex) {
+          // draw the line above subtotal and above Amount Due
+          if (isLastRow || isSubTotalRow) {
             writeBold(doc, FontSize.H3);
-          }
-          if (
-            indexRow === subtotalSectionRowIndex ||
-            indexRow === lastRowIndex
-          ) {
-            let padding = 10;
-            if (lastRowIndex) {
-              padding = 15;
-            }
+            let padding = isLastRow
+              ? Padding.big
+              : Padding.big + Padding.medium;
             const y = rectCell ? rectCell.y + padding : 0;
             rectCell &&
               doc
