@@ -11,9 +11,9 @@ import {
   writeText,
 } from "./pdfStyleConfig";
 import { InvoiceType, specs } from "./defines";
+import { contact, paymentValues } from "config";
 import { format, parseISO } from "date-fns";
 
-import { contact } from "config";
 import { pEvent } from "p-event";
 
 export const generatePdf = async ({
@@ -22,7 +22,6 @@ export const generatePdf = async ({
   dueDate,
   client,
   items,
-  paymentValues,
   gst,
   subtotal,
   amountDue,
@@ -289,7 +288,11 @@ export const generatePdf = async ({
 
     ////////// FOOTER /////////////
     writeBold(doc, FontSize.H2);
-    doc.text("Thank you", PageParams.MARGIN, PageParams.FOOTER_HEIGHT);
+    doc.text(
+      "Thank you for choosing us",
+      PageParams.MARGIN,
+      PageParams.FOOTER_HEIGHT
+    );
     doc
       .lineCap("butt")
       .moveTo(PageParams.MARGIN, PageParams.FOOTER_HEIGHT + 30)

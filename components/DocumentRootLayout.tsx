@@ -2,7 +2,7 @@ import Footer from "./Footer";
 import Header from "./Header";
 import React from "react";
 
-export default function Layout({
+export default function DocumentRootLayout({
   children,
   title,
 }: {
@@ -12,7 +12,7 @@ export default function Layout({
   return (
     <div
       id="content"
-      className="flex flex-col justify-center font-inriaSans text-midnight-black mx-4 xl:mx-40 mt-10 mb-10"
+      className="flex flex-col flex-grow justify-center font-inriaSans text-midnight-black mx-4 xl:mx-40 mt-10 mb-10"
     >
       <Header title={title} />
       <main>{children}</main>

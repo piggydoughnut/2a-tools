@@ -9,7 +9,7 @@ export const predefined = [
   - Site plan drawing
   - Concept scheme/s for discussion and approval 
   - Floor plans`,
-    fees: "",
+    fees: 0,
   },
   {
     description: "Developed Design",
@@ -18,7 +18,7 @@ export const predefined = [
   - Outline specification of materials and finishes`,
     outcome: `- Updated plans and details
   - Developed proposal for discussion / approval`,
-    fees: "",
+    fees: 0,
   },
   {
     description: "Architectural Documentation",
@@ -33,14 +33,14 @@ export const predefined = [
   information as required
   - Building Consent application
   documents`,
-    fees: "",
+    fees: 0,
   },
   {
     description: "Contract Works Administration",
     workInvolved: `Site observations
   - 5 site visits are allowed within quote (excluding site visit already made`,
     outcome: `Administration documents and record-keeping `,
-    fees: "",
+    fees: 0,
   },
 ];
 

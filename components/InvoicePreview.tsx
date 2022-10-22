@@ -1,5 +1,6 @@
-import { DownloadLink, InternalButton } from "./General/Button";
+import { Button, DownloadLink, InternalButton } from "./General/Button";
 
+import { Colors } from "util/defines";
 import Iframe from "react-iframe";
 import React from "react";
 
@@ -28,9 +29,10 @@ const InvoicePreview = ({
         // @ts-ignore
         ref={invoicePreviewRef}
       >
-        <InternalButton
-          action={() => setPdfUrl(null)}
-          title={"Edit document"}
+        <Button
+          onClick={() => setPdfUrl(null)}
+          label={"Edit document"}
+          color={Colors.GRAY}
         />
         <DownloadLink
           url={pdfUrl}

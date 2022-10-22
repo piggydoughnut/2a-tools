@@ -11,25 +11,12 @@ import {
   writeBold,
   writeText,
 } from "./pdfStyleConfig";
+import { ProposalType, specs } from "./defines";
 
 import { addFooter } from "./pdfHelpers/addFooter";
 import { addHeader } from "./pdfHelpers/addHeader";
 import { addTermsAndConditionsPage } from "./pdfHelpers/addTermsAndConditionsPage";
 import { pEvent } from "p-event";
-import { specs } from "./defines";
-
-export type ProposalProps = {
-  items: any;
-  deliverablesNote: string;
-  subtotal: string;
-  discount: string;
-  discountVal: string;
-  amountDue: string;
-  gst: string;
-  projectName: string;
-  client: string;
-  projectScope: string;
-};
 
 export const generateProposal = async ({
   items,
@@ -42,7 +29,7 @@ export const generateProposal = async ({
   projectName,
   client,
   projectScope,
-}: ProposalProps): Promise<Buffer | undefined | string> => {
+}: ProposalType): Promise<Buffer | undefined | string> => {
   try {
     const doc = getNewDoc();
     let bufferChunks: any = [];

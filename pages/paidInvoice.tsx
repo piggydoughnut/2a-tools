@@ -1,9 +1,9 @@
-import Layout from "components/Layout";
+import DocumentRootLayout from "components/DocumentRootLayout";
 
 export default function paidInvoice() {
   return (
-    <Layout title="Coming soon...">
+    <DocumentRootLayout title="Coming soon...">
       <div></div>
-    </Layout>
+    </DocumentRootLayout>
   );
 }

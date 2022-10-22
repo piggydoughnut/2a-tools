@@ -1,12 +1,19 @@
+export const Colors = {
+  ORANGE: "orange",
+  GRAY: "gray",
+  BLUE: "blue",
+  RED: "red",
+};
+
 export interface InvoiceEntryType {
   item: string;
   qty: number;
   price: number;
 }
 
-export interface ProcesedInvoiceEntryType extends InvoiceEntryType {
-  priceFormatted: string;
-  total: number;
+export interface ProcessedInvoiceEntryType extends InvoiceEntryType {
+  priceFormatted?: string;
+  total?: string;
 }
 
 export enum CustomPdfDocumentType {
@@ -16,29 +23,37 @@ export enum CustomPdfDocumentType {
 
 export interface PdfDocumentData<T = CustomPdfDocumentType> {
   client: string;
-  jobTitle: string;
   type: T;
+  amountDue: string;
+  gst: string;
+  subtotal: string;
+  discount?: string | null;
+  discountVal?: string;
+  projectName: string;
+}
+
+export interface ProposalItem {
+  description: string;
+  workInvolved: string;
+  outcome: string;
+  fees: number;
 }
 
 export interface InvoiceType extends PdfDocumentData {
-  invoiceNumberFull: number;
-  issueDate: Date;
-  dueDate: Date;
-  items: Array<ProcesedInvoiceEntryType>;
-  paymentValues: Array<{
-    label: string;
-    value: string;
-    number?: boolean;
-  }>;
-  amountDue: number;
-  subtotal: number;
-  gst: number;
-  discount?: number;
-  discountVal?: number;
+  invoiceNumberFull: string;
+  invoiceNumber: number;
+  projectNumber: number;
+  issueDate: string;
+  dueDate: string;
+  jobTitle: string;
+  items: Array<ProcessedInvoiceEntryType>;
+  total: string;
 }
 
 export interface ProposalType extends PdfDocumentData {
-  thescope: string;
+  items: Array<ProposalItem>;
+  deliverablesNote: string;
+  projectScope: string;
 }
 
 export type specs = {

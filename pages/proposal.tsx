@@ -1,38 +1,49 @@
+import {
+  CustomPdfDocumentType,
+  ProposalItem,
+  ProposalType,
+} from "util/defines";
 import { FieldArray, Form, Formik } from "formik";
 import { deliverablesNote, predefined } from "../util/data/termsAndConditions";
-import { getPDF, processNumber } from "util/helpers";
+import { getPDF, getTotalProposal, processNumber } from "util/helpers";
 
+import { CustomLink } from "components/General/Button";
+import DocumentRootLayout from "components/DocumentRootLayout";
 import Image from "next/image";
 import { Input } from "components/Input";
 import InvoicePreview from "components/InvoicePreview";
-import Layout from "components/Layout";
 import { ProposalSchema } from "util/invoiceValidationSchemas";
-import { Rings } from "react-loader-spinner";
+import Submission from "components/Submission";
 import add from "../public/icon-add.svg";
 import remove from "../public/icon-remove.svg";
 import { useState } from "react";
 
-const proposalItem = {
+const proposalItem: ProposalItem = {
   description: "",
   workInvolved: "",
   outcome: "",
-  fees: "",
+  fees: 0,
 };
 
-const initialValues = {
+const initialValues: ProposalType = {
+  type: CustomPdfDocumentType.proposal,
   projectName: "",
   client: "",
   projectScope: "",
   items: predefined,
   deliverablesNote: deliverablesNote,
+  amountDue: "",
+  gst: "",
+  subtotal: "",
 };
+
 export default function Proposal() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showSpinner, setShowSpinner] = useState(false);
   const [params, setParams] = useState(initialValues);
 
   return (
-    <Layout title={"New Proposal"}>
+    <DocumentRootLayout title={"New Proposal"}>
       {pdfUrl ? (
         <InvoicePreview
           setPdfUrl={(s: string) => {
@@ -48,20 +59,16 @@ export default function Proposal() {
           initialValues={params}
           enableReinitialize
           validationSchema={ProposalSchema}
-          onSubmit={async (vs) => {
+          onSubmit={async (vs: ProposalType) => {
             setShowSpinner(true);
             console.log(vs);
             setParams(vs);
-            vs.total = 0;
-            const tot = vs.items.reduce(
-              (t: number, curr: any) => t + curr.fees,
-              0
-            );
-            const gst = tot * 0.15;
+            const tot = getTotalProposal(vs.items);
+            const gst = Math.ceil(tot * 0.15);
             vs.subtotal = processNumber(tot);
             vs.amountDue = processNumber(tot + gst);
             vs.gst = processNumber(gst);
-            const pdfData = await getPDF(vs);
+            const pdfData: string | undefined = await getPDF(vs);
             setPdfUrl(pdfData);
           }}
         >
@@ -196,23 +203,18 @@ export default function Proposal() {
                               value={val.fees}
                             />
                             {values.items.length > 1 && (
-                              <div
-                                className="underline cursor-pointer justify-self-start text-left hover:text-blue-500 transition-all"
-                                onClick={() => arrayHelpers.remove(idx)}
-                              >
-                                <p>Remove</p>
-                              </div>
+                              <CustomLink
+                                label="Remove"
+                                action={() => arrayHelpers.remove(idx)}
+                              />
                             )}
                           </div>
                         ))}
-                        <button
-                          className="underline cursor-pointer mt-4 mb-4 text-sm flex align-center gap-3 hover:text-blue-500 transition-all"
-                          type="button"
-                          onClick={() => arrayHelpers.push({ ...proposalItem })}
-                        >
-                          <Image src={add} alt="add row" />
-                          Add new table item
-                        </button>
+                        <CustomLink
+                          label="Add new table item"
+                          imageSrc={add}
+                          action={() => arrayHelpers.push({ ...proposalItem })}
+                        />
                       </div>
                     )}
                   ></FieldArray>
@@ -237,34 +239,15 @@ export default function Proposal() {
                 </div>
               </div>
 
-              <div className="flex justify-center mt-16">
-                {!showSpinner ? (
-                  <button
-                    className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
-                    type="submit"
-                  >
-                    Create a proposal{" "}
-                  </button>
-                ) : (
-                  <div className="flex flex-col justify-center">
-                    <p>Generating proposal. Please be patient.</p>
-                    <Rings
-                      height="80"
-                      width="80"
-                      color="#fabb92"
-                      radius="6"
-                      wrapperStyle={{ margin: "auto" }}
-                      wrapperClass=""
-                      visible={true}
-                      ariaLabel="rings-loading"
-                    />
-                  </div>
-                )}
-              </div>
+              <Submission
+                showSpinner={showSpinner}
+                buttonLabel="Create proposal"
+                errors={errors}
+              />
             </Form>
           )}
         </Formik>
       )}
-    </Layout>
+    </DocumentRootLayout>
   );
 }

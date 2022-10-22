@@ -1,4 +1,9 @@
-import { InvoiceEntryType } from "./defines";
+import {
+  InvoiceEntryType,
+  ProcessedInvoiceEntryType,
+  ProposalItem,
+} from "./defines";
+
 import axios from "axios";
 import { format } from "date-fns";
 
@@ -13,17 +18,20 @@ export const getTotal = (val: any): number =>
     )
   );
 
-export const getTotalInvoiceValue = (items: any, discount: number = 0) =>
-  Math.ceil(getSubtotal(items, discount) * 1.15);
+export const getTotalProposal = (items: Array<ProposalItem>) =>
+  items.reduce((t: number, curr: any) => t + curr.fees, 0);
 
-export const getGSTValue = (items: any, discount: number) =>
-  Math.ceil(getSubtotal(items, discount) * 0.15);
+export const getTotalInvoiceValue = (items: any, discount: string) =>
+  Math.ceil(getSubtotal(items, Number(discount)) * 1.15);
+
+export const getGSTValue = (items: any, discount: string) =>
+  Math.ceil(getSubtotal(items, Number(discount)) * 0.15);
 
 const getSubtotal = (items: any, discount: number) =>
   Math.ceil(Number(getTotal(items)) - getDiscountValue(items, discount));
 
 export const getDiscountValue = (
-  items: number | string,
+  items: Array<ProcessedInvoiceEntryType>,
   discount: number | string
 ) => {
   const total = getTotal(items);

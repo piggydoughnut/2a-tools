@@ -9,7 +9,7 @@ export const Error = ({ children }: { children: React.ReactNode }) => (
 export const Input = (props: any) => {
   const [field, meta] = useField(props.name);
   const isMyError = meta.error && meta.touched;
-  const inputStyle = `shadow-inner w-full bg-white-100 mb-2 border border-slate-700 rounded-lg p-4 focus:outline focus:outline-offset  focus:outline-indigo-400 ${
+  const inputStyle = `shadow-inner w-full bg-white-100 mb-2 border border-slate-700 rounded-lg pl-4 pr-4 pt-2 pb-2 focus:outline focus:outline-offset  focus:outline-indigo-400 ${
     props.customstyle
   } ${isMyError ? " outline outline-offset outline-red-400" : ""}`;
 
