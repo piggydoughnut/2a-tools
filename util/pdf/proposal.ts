@@ -10,12 +10,12 @@ import {
   getNewDoc,
   writeBold,
   writeText,
-} from "./pdfStyleConfig";
-import { ProposalType, specs } from "./defines";
+} from "../pdfHelpers/pdfStyleConfig";
+import { ProposalType, specs } from "../defines";
 
-import { addFooter } from "./pdfHelpers/addFooter";
-import { addHeader } from "./pdfHelpers/addHeader";
-import { addTermsAndConditionsPage } from "./pdfHelpers/addTermsAndConditionsPage";
+import { addFooter } from "../pdfHelpers/addFooter";
+import { addHeader } from "../pdfHelpers/addHeader";
+import { addTermsAndConditionsPage } from "./addTermsAndConditionsPage";
 import { pEvent } from "p-event";
 
 export const generateProposal = async ({

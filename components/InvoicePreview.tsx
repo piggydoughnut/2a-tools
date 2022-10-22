@@ -1,4 +1,4 @@
-import { Button, DownloadLink, InternalButton } from "./General/Button";
+import { Button, DownloadLink } from "./General/Button";
 
 import { Colors } from "util/defines";
 import Iframe from "react-iframe";

@@ -1,4 +1,4 @@
-import { Colors, FontSize, PageParams, REM } from "../pdfStyleConfig";
+import { Colors, FontSize, PageParams, REM } from "./pdfStyleConfig";
 
 import PDFDocument from "pdfkit-table";
 import { contact } from "config";

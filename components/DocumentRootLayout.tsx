@@ -7,7 +7,7 @@ export default function DocumentRootLayout({
   title,
 }: {
   children: React.ReactNode;
-  title: string;
+  title?: string;
 }) {
   return (
     <div

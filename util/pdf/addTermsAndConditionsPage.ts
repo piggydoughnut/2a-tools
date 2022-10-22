@@ -6,11 +6,11 @@ import {
   REM,
   writeBold,
   writeText,
-} from "../pdfStyleConfig";
+} from "../pdfHelpers/pdfStyleConfig";
 
 import PDFDocument from "pdfkit-table";
-import { addFooter } from "./addFooter";
-import { addHeader } from "./addHeader";
+import { addFooter } from "../pdfHelpers/addFooter";
+import { addHeader } from "../pdfHelpers/addHeader";
 import { paymentValues } from "config";
 
 export const addTermsAndConditionsPage = (

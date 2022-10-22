@@ -1,9 +1,9 @@
 import { CustomPdfDocumentType, InvoiceType, ProposalType } from "util/defines";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { generatePdf } from "../../util/invoice";
+import { generatePdf } from "../../util/pdf/invoice";
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { generateProposal } from "util/proposal";
+import { generateProposal } from "util/pdf/proposal";
 
 export default async function handler(
   req: NextApiRequest,

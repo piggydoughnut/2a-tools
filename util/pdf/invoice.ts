@@ -9,8 +9,8 @@ import {
   writeBold,
   writeNumbers,
   writeText,
-} from "./pdfStyleConfig";
-import { InvoiceType, specs } from "./defines";
+} from "../pdfHelpers/pdfStyleConfig";
+import { InvoiceType, specs } from "../defines";
 import { contact, paymentValues } from "config";
 import { format, parseISO } from "date-fns";
 
@@ -25,8 +25,8 @@ export const generatePdf = async ({
   gst,
   subtotal,
   amountDue,
-  discount = 0,
-  discountVal = 0,
+  discount = "0",
+  discountVal = "0",
   jobTitle,
 }: InvoiceType): Promise<Buffer | undefined | string> => {
   try {
@@ -122,7 +122,7 @@ export const generatePdf = async ({
       ["", Labels.SUBTOTAL, "", `$${subtotal}`]
     );
 
-    if (discount && discountVal) {
+    if (discount && discount !== "0" && discountVal && discountVal !== "0") {
       tableData.push([
         "",
         `${Labels.DISCOUNT} (${discount}%)`,

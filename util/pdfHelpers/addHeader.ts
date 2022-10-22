@@ -4,7 +4,7 @@ import {
   PageParams,
   REM,
   writeText,
-} from "../pdfStyleConfig";
+} from "./pdfStyleConfig";
 
 import PDFDocument from "pdfkit-table";
 
