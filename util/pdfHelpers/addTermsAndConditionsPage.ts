@@ -151,12 +151,33 @@ export const addTermsAndConditionsPage = (
         "3. Any additional design work as a result of a significant change of scope after concept and developed design stages have been signed off and any associated application work is charged at $200 + gst per hr.",
         "",
         "4. This fee proposal has been prepared based on our previous experience with similar scale, design and documentation projects.",
+        "",
+        "5. Each project is broken down into 4 phases:",
       ],
       PageParams.MARGIN,
       doc.y,
       {
         bulletRadius: 0.1,
         textIndent: 0,
+        bulletIndent: 0,
+        width: 400,
+      }
+    );
+    doc.moveDown();
+    doc.list(
+      [
+        "Brief phase - definition of the brief, signing the contract. 5 revisions are allowed during this phase.",
+        "Concept phase - 3 revisions are allowed during this phase.",
+        "Development phase - 3 revisions are allowed during this phase. At this stage the design is agreed upon and the documentation phase will begin.",
+        "Documentation phase - Any significant changes that modify the design will be charged per hour at $200/hr.",
+        "",
+        "Additional revisions will be charged per hour at $200/hr",
+      ],
+      PageParams.MARGIN,
+      doc.y,
+      {
+        bulletRadius: 0.1,
+        textIndent: 10,
         bulletIndent: 0,
         width: 400,
       }
