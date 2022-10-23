@@ -9,7 +9,6 @@ export default function Tools() {
   return (
     <DocumentRootLayout>
       <div>
-        <h3 className="text-md text-left mb-4 ">2A design tools</h3>
         <div className="flex justify-start align-start gap-6">
           <div className="flex flex-col gap-4 mt-4">
             <p className="text-sm uppercase">Invoice</p>
