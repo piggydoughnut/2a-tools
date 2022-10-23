@@ -23,34 +23,44 @@ export const Button = ({
   label,
   color = Colors.ORANGE,
   onClick,
+  type = "submit",
+  customstyle = "",
+  disabled = false,
 }: {
   label: string;
   color?: string;
   onClick?: () => void;
+  type: "button" | "submit" | "reset";
+  customstyle?: string;
+  disabled?: boolean;
 }) => {
   let colorStyle = "";
-  switch (color) {
-    case Colors.ORANGE:
-      colorStyle = "bg-peachy hover:text-orange-600 hover:border-orange-600";
-      break;
-    case Colors.GRAY:
-      colorStyle = "bg-gray-200 hover:text-brown-800 hover:border-brown-800";
-      break;
-    case Colors.RED:
-      colorStyle =
-        "bg-orange-500 hover:text-orange-800 hover:border-orange-800";
-      break;
-    case Colors.BLUE:
-      colorStyle = "bg-blue-300 hover:text-blue-800 hover:border-blue-800";
-      break;
-    default:
-      break;
+  if (disabled) {
+    colorStyle = "bg-white border cursor-not-allowed";
+  } else {
+    switch (color) {
+      case Colors.ORANGE:
+        colorStyle = `bg-peachy hover:text-orange-600 hover:border-orange-600 ${customstyle}`;
+        break;
+      case Colors.GRAY:
+        colorStyle = `bg-gray-200 hover:text-brown-800 hover:border-brown-800 ${customstyle}`;
+        break;
+      case Colors.RED:
+        colorStyle = `bg-orange-500 hover:text-orange-800 hover:border-orange-800 ${customstyle}`;
+        break;
+      case Colors.BLUE:
+        colorStyle = `bg-blue-300 hover:text-blue-800 hover:border-blue-800 ${customstyle}`;
+        break;
+      default:
+        break;
+    }
   }
+
   return (
     <button
-      className={`pr-4 pl-4 pt-2 pb-2 w-48 border rounded-md text-tiny font-bold ease-in-out duration-300 hover:bg-transparent uppercase ${colorStyle}`}
-      type="submit"
-      onClick={() => (onClick ? onClick() : "")}
+      className={`pr-4 pl-4 pt-2 pb-2 w-48 border rounded-md text-tiny font-bold ease-in-out duration-300 hover:bg-transparent uppercase ${colorStyle} `}
+      type={type}
+      onClick={() => (onClick && !disabled ? onClick() : "")}
     >
       {label}
     </button>

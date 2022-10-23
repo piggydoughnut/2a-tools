@@ -13,6 +13,7 @@ import {
   getTotalInvoiceValue,
   processNumber,
 } from "../util/helpers";
+import ls, { get, set } from "local-storage";
 
 import { CustomLink } from "../components/General/Button";
 import DocumentRootLayout from "../components/DocumentRootLayout";
@@ -24,6 +25,7 @@ import Submission from "../components/Submission";
 import add from "../public/icon-add.svg";
 import { getPDF } from "../util/helpers";
 import remove from "../public/icon-remove.svg";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const newValue: InvoiceEntryType = {
@@ -59,6 +61,23 @@ export default function InvoiceGeneratorPage() {
   const [amountDue, setAmountDue] = useState(0);
   const [subtotal, setSubtotal] = useState(0);
   const [showSpinner, setShowSpinner] = useState(false);
+  const [restored, setRestored] = useState(false);
+  const router = useRouter();
+
+  console.log(router.query);
+
+  if (router.query.restore && !restored) {
+    const draft: InvoiceType | null = get(router.query.draftName || "");
+    if (draft) {
+      console.log("Found draft ", draft);
+      setParams({ ...draft });
+      setRestored(true);
+      router.replace({
+        pathname: router.pathname,
+        query: {},
+      });
+    }
+  }
 
   const setGSTValue = (items: Array<InvoiceEntryType>, discount: string) => {
     const gst = getGSTValue(items, discount);
@@ -370,6 +389,7 @@ export default function InvoiceGeneratorPage() {
                   showSpinner={showSpinner}
                   buttonLabel="Create invoice"
                   errors={errors}
+                  data={values}
                 />
               </div>
             </Form>

@@ -1,3 +1,4 @@
+import { Button, CustomLink } from "components/General/Button";
 import {
   CustomPdfDocumentType,
   ProposalItem,
@@ -6,16 +7,19 @@ import {
 import { FieldArray, Form, Formik } from "formik";
 import { deliverablesNote, predefined } from "../util/data/termsAndConditions";
 import { getPDF, getTotalProposal, processNumber } from "util/helpers";
+import ls, { get, set } from "local-storage";
 
-import { CustomLink } from "components/General/Button";
+import { Colors } from "util/defines";
 import DocumentRootLayout from "components/DocumentRootLayout";
 import Image from "next/image";
 import { Input } from "components/Input";
 import InvoicePreview from "components/InvoicePreview";
 import { ProposalSchema } from "util/invoiceValidationSchemas";
+import Restore from "components/Restore";
 import Submission from "components/Submission";
 import add from "../public/icon-add.svg";
 import remove from "../public/icon-remove.svg";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const proposalItem: ProposalItem = {
@@ -41,7 +45,23 @@ export default function Proposal() {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [showSpinner, setShowSpinner] = useState(false);
   const [params, setParams] = useState(initialValues);
+  const [restored, setRestored] = useState(false);
+  const router = useRouter();
 
+  console.log(router.query);
+
+  if (router.query.restore && !restored) {
+    const draft: ProposalType | null = get(router.query.draftName || "");
+    if (draft) {
+      console.log(draft);
+      setParams({ ...draft });
+      setRestored(true);
+      router.replace({
+        pathname: router.pathname,
+        query: {},
+      });
+    }
+  }
   return (
     <DocumentRootLayout title={"New Proposal"}>
       {pdfUrl ? (
@@ -72,7 +92,7 @@ export default function Proposal() {
             setPdfUrl(pdfData);
           }}
         >
-          {({ values, errors }) => (
+          {({ values, errors, validateForm }) => (
             <Form>
               <div className="">
                 <div className=" gap-10 bg-orange-100 border-orange-400 border p-4 pl-10 shadow">
@@ -238,11 +258,11 @@ export default function Proposal() {
                   </div>
                 </div>
               </div>
-
               <Submission
                 showSpinner={showSpinner}
                 buttonLabel="Create proposal"
                 errors={errors}
+                data={values}
               />
             </Form>
           )}
