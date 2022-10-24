@@ -56,8 +56,11 @@ export const getDateFormat = () => format(new Date(), "yyyy-MM-dd");
 export const getPDF = async (params: any) => {
   try {
     const data = await axios.post("/api/generatePdf", { ...params });
-    return "data:application/pdf;base64," + data.data;
+    return getBase64String(data.data);
   } catch (e) {
     console.log(e);
   }
 };
+
+export const getBase64String = (base64string: string) =>
+  "data:application/pdf;base64,".concat(base64string);
