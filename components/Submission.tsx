@@ -21,6 +21,7 @@ export default function Submission({
   const [saving, setSaving] = useState(false);
   const saveDraft = () => {
     setSaving(true);
+    set(`${data.type}-draft`, data);
     setTimeout(() => {
       setSaving(false);
     }, 2000);
