@@ -21,7 +21,7 @@ export const Input = (props: any) => {
         </label>
       )}
       {props.type === "textarea" ? (
-        <GrammarlyEditorPlugin clientId="client_3qMp9dapxvbwsnzv53xKGg">
+        <GrammarlyEditorPlugin clientId={process.env.NEXT_PUBLIC_GRAMMARLY}>
           <textarea className={inputStyle} {...field} {...props} />
         </GrammarlyEditorPlugin>
       ) : (
