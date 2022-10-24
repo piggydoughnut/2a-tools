@@ -45,4 +45,6 @@ export const ProposalSchema = Yup.object().shape({
   client: Yup.string().required("Required").max(300),
   projectScope: Yup.string().required("Required"),
   items: Yup.array().of(ProposalItemSchema).min(1).required("Required"),
+  deliverablesNote: Yup.string(),
+  hourlyRate: Yup.number().required("Required"),
 });

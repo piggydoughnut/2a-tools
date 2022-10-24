@@ -39,6 +39,7 @@ const initialValues: ProposalType = {
   amountDue: "",
   gst: "",
   subtotal: "",
+  hourlyRate: 160,
 };
 
 export default function Proposal() {
@@ -258,6 +259,14 @@ export default function Proposal() {
                       name={"deliverablesNote"}
                       type={"textarea"}
                       rows={5}
+                    />
+                    <Input
+                      key={"hourlyRate"}
+                      name={"hourlyRate"}
+                      label={"Hourly rate in NZD"}
+                      type={"number"}
+                      value={values.hourlyRate}
+                      customstyle={"w-36"}
                     />
                   </div>
                 </div>

@@ -45,4 +45,4 @@ export const predefined = [
 ];
 
 export const deliverablesNote =
-  "We propose to charge the as-built portion of the services as a fixed fee as it is easy to quantify. We propose an hourly rate for the Building Consent and Resource Consent documentation phases as it is unclear just how much documentation work is involved. The estimated fees are based on a rate of $200 / hr and we consider they would be a maximum.";
+  "We propose to charge the as-built portion of the services as a fixed fee as it is easy to quantify. We propose an hourly rate for the Building Consent and Resource Consent documentation phases as it is unclear just how much documentation work is involved. You can find our hourly rate in terms and conditions at the end of this proposal.";

@@ -15,7 +15,8 @@ import { paymentValues } from "config";
 
 export const addTermsAndConditionsPage = (
   doc: PDFDocument,
-  projectName: string
+  projectName: string,
+  hourlyRate: number
 ): void => {
   try {
     const columnWidth = 15 * REM;
@@ -150,7 +151,7 @@ export const addTermsAndConditionsPage = (
       [
         "2. The balance of our fee is invoiced on stage completion and is payable on receipt of the invoice.",
         "",
-        "3. Any additional design work as a result of a significant change of scope after concept and developed design stages have been signed off and any associated application work is charged at $160 + gst per hr.",
+        `3. Any additional design work as a result of a significant change of scope after concept and developed design stages have been signed off and any associated application work is charged at $${hourlyRate} + gst per hr.`,
         "",
         "4. This fee proposal has been prepared based on our previous experience with similar scale, design and documentation projects.",
       ],
@@ -174,9 +175,9 @@ export const addTermsAndConditionsPage = (
         "",
         "Development phase - 3 revisions are allowed during this phase. At this stage the design is agreed upon and the documentation phase will begin.",
         "",
-        "Documentation phase - Any significant changes that modify the design will be charged per hour at $160 + gst per hr.",
+        `Documentation phase - Any significant changes that modify the design will be charged per hour at $${hourlyRate} + gst per hr.`,
         "",
-        "Additional revisions will be charged per hour at $160 + gst per hr",
+        `Additional revisions will be charged per hour at $${hourlyRate} + gst per hr`,
       ],
       PageParams.MARGIN * 8,
       termsStartY,

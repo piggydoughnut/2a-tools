@@ -44,6 +44,7 @@ export const inputKeysMap = {
   discount: "Discount",
   fees: "Fees",
   projectScope: "Project Scope",
+  hourlyRate: "Hourly Rate",
 };
 
 export const Messages = {

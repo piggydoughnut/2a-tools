@@ -54,6 +54,7 @@ export interface ProposalType extends PdfDocumentData {
   items: Array<ProposalItem>;
   deliverablesNote: string;
   projectScope: string;
+  hourlyRate: number;
 }
 
 export type specs = {

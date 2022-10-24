@@ -29,6 +29,7 @@ export const generateProposal = async ({
   projectName,
   client,
   projectScope,
+  hourlyRate,
 }: ProposalType): Promise<Buffer | undefined | string> => {
   try {
     const doc = getNewDoc();
@@ -241,11 +242,13 @@ export const generateProposal = async ({
 
     doc.moveDown();
     doc.fontSize(FontSize.P).opacity(0.7);
-    doc.text("NOTE");
-    doc.fontSize(FontSize.P);
-    doc.text(deliverablesNote, { width: 400 }).opacity(1);
+    if (deliverablesNote) {
+      doc.text("NOTE");
+      doc.fontSize(FontSize.P);
+      doc.text(deliverablesNote, { width: 400 }).opacity(1);
+    }
     doc.addPage();
-    addTermsAndConditionsPage(doc, projectName);
+    addTermsAndConditionsPage(doc, projectName, hourlyRate);
     doc.end();
 
     await pEvent(doc, "end");
