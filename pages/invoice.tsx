@@ -52,10 +52,8 @@ const initValues: InvoiceType = {
   gst: "",
 };
 
-console.log("init ", initValues);
-
 export default function InvoiceGeneratorPage() {
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState("");
   const [params, setParams] = useState(initValues);
   const [gst, setGST] = useState(0);
   const [amountDue, setAmountDue] = useState(0);
@@ -64,12 +62,12 @@ export default function InvoiceGeneratorPage() {
   const [restored, setRestored] = useState(false);
   const router = useRouter();
 
-  console.log(router.query);
-
   if (router.query.restore && !restored) {
-    const draft: InvoiceType | null = get(router.query.draftName || "");
+    //@ts-ignore
+    const draft: InvoiceType | null = get(
+      router.query.draftName?.toString() || ""
+    );
     if (draft) {
-      console.log("Found draft ", draft);
       setParams({ ...draft });
       setRestored(true);
       router.replace({
@@ -99,13 +97,14 @@ export default function InvoiceGeneratorPage() {
     setSubtotal(total);
     return processNumber(total);
   };
-  const layoutTitle = pdfUrl ? "New Invoice Preview" : "Create New Invoice";
+  const layoutTitle =
+    pdfUrl !== "" ? "New Invoice Preview" : "Create New Invoice";
 
   return (
     <DocumentRootLayout title={layoutTitle}>
-      {pdfUrl ? (
+      {pdfUrl !== "" ? (
         <InvoicePreview
-          setPdfUrl={(s) => {
+          setPdfUrl={(s: string) => {
             setShowSpinner(false);
             setPdfUrl(s);
           }}
@@ -145,7 +144,10 @@ export default function InvoiceGeneratorPage() {
             );
             setParams(vs);
             const pdfData = await getPDF(vs);
-            setPdfUrl(pdfData);
+            if (pdfData) {
+              setPdfUrl(pdfData);
+              // @todo add error handling
+            }
           }}
         >
           {({ values, errors }) => (

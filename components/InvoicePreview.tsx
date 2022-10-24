@@ -11,7 +11,7 @@ const InvoicePreview = ({
   pdfUrl,
 }: {
   projectName: string;
-  invoiceNumber: string;
+  invoiceNumber?: string;
   setPdfUrl: any;
   pdfUrl: string;
 }) => {
@@ -19,7 +19,11 @@ const InvoicePreview = ({
   const fileName = projectName
     .replace(/\b\w/g, (l) => l.toUpperCase())
     .replaceAll(" ", "-");
-  const invoiceFileName = `${invoiceNumber.replace("#", "")}-${fileName}.pdf`;
+  const invoiceFileName = `${
+    invoiceNumber
+      ? invoiceNumber.replace("#", "").concat("-")
+      : "2ADesign-Proposal-"
+  }${fileName}.pdf`;
   return (
     <div>
       {" "}

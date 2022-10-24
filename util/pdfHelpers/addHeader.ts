@@ -26,7 +26,7 @@ export const addHeader = (doc: PDFDocument, projectName: string): void => {
       .moveTo(PageParams.MARGIN, TOP_SEPARATOR_Y)
       .lineTo(PageParams.A4_WIDTH - PageParams.MARGIN, TOP_SEPARATOR_Y)
       .stroke();
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
   }
 };

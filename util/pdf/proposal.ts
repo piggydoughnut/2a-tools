@@ -252,7 +252,7 @@ export const generateProposal = async ({
     bufferChunks = bufferChunks.filter((a: any) => a);
     var pdfBuffer = Buffer.concat(bufferChunks);
     return pdfBuffer.toString("base64");
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
   }
 };

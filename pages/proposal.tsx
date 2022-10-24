@@ -42,18 +42,18 @@ const initialValues: ProposalType = {
 };
 
 export default function Proposal() {
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);
   const [params, setParams] = useState(initialValues);
   const [restored, setRestored] = useState(false);
+  const [projectName, setProjectName] = useState("");
   const router = useRouter();
 
-  console.log(router.query);
-
   if (router.query.restore && !restored) {
-    const draft: ProposalType | null = get(router.query.draftName || "");
+    const draft: ProposalType | null = get(
+      router.query.draftName?.toString() || ""
+    );
     if (draft) {
-      console.log(draft);
       setParams({ ...draft });
       setRestored(true);
       router.replace({
@@ -71,8 +71,7 @@ export default function Proposal() {
             setPdfUrl(s);
           }}
           pdfUrl={pdfUrl}
-          projectName={"asdad"}
-          invoiceNumber={"123"}
+          projectName={projectName}
         />
       ) : (
         <Formik
@@ -82,6 +81,7 @@ export default function Proposal() {
           onSubmit={async (vs: ProposalType) => {
             setShowSpinner(true);
             console.log(vs);
+            setProjectName(vs.projectName);
             setParams(vs);
             const tot = getTotalProposal(vs.items);
             const gst = Math.ceil(tot * 0.15);
@@ -89,7 +89,11 @@ export default function Proposal() {
             vs.amountDue = processNumber(tot + gst);
             vs.gst = processNumber(gst);
             const pdfData: string | undefined = await getPDF(vs);
-            setPdfUrl(pdfData);
+            if (pdfData) {
+              setPdfUrl(pdfData);
+            } else {
+              // @to-do add error handling
+            }
           }}
         >
           {({ values, errors, validateForm }) => (

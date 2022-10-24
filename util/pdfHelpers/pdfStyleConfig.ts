@@ -77,6 +77,7 @@ export const getNewDoc = () =>
   new PDFDocument({
     bufferPages: true,
     size: "A4",
+    // @ts-ignore
     margins: {
       top: PageParams.MARGIN,
       // bottom: PageParams.MARGIN,

@@ -17,18 +17,17 @@ export default async function handler(
         if (data?.type === CustomPdfDocumentType.invoice) {
           pdfData = await generatePdf(req.body);
         } else {
-          console.log("f", req.body);
           pdfData = await generateProposal(req.body);
         }
         return res.end(pdfData);
-      } catch (e: unknown) {
+      } catch (e: any) {
         console.log(e);
         return res.send({ err: e.message, stack: e.stack });
       }
     } else {
       return res.json({ what: "yo" });
     }
-  } catch (e) {
+  } catch (e: any) {
     return res.json({ err: e.message, stack: e.stack });
   }
 }

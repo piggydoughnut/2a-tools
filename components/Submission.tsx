@@ -21,14 +21,11 @@ export default function Submission({
   const [saving, setSaving] = useState(false);
   const saveDraft = () => {
     setSaving(true);
-    console.log("saving as ", data.type + "-draft");
-    set(data.type + "-draft", data);
     setTimeout(() => {
       setSaving(false);
     }, 2000);
   };
   const thereAreErrors = Object.keys(errors).length > 0;
-  console.log(thereAreErrors);
 
   const Buttons = () => (
     <div className="flex flex-row gap-8 justify-center">

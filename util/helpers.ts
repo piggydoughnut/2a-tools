@@ -57,7 +57,7 @@ export const getPDF = async (params: any) => {
   try {
     const data = await axios.post("/api/generatePdf", { ...params });
     return getBase64String(data.data);
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
   }
 };

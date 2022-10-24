@@ -14,18 +14,24 @@ import fileIcon from "../public/fileIcon.svg";
 
 const msg = "Drag an invoice that you want to mark as paid here";
 export default function PaidInvoice() {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>();
   const [pdfUrl, setPdfUrl] = useState("");
   const [showSpinner, setShowSpinner] = useState(true);
   const [message, setMessage] = useState(msg);
   const [error, setError] = useState(false);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const onFileInputChange = (event) => {
+  const onFileInputChange = (event: any) => {
     setError(false);
     const { files } = event.target;
-    console.log(files);
-    processFile(files[0]);
+    if (files && files.length > 0) {
+      processFile(files[0]);
+    } else {
+      setError(true);
+      setMessage(
+        "Could not upload your file. Please try again later or try another file."
+      );
+    }
   };
 
   const processFile = async (file: File | null) => {
@@ -38,7 +44,7 @@ export default function PaidInvoice() {
         setTimeout(() => setShowSpinner(false), 1000);
         setPdfUrl(newPdfUrl);
       }
-    } catch (e: unknown) {
+    } catch (e: any) {
       console.log(e);
       setError(true);
       setMessage(
@@ -102,7 +108,9 @@ export default function PaidInvoice() {
                     className="w-80 text-center h-64 flex justify-center align-middle"
                     onDragOver={(event) => setMessage("Release the file")}
                     onDragLeave={(event) => setMessage(msg)}
-                    onDrop={(files, event) => processFile(files[0])}
+                    onDrop={(files, event) =>
+                      processFile(files ? files[0] : null)
+                    }
                     onTargetClick={onTargetClick}
                   >
                     <div className="flex flex-col mx-auto">

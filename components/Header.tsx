@@ -3,7 +3,7 @@ import { getTodayDate } from "util/helpers";
 import logo from "../public/logov2-1.svg";
 import { useRouter } from "next/router";
 
-export default function Header({ title }: { title: string }) {
+export default function Header({ title }: { title: string | undefined }) {
   const router = useRouter();
   const d = getTodayDate();
   return (

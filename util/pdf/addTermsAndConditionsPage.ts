@@ -189,7 +189,7 @@ export const addTermsAndConditionsPage = (
     );
 
     addFooter(doc);
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
   }
 };

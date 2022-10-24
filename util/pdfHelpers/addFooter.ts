@@ -41,7 +41,7 @@ export const addFooter = (doc: PDFDocument): void => {
         width: PageParams.A4_WIDTH / 2,
       }
     );
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
   }
 };

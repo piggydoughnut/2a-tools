@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 export default function Tools() {
   const router = useRouter();
   return (
-    <DocumentRootLayout>
+    <DocumentRootLayout title="">
       <div>
         <div className="flex justify-start align-start gap-6">
           <div className="flex flex-col gap-4 mt-4">
