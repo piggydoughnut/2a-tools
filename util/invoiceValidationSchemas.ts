@@ -16,6 +16,16 @@ const ItemSchema = Yup.object().shape({
     .typeError("A number is required"),
 });
 
+const ProposalItemSchema = Yup.object().shape({
+  description: Yup.string().required("Required"),
+  workInvolved: Yup.string().required("Required"),
+  outcome: Yup.string().required("Required"),
+  fees: Yup.number()
+    .required("Required")
+    .min(1, "Minimum 1")
+    .typeError("A number is required"),
+});
+
 export const InvoiceSchema = Yup.object().shape({
   invoiceNumber: Yup.string().min(0).required("Required"),
   projectNumber: Yup.number()
@@ -25,7 +35,14 @@ export const InvoiceSchema = Yup.object().shape({
   jobTitle: Yup.string().max(200),
   issueDate: Yup.date().required("Required"),
   dueDate: Yup.date().required("Required"),
-  billto: Yup.string().required("Required").max(300),
+  client: Yup.string().required("Required").max(300),
   items: Yup.array().of(ItemSchema).min(1).required("Required"),
   discount: Yup.number().max(100),
+});
+
+export const ProposalSchema = Yup.object().shape({
+  projectName: Yup.string().required("Required").max(100),
+  client: Yup.string().required("Required").max(300),
+  projectScope: Yup.string().required("Required"),
+  items: Yup.array().of(ProposalItemSchema).min(1).required("Required"),
 });

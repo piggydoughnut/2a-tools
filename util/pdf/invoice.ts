@@ -2,162 +2,123 @@ import {
   Colors,
   DATE_FORMAT,
   FontSize,
-  Fonts,
   LOGO_IMAGE,
   Labels,
+  Padding,
   PageParams,
-} from "./pdfStyleConfig";
+  REM,
+  getNewDoc,
+  writeBold,
+  writeNumbers,
+  writeText,
+} from "../pdfHelpers/pdfStyleConfig";
+import { InvoiceType, specs } from "../defines";
+import { contact, paymentValues } from "config";
 import { format, parseISO } from "date-fns";
 
-import { NewValueType } from "./helpers";
-import PDFDocument from "pdfkit-table";
-import { contact } from "config";
 import { pEvent } from "p-event";
-
-export type InvoiceProps = {
-  invoiceNumberFull: number;
-  issueDate: Date;
-  dueDate: Date;
-  billto: string;
-  totalInvoice?: number;
-  items: Array<NewValueType>;
-  paymentValues: Array<{
-    label: string;
-    value: string;
-    number?: boolean;
-  }>;
-  subtotal?: number;
-  gst?: number;
-  amountDue?: number;
-  discount?: number;
-  discountVal: number;
-  jobTitle: string;
-};
 
 export const generatePdf = async ({
   invoiceNumberFull,
   issueDate,
   dueDate,
-  billto,
+  client,
   items,
-  paymentValues,
   gst,
   subtotal,
   amountDue,
-  discount = 0,
-  discountVal = 0,
+  discount = "0",
+  discountVal = "0",
   jobTitle,
-}: InvoiceProps): Promise<Buffer | undefined | string> => {
+}: InvoiceType): Promise<Buffer | undefined | string> => {
   try {
-    const doc = new PDFDocument({
-      bufferPages: true,
-      size: "A4",
-      margins: {
-        top: PageParams.MARGIN,
-        bottom: PageParams.MARGIN,
-        left: PageParams.MARGIN,
-        right: PageParams.MARGIN,
-      },
-    });
-
+    const doc = getNewDoc();
     let bufferChunks: any = [];
     doc.on("readable", function () {
       // Store buffer chunk to array
       bufferChunks.push(doc.read());
     });
-    const Y_OFFSET_CONDITION = 17;
     doc
       .opacity(0.05)
-      .rect(0, 0, PageParams.A4_WIDTH, 240 + Y_OFFSET_CONDITION)
-      .fill(Colors.BLACK);
-    doc.fill(Colors.BLACK).opacity(1);
+      .rect(0, 0, PageParams.A4_WIDTH, 240 + Padding.big)
+      .fill(Colors.BLACK)
+      .opacity(1);
 
     doc.image(LOGO_IMAGE, PageParams.MARGIN, PageParams.MARGIN, {
       width: 150,
     });
 
-    const writeBold = (fontSize?: number | null) => {
-      if (!fontSize) {
-        fontSize = FontSize.P;
-      }
-      doc.fontSize(fontSize);
-      doc.font(Fonts.inriaBold);
-    };
-
-    const writeNumbers = (fontSize?: number | null) => {
-      if (!fontSize) {
-        fontSize = FontSize.P;
-      }
-      doc.fontSize(fontSize);
-      doc.font(Fonts.robotoMono);
-    };
-
-    const writeText = (fontSize?: number | null) => {
-      if (!fontSize) {
-        fontSize = FontSize.P;
-      }
-      doc.fontSize(fontSize);
-      doc.font(Fonts.inriaRegular);
-    };
-
     const HEADER_X = 400;
-    const HEADER_YY = PageParams.MARGIN + 2;
-    const HEADER_Y = HEADER_YY + PageParams.LINE_HEIGHT * 0.75;
+    const HEADER_Y = PageParams.MARGIN + 2;
 
-    writeBold(8);
+    writeBold(doc, 8);
     doc.opacity(0.7);
-    doc.text("DUE DATE", HEADER_X, HEADER_YY);
+    doc.text("DUE DATE", HEADER_X, HEADER_Y);
     doc.opacity(1);
-    writeText(8);
+    writeText(doc, 8);
     doc.text(
       format(parseISO(dueDate.toString()), DATE_FORMAT),
-      HEADER_X,
-      HEADER_Y
+      doc.x,
+      doc.y + Padding.small
     );
 
-    writeBold(8);
-    doc.opacity(0.7);
-    doc.text("ISSUE DATE", HEADER_X, HEADER_YY + PageParams.LINE_HEIGHT * 1.75);
-    doc.opacity(1);
-    writeText(8);
+    writeBold(doc, 8);
+    doc
+      .opacity(0.7)
+      .text("ISSUE DATE", HEADER_X, doc.y + Padding.big)
+      .opacity(1);
+    writeText(doc, 8);
     doc.text(
       format(parseISO(issueDate.toString()), DATE_FORMAT),
-      HEADER_X,
-      HEADER_YY + PageParams.LINE_HEIGHT * 2.5
+      doc.x,
+      doc.y + Padding.small
     );
 
-    writeBold(8);
-    doc.opacity(0.7);
-    doc.text("BILL TO", HEADER_X + 90, HEADER_YY, { align: "right" });
-    doc.opacity(1);
+    writeBold(doc, 8);
+    doc
+      .opacity(0.7)
+      .text("CLIENT", HEADER_X + 4 * REM, HEADER_Y, {
+        align: "right",
+      })
+      .opacity(1);
 
-    writeText(8);
-    doc.text(billto, HEADER_X, HEADER_Y, {
+    writeText(doc, 8);
+    doc.text(client, doc.x, doc.y + Padding.small, {
       align: "right",
-      lineGap: 2,
+      lineGap: 3,
     });
 
-    writeBold(FontSize.H1);
-    doc.text("INVOICE", PageParams.MARGIN, 180, {
+    const INVOICE_Y = 180;
+
+    writeBold(doc, FontSize.H1);
+    doc.text("INVOICE", PageParams.MARGIN, INVOICE_Y, {
       align: "left",
       characterSpacing: 10,
     });
     //230
-    writeText(FontSize.P);
-    doc.opacity(0.7);
-    doc.text(`${invoiceNumberFull}`, PageParams.MARGIN, 230, {
-      align: "left",
-      continued: true,
-    });
+    writeText(doc, FontSize.P);
+    doc
+      .opacity(0.7)
+      .text(
+        `${invoiceNumberFull}`,
+        PageParams.MARGIN,
+        INVOICE_Y + REM * 3.125,
+        {
+          align: "left",
+          continued: true,
+        }
+      );
     if (jobTitle) {
-      writeText(FontSize.P);
-      doc.text(` for ${jobTitle}`, PageParams.MARGIN, 230);
+      writeText(doc, FontSize.P);
+      doc.text(
+        ` for ${jobTitle}`,
+        PageParams.MARGIN + Padding.small,
+        INVOICE_Y + REM * 3.125
+      );
     }
 
     doc.opacity(1);
-    writeText();
-
-    const HEADER_LINE_Y = 250 + Y_OFFSET_CONDITION;
+    writeText(doc);
 
     const tableData = [];
 
@@ -175,7 +136,7 @@ export const generatePdf = async ({
       ["", Labels.SUBTOTAL, "", `$${subtotal}`]
     );
 
-    if (discount && discountVal) {
+    if (discount && discount !== "0" && discountVal && discountVal !== "0") {
       tableData.push([
         "",
         `${Labels.DISCOUNT} (${discount}%)`,
@@ -189,14 +150,7 @@ export const generatePdf = async ({
       ["", "", Labels.AMOUNT_DUE, `$${amountDue}`]
     );
 
-    type specs = {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    };
-    // @ts-ignore
-    const renderCol = (
+    const renderItem = (
       value: string,
       indexColumn: number,
       indexRow: number,
@@ -205,29 +159,71 @@ export const generatePdf = async ({
       rectCell: specs
     ) => {
       let { x, y, width, height } = rectCell;
-      let padding = 15;
-      const labels = [
-        Labels.SUBTOTAL,
-        Labels.GST,
-        Labels.DISCOUNT,
-        Labels.TOTAL,
-      ];
+      doc.text(value, x, y + Padding.big, {
+        align: "left",
+        width: width - Padding.big,
+        height,
+      });
+    };
+
+    const renderPrice = (
+      value: string,
+      indexColumn: number,
+      indexRow: number,
+      row: Array<string | number>,
+      rectRow: specs,
+      rectCell: specs
+    ) => {
+      let { x, y, width, height } = rectCell;
+      let padding = Padding.big;
+      let offset = 0;
+      doc.text(value, x + offset, y + padding, {
+        align: "left",
+        width: width - Padding.big,
+        height,
+      });
+    };
+    const renderQty = (
+      value: string,
+      indexColumn: number,
+      indexRow: number,
+      row: Array<string | number>,
+      rectRow: specs,
+      rectCell: specs
+    ) => {
+      let { x, y, width, height } = rectCell;
+      let padding = Padding.big;
+      let offset = Padding.small;
+      let align = "center";
+      //// Amount Due label
+      if (value == Labels.AMOUNT_DUE) {
+        offset = -REM * 6.5;
+        width = width * 2.5;
+        padding = padding * 2;
+      }
+      doc.text(value, x + offset, y + padding, {
+        align,
+        width: width - Padding.big,
+        height,
+      });
+    };
+    // @ts-ignore
+    const renderLastCol = (
+      value: string,
+      indexColumn: number,
+      indexRow: number,
+      row: Array<string | number>,
+      rectRow: specs,
+      rectCell: specs
+    ) => {
+      let { x, y, width, height } = rectCell;
+      let padding = Padding.big;
       let offset = 0;
       let align = "left";
 
-      //// Amount Due label
-      if (value == Labels.AMOUNT_DUE) {
-        offset = -98;
-        width = width * 2;
-        padding = padding * 2;
-      }
       //// Amount Due value
       if (indexRow === tableData.length - 1 && indexColumn === 3) {
         padding = padding * 2;
-      }
-      // align qty center
-      if (indexColumn === 2) {
-        align = "center";
       }
       // align total right
       if (indexColumn === 3) {
@@ -249,7 +245,7 @@ export const generatePdf = async ({
           align: "left",
           headerAlign: "left",
           headerColor: "white",
-          renderer: renderCol,
+          renderer: renderItem,
         },
         {
           label: "Price",
@@ -257,7 +253,7 @@ export const generatePdf = async ({
           align: "left",
           headerAlign: "left",
           headerColor: "white",
-          renderer: renderCol,
+          renderer: renderPrice,
         },
         {
           label: "Qty",
@@ -265,7 +261,7 @@ export const generatePdf = async ({
           align: "center",
           headerAlign: "center",
           headerColor: "white",
-          renderer: renderCol,
+          renderer: renderQty,
         },
         {
           label: "Total",
@@ -273,24 +269,24 @@ export const generatePdf = async ({
           align: "right",
           headerAlign: "right",
           headerColor: "white",
-          renderer: renderCol,
+          renderer: renderLastCol,
         },
       ],
       rows: tableData,
     };
 
-    doc.text("", PageParams.MARGIN, HEADER_LINE_Y);
+    doc.text("", PageParams.MARGIN, INVOICE_Y + REM * 5.5);
     // @ts-ignore
     await doc.table(table, {
       columnsSize: [290, 90, 50, 85],
       columnSpacing: 5,
       prepareHeader: () => {
-        writeBold();
+        writeBold(doc);
         return doc;
       },
-      prepareRow: (row, indexColumn, indexRow, rectRow, rectCell) => {
+      prepareRow: (row, indexColumn, indexRow: unknown, rectRow, rectCell) => {
         //regular text
-        writeText();
+        writeText(doc);
 
         if (indexRow === 0) {
           rectCell &&
@@ -302,32 +298,31 @@ export const generatePdf = async ({
         }
 
         if (indexColumn !== 0) {
-          const allRows = table.rows.length;
           const subtotalSectionRowIndex =
-            allRows - Object.keys(Labels).length + (discount ? 0 : 1);
-          const lastRowIndex = allRows - 1;
+            table.rows.length - Object.keys(Labels).length + (discount ? 0 : 1);
+          const lastRowIndex = table.rows.length - 1;
+          const isLastRow = indexRow === lastRowIndex;
+          const isSubTotalRow = indexRow === subtotalSectionRowIndex;
+          const isInSubtotalSection = indexRow
+            ? indexRow >= subtotalSectionRowIndex
+            : false;
           // text
           if (
             indexRow &&
-            indexRow >= subtotalSectionRowIndex &&
-            indexRow < lastRowIndex &&
+            isInSubtotalSection &&
+            !isLastRow &&
             indexColumn === 1
           ) {
-            writeBold();
+            writeBold(doc);
           } else {
-            writeNumbers();
+            writeNumbers(doc);
           }
-          if (indexRow == lastRowIndex) {
-            writeBold(FontSize.H3);
-          }
-          if (
-            indexRow === subtotalSectionRowIndex ||
-            indexRow === lastRowIndex
-          ) {
-            let padding = 10;
-            if (lastRowIndex) {
-              padding = 15;
-            }
+          // draw the line above subtotal and above Amount Due
+          if (isLastRow || isSubTotalRow) {
+            writeBold(doc, FontSize.H3);
+            let padding = isLastRow
+              ? Padding.big
+              : Padding.big + Padding.medium;
             const y = rectCell ? rectCell.y + padding : 0;
             rectCell &&
               doc
@@ -346,15 +341,19 @@ export const generatePdf = async ({
     });
 
     ////////// FOOTER /////////////
-    writeBold(FontSize.H2);
-    doc.text("Thank you", PageParams.MARGIN, PageParams.FOOTER_HEIGHT);
+    writeBold(doc, FontSize.H2);
+    doc.text(
+      "Thank you for choosing us",
+      PageParams.MARGIN,
+      PageParams.FOOTER_HEIGHT
+    );
     doc
       .lineCap("butt")
       .moveTo(PageParams.MARGIN, PageParams.FOOTER_HEIGHT + 30)
       .lineTo(555, PageParams.FOOTER_HEIGHT + 30)
       .stroke();
 
-    writeBold();
+    writeBold(doc);
     const COEF = 0.7;
 
     doc
@@ -364,7 +363,7 @@ export const generatePdf = async ({
         PageParams.MARGIN,
         PageParams.FOOTER_HEIGHT + PageParams.LINE_HEIGHT * 2
       );
-    writeText();
+    writeText(doc);
     doc.fillColor(Colors.BLACK);
     paymentValues.map((value, index) => {
       let height =
@@ -373,7 +372,7 @@ export const generatePdf = async ({
       doc.text(value.value, PageParams.MARGIN * 4, height);
     });
 
-    writeBold();
+    writeBold(doc);
 
     doc
       .fillColor(Colors.GRAY)
@@ -382,7 +381,7 @@ export const generatePdf = async ({
         430,
         PageParams.FOOTER_HEIGHT + PageParams.LINE_HEIGHT * 2
       );
-    writeText();
+    writeText(doc);
     doc.fillColor(Colors.BLACK);
     contact.map((val, index) => {
       let height =
@@ -396,7 +395,7 @@ export const generatePdf = async ({
     bufferChunks = bufferChunks.filter((a: any) => a);
     var pdfBuffer = Buffer.concat(bufferChunks);
     return pdfBuffer.toString("base64");
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
   }
 };

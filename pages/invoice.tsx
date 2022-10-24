@@ -1,5 +1,9 @@
+import {
+  CustomPdfDocumentType,
+  InvoiceEntryType,
+  InvoiceType,
+} from "../util/defines";
 import { FieldArray, Form, Formik } from "formik";
-import { Messages, paymentValues } from "../config";
 import {
   getDateFormat,
   getDiscountValue,
@@ -9,67 +13,98 @@ import {
   getTotalInvoiceValue,
   processNumber,
 } from "../util/helpers";
+import ls, { get, set } from "local-storage";
 
-import { Error } from "../components/Input";
+import { CustomLink } from "../components/General/Button";
+import DocumentRootLayout from "../components/DocumentRootLayout";
 import Image from "next/image";
 import { Input } from "../components/Input";
 import InvoicePreview from "../components/InvoicePreview";
 import { InvoiceSchema } from "../util/invoiceValidationSchemas";
-import Layout from "../components/Layout";
-import { Rings } from "react-loader-spinner";
+import Submission from "../components/Submission";
+import add from "../public/icon-add.svg";
 import { getPDF } from "../util/helpers";
+import remove from "../public/icon-remove.svg";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
-const newValue = {
+const newValue: InvoiceEntryType = {
   item: "",
   qty: 1,
   price: 0,
 };
 
-const initValues = {
-  invoiceNumber: "",
-  projectNumber: "",
+const initValues: InvoiceType = {
+  type: CustomPdfDocumentType.invoice,
+  invoiceNumber: 0,
+  invoiceNumberFull: "",
+  projectNumber: 0,
   projectName: "",
   jobTitle: "",
   issueDate: getDateFormat(),
   dueDate: getDateFormat(),
-  billto: "",
+  client: "",
   items: [{ ...newValue }],
-  paymentValues,
-  discount: 0,
+  discount: "0",
+  total: "",
+  subtotal: "",
+  amountDue: "",
+  gst: "",
 };
 
 export default function InvoiceGeneratorPage() {
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfUrl, setPdfUrl] = useState("");
   const [params, setParams] = useState(initValues);
   const [gst, setGST] = useState(0);
-  const [amountDue, setAmountDue] = useState(initValues);
-  const [subtotal, setSubtotal] = useState(initValues);
+  const [amountDue, setAmountDue] = useState(0);
+  const [subtotal, setSubtotal] = useState(0);
   const [showSpinner, setShowSpinner] = useState(false);
+  const [restored, setRestored] = useState(false);
+  const router = useRouter();
 
-  const setGSTValue = (items, discount) => {
+  if (router.query.restore && !restored) {
+    //@ts-ignore
+    const draft: InvoiceType | null = get(
+      router.query.draftName?.toString() || ""
+    );
+    if (draft) {
+      setParams({ ...draft });
+      setRestored(true);
+      router.replace({
+        pathname: router.pathname,
+        query: {},
+      });
+    }
+  }
+
+  const setGSTValue = (items: Array<InvoiceEntryType>, discount: string) => {
     const gst = getGSTValue(items, discount);
     setGST(gst);
     return processNumber(gst);
   };
 
-  const setAmountDueValue = (items, discount) => {
+  const setAmountDueValue = (
+    items: Array<InvoiceEntryType>,
+    discount: string
+  ) => {
     const due = getTotalInvoiceValue(items, discount);
     setAmountDue(due);
     return processNumber(due);
   };
 
-  const setSubtotalValue = (items) => {
+  const setSubtotalValue = (items: Array<InvoiceEntryType>) => {
     const total = getTotal(items);
     setSubtotal(total);
     return processNumber(total);
   };
+  const layoutTitle =
+    pdfUrl !== "" ? "New Invoice Preview" : "Create New Invoice";
 
   return (
-    <Layout title={pdfUrl ? "New Invoice Preview" : "Create New Invoice"}>
-      {pdfUrl ? (
+    <DocumentRootLayout title={layoutTitle}>
+      {pdfUrl !== "" ? (
         <InvoicePreview
-          setPdfUrl={(s) => {
+          setPdfUrl={(s: string) => {
             setShowSpinner(false);
             setPdfUrl(s);
           }}
@@ -85,13 +120,17 @@ export default function InvoiceGeneratorPage() {
           onSubmit={async (vs) => {
             setShowSpinner(true);
             // @todo explore if you can make these fields Hidden form fields in Formik
+            vs.type = CustomPdfDocumentType.invoice;
             vs.amountDue = processNumber(amountDue);
             vs.subtotal = processNumber(subtotal);
             vs.gst = processNumber(gst);
             if (vs.discount && vs.discount !== "0") {
-              vs.discountVal = getDiscountValue(vs.items, vs.discount);
+              vs.discountVal = getDiscountValue(
+                vs.items,
+                vs.discount
+              ).toString();
             } else {
-              vs.discount = 0;
+              vs.discount = "0";
             }
             vs.items = vs.items.map((item) => {
               item.priceFormatted = processNumber(item.price);
@@ -105,7 +144,10 @@ export default function InvoiceGeneratorPage() {
             );
             setParams(vs);
             const pdfData = await getPDF(vs);
-            setPdfUrl(pdfData);
+            if (pdfData) {
+              setPdfUrl(pdfData);
+              // @todo add error handling
+            }
           }}
         >
           {({ values, errors }) => (
@@ -127,16 +169,18 @@ export default function InvoiceGeneratorPage() {
                       customstyle: "w-96",
                     },
                   ].map((val) => (
-                    <Input
-                      key={val.fieldName}
-                      name={val.fieldName}
-                      label={val.fieldLabel}
-                      type={val.fieldType}
-                      customstyle={val.customstyle}
-                    />
+                    <div className={val.customstyle} key={val.fieldName}>
+                      <Input
+                        name={val.fieldName}
+                        label={val.fieldLabel}
+                        type={val.fieldType}
+                        customstyle={val.customstyle}
+                      />
+                    </div>
                   ))}
                 </div>
-                <div>
+
+                <div className="pb-10 border">
                   <div className="bg-slate-100 p-14">
                     <div className="flex flex-col sm:flex-row justify-between">
                       <Image
@@ -147,7 +191,7 @@ export default function InvoiceGeneratorPage() {
                         className="-ml-3"
                       />
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col">
                           <Input
                             name="issueDate"
                             label="Issue date"
@@ -164,8 +208,8 @@ export default function InvoiceGeneratorPage() {
                           />
                         </div>
                         <Input
-                          name="billto"
-                          label="Bill to"
+                          name="client"
+                          label="Client"
                           type="textarea"
                           rows={5}
                           as="textarea"
@@ -183,12 +227,12 @@ export default function InvoiceGeneratorPage() {
                             ? values.projectNumber + "-"
                             : null}
                         </p>
-                        <div className="text-md self-align-baseline align-middle sm:pt-10 ml-4 w-44">
+                        <div className="text-md self-align-baseline align-middle sm:pt-10 ml-4 w-44 mt-1">
                           <Input
                             name="invoiceNumber"
                             type="text"
                             placeholder="invoice number"
-                            customstyle="text-base mt-2"
+                            customstyle="text-base"
                           />
                         </div>
                       </div>
@@ -208,7 +252,7 @@ export default function InvoiceGeneratorPage() {
                           <div className="col-span-4 text-left uppercase max-w-4xl">
                             Item
                           </div>
-                          {["Price", "Qty", "Total", "Action"].map((val) => (
+                          {["Price", "Qty", "Total"].map((val) => (
                             <div
                               key={val}
                               className="justify-self-end text-right uppercase w-10"
@@ -216,11 +260,21 @@ export default function InvoiceGeneratorPage() {
                               {val}
                             </div>
                           ))}
+                          <div
+                            key={"Action"}
+                            className="col-span-1 justify-self-end text-left uppercase flex gap-2"
+                          >
+                            Action <Image src={remove} alt="remove row" />
+                          </div>
                         </div>
                         {values.items?.map((val, idx) => (
                           <div
                             key={idx}
-                            className="flex flex-col sm:grid gap-3 sm:grid-cols-8 mb-4"
+                            className={`flex flex-col sm:grid gap-3 sm:grid-cols-8 mb-4 ${
+                              idx !== values.items.length - 1
+                                ? "border-b-2"
+                                : ""
+                            }`}
                           >
                             <div className="justify-self-end text-right uppercase w-10 sm:hidden">
                               Item
@@ -265,103 +319,86 @@ export default function InvoiceGeneratorPage() {
                               )}
                             </div>
                             {values.items.length > 1 && (
-                              <div
-                                className="underline cursor-pointer justify-self-end text-right"
-                                onClick={() => arrayHelpers.remove(idx)}
-                              >
-                                Remove
-                              </div>
+                              <CustomLink
+                                label="Remove"
+                                action={() => arrayHelpers.remove(idx)}
+                              />
                             )}
                           </div>
                         ))}
-                        <button
-                          className="underline cursor-pointer mt-4 mb-4"
-                          type="button"
-                          onClick={() => arrayHelpers.push({ ...newValue })}
-                        >
-                          Add item
-                        </button>
+                        <CustomLink
+                          label="Add new table item"
+                          imageSrc={add}
+                          action={() => arrayHelpers.push({ ...newValue })}
+                        />
                       </div>
                     )}
                   ></FieldArray>
                   <hr />
 
                   <div className="grid grid-rows-[1fr 1fr 1fr 1fr] grid-cols-5 justify-items-end pr-14 mt-4 gap-4">
-                    <h3 className="w-32 col-span-4 text-md">Subtotal</h3>
+                    <h3 className="w-40 col-span-4 text-sm">Subtotal</h3>
                     <h3 className="col-span-1">
                       ${setSubtotalValue(values.items)}
                     </h3>
 
-                    <div className="flex flex-row col-span-4 mt-2 w-32 gap-2">
+                    <div className="flex flex-row col-span-4 mt-2 w-40 gap-2">
                       <h3 className="mt-2">Discount</h3>
-                      <Input
-                        key="discount"
-                        name="discount"
-                        type="number"
-                        customstyle="justify-self-end text-right h-7 w-14 mt-1"
-                        value={values.discount}
-                        shownoerr={true}
-                      />{" "}
+                      <div className="w-24">
+                        <Input
+                          key="discount"
+                          name="discount"
+                          type="number"
+                          customstyle="justify-self-end text-left h-7 mt-1 w-full"
+                          value={values.discount}
+                          shownoerr={true}
+                        />{" "}
+                      </div>
+
                       <p className="mt-2">%</p>
                     </div>
 
                     <div className="flex align-middle gap-2 mt-3">
-                      ${getDiscountValue(values.items, values.discount)}
+                      $
+                      {getDiscountValue(
+                        values.items,
+                        values.discount ? values.discount : "0"
+                      )}
                     </div>
 
-                    <h3 className="w-32 col-span-4">GST (15%)</h3>
+                    <h3 className="w-40 col-span-4">GST (15%)</h3>
                     <h3 className="col-span-1">
-                      ${setGSTValue(values.items, values.discount)}
+                      $
+                      {setGSTValue(
+                        values.items,
+                        values.discount ? values.discount : "0"
+                      )}
                     </h3>
 
                     <h1 className="w-54 text-lg col-span-4 font-bold">
                       Amount due
                     </h1>
                     <h1 className="col-span-1 font-bold text-lg">
-                      ${setAmountDueValue(values.items, values.discount)}
+                      $
+                      {setAmountDueValue(
+                        values.items,
+                        values.discount ? values.discount : "0"
+                      )}
                     </h1>
                   </div>
-                  <div className="h-12 mt-10">
-                    {Object.keys(errors).length > 0 && (
-                      <div className="text-center pb-2">
-                        <Error>
-                          {" "}
-                          {Messages.VALIDATION_MSG(Object.keys(errors))}{" "}
-                        </Error>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex justify-center">
-                    {!showSpinner ? (
-                      <button
-                        className="p-4 bg-peachy border rounded-md text-md ease-in-out duration-300 w-64 mx-auto hover:bg-transparent hover:text-orange-600 hover:border-orange-600"
-                        type="submit"
-                      >
-                        Create an Invoice{" "}
-                      </button>
-                    ) : (
-                      <div className="flex flex-col justify-center">
-                        <p>Generating invoice. Please be patient.</p>
-                        <Rings
-                          height="80"
-                          width="80"
-                          color="#fabb92"
-                          radius="6"
-                          wrapperStyle={{ margin: "auto" }}
-                          wrapperClass=""
-                          visible={true}
-                          ariaLabel="rings-loading"
-                        />
-                      </div>
-                    )}
-                  </div>
                 </div>
+                <Submission
+                  showSpinner={showSpinner}
+                  buttonLabel="Create invoice"
+                  errors={errors}
+                  data={values}
+                />
               </div>
             </Form>
           )}
         </Formik>
       )}
       <div className="flex flex-row justify-center"></div>
-    </Layout>
+    </DocumentRootLayout>
   );
 }

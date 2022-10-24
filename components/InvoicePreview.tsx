@@ -1,5 +1,6 @@
-import { DownloadLink, InternalButton } from "./General/Button";
+import { Button, DownloadLink } from "./General/Button";
 
+import { Colors } from "util/defines";
 import Iframe from "react-iframe";
 import React from "react";
 
@@ -10,7 +11,7 @@ const InvoicePreview = ({
   pdfUrl,
 }: {
   projectName: string;
-  invoiceNumber: string;
+  invoiceNumber?: string;
   setPdfUrl: any;
   pdfUrl: string;
 }) => {
@@ -18,7 +19,11 @@ const InvoicePreview = ({
   const fileName = projectName
     .replace(/\b\w/g, (l) => l.toUpperCase())
     .replaceAll(" ", "-");
-  const invoiceFileName = `${invoiceNumber.replace("#", "")}-${fileName}.pdf`;
+  const invoiceFileName = `${
+    invoiceNumber
+      ? invoiceNumber.replace("#", "").concat("-")
+      : "2ADesign-Proposal-"
+  }${fileName}.pdf`;
   return (
     <div>
       {" "}
@@ -28,7 +33,11 @@ const InvoicePreview = ({
         // @ts-ignore
         ref={invoicePreviewRef}
       >
-        <InternalButton action={() => setPdfUrl(null)} title={"Edit invoice"} />
+        <Button
+          onClick={() => setPdfUrl(null)}
+          label={"Edit document"}
+          color={Colors.GRAY}
+        />
         <DownloadLink
           url={pdfUrl}
           fileName={invoiceFileName}

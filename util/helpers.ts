@@ -1,32 +1,37 @@
+import {
+  InvoiceEntryType,
+  ProcessedInvoiceEntryType,
+  ProposalItem,
+} from "./defines";
+
 import axios from "axios";
 import { format } from "date-fns";
-export type NewValueType = {
-  item: string;
-  qty: number;
-  price: number;
-  priceFormatted?: string;
-  total?: number;
-};
 
 export const processNumber = (n: string | number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 export const getTotal = (val: any): number =>
   Math.ceil(
-    val.reduce((t: number, curr: NewValueType) => t + curr.qty * curr.price, 0)
+    val.reduce(
+      (t: number, curr: InvoiceEntryType) => t + curr.qty * curr.price,
+      0
+    )
   );
 
-export const getTotalInvoiceValue = (items: any, discount: number = 0) =>
-  Math.ceil(getSubtotal(items, discount) * 1.15);
+export const getTotalProposal = (items: Array<ProposalItem>) =>
+  items.reduce((t: number, curr: any) => t + curr.fees, 0);
 
-export const getGSTValue = (items: any, discount: number) =>
-  Math.ceil(getSubtotal(items, discount) * 0.15);
+export const getTotalInvoiceValue = (items: any, discount: string) =>
+  Math.ceil(getSubtotal(items, Number(discount)) * 1.15);
+
+export const getGSTValue = (items: any, discount: string) =>
+  Math.ceil(getSubtotal(items, Number(discount)) * 0.15);
 
 const getSubtotal = (items: any, discount: number) =>
   Math.ceil(Number(getTotal(items)) - getDiscountValue(items, discount));
 
 export const getDiscountValue = (
-  items: number | string,
+  items: Array<ProcessedInvoiceEntryType>,
   discount: number | string
 ) => {
   const total = getTotal(items);
@@ -51,8 +56,11 @@ export const getDateFormat = () => format(new Date(), "yyyy-MM-dd");
 export const getPDF = async (params: any) => {
   try {
     const data = await axios.post("/api/generatePdf", { ...params });
-    return "data:application/pdf;base64," + data.data;
-  } catch (e) {
+    return getBase64String(data.data);
+  } catch (e: any) {
     console.log(e);
   }
 };
+
+export const getBase64String = (base64string: string) =>
+  "data:application/pdf;base64,".concat(base64string);

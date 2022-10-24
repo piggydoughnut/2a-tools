@@ -28,3 +28,25 @@ a {
     background: black;
   }
 }
+
+.file-drop-dragging-over-target{
+  background-color: #fabb92;
+  color: white;
+  transition: all 0.3s ease-in-out;
+}
+
+.file-drop-target {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #d9622b
+}
+
+.file-drop-target:hover {
+  background-color: #fabb92;
+  transition: all 0.3s ease-in-out;
+  color:white;
+  cursor: pointer;
+}

@@ -1,6 +1,7 @@
 import * as c from "../config";
 
 import Image from "next/image";
+import Router from "next/router";
 import logo from "../public/logov2-1.svg";
 
 export default function Home() {
@@ -10,7 +11,7 @@ export default function Home() {
         <Image
           alt="2aLogo"
           src={logo}
-          onClick={() => router.push("/")}
+          onClick={() => Router.push("/")}
           width="300"
         />
       </div>

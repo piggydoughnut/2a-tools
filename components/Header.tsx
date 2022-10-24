@@ -3,7 +3,7 @@ import { getTodayDate } from "util/helpers";
 import logo from "../public/logov2-1.svg";
 import { useRouter } from "next/router";
 
-export default function Header({ title }: { title: string }) {
+export default function Header({ title }: { title: string | undefined }) {
   const router = useRouter();
   const d = getTodayDate();
   return (
@@ -21,7 +21,7 @@ export default function Header({ title }: { title: string }) {
             router.pathname !== "/tools" &&
             title !== "New Invoice Preview" && (
               <button
-                className="underline rounded-sm text-sm hover:scale-110 ease-in-out duration-300 text-blue-400 text-left ml-1"
+                className="underline rounded-sm text-sm hover:text-blue-500 transition-all text-left ml-1"
                 onClick={() => router.back()}
               >
                 Go to Tools
@@ -31,7 +31,9 @@ export default function Header({ title }: { title: string }) {
         <div className="mt-2">Today is {d}</div>
       </div>
 
-      <h1 className="font-inriaSans text-lg mb-4 text-center mt-24">{title}</h1>
+      <h1 className="font-inriaSans text-md mb-12 text-center mt-24">
+        {title}
+      </h1>
     </div>
   );
 }
