@@ -10,7 +10,7 @@ export default function Restore({ onClick }: { onClick: () => void }) {
         color={Colors.GRAY}
         onClick={() => onClick()}
       />
-      <p className="opacity-70 w-80 text-tiny">
+      <p className="opacity-70 w-80 text-tiny mt-2">
         When clicking restore from draft the <br />
         latest draft will be restored.
       </p>

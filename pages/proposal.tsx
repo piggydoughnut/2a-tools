@@ -80,8 +80,8 @@ export default function Proposal() {
           enableReinitialize
           validationSchema={ProposalSchema}
           onSubmit={async (vs: ProposalType) => {
+            console.log("me clickit");
             setShowSpinner(true);
-            console.log(vs);
             setProjectName(vs.projectName);
             setParams(vs);
             const tot = getTotalProposal(vs.items);

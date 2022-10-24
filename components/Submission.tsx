@@ -35,9 +35,7 @@ export default function Submission({
           type="button"
           label="Save as draft"
           color={Colors.GRAY}
-          onClick={() => {
-            saveDraft();
-          }}
+          onClick={() => saveDraft()}
           disabled={thereAreErrors ? true : false}
         />
         <p className="text-tiny mt-2">Only one draft can be saved at a time.</p>
