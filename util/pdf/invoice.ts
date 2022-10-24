@@ -34,6 +34,8 @@ export const generatePdf = async ({
   try {
     const doc = getNewDoc();
     let bufferChunks: any = [];
+    const discountAdded = discount !== "0" && discountVal !== "0";
+    console.log(discountAdded, "discountAdded");
     doc.on("readable", function () {
       // Store buffer chunk to array
       bufferChunks.push(doc.read());
@@ -136,7 +138,7 @@ export const generatePdf = async ({
       ["", Labels.SUBTOTAL, "", `$${subtotal}`]
     );
 
-    if (discount && discount !== "0" && discountVal && discountVal !== "0") {
+    if (discountAdded) {
       tableData.push([
         "",
         `${Labels.DISCOUNT} (${discount}%)`,
@@ -299,7 +301,9 @@ export const generatePdf = async ({
 
         if (indexColumn !== 0) {
           const subtotalSectionRowIndex =
-            table.rows.length - Object.keys(Labels).length + (discount ? 0 : 1);
+            table.rows.length -
+            Object.keys(Labels).length +
+            (discountAdded ? -1 : 0);
           const lastRowIndex = table.rows.length - 1;
           const isLastRow = indexRow === lastRowIndex;
           const isSubTotalRow = indexRow === subtotalSectionRowIndex;

@@ -98,7 +98,7 @@ export default function InvoiceGeneratorPage() {
     return processNumber(total);
   };
   const layoutTitle =
-    pdfUrl !== "" ? "New Invoice Preview" : "Create New Invoice";
+    pdfUrl && pdfUrl !== "" ? "New Invoice Preview" : "Create New Invoice";
 
   return (
     <DocumentRootLayout title={layoutTitle}>
@@ -131,6 +131,7 @@ export default function InvoiceGeneratorPage() {
               ).toString();
             } else {
               vs.discount = "0";
+              vs.discountVal = "0";
             }
             vs.items = vs.items.map((item) => {
               item.priceFormatted = processNumber(item.price);

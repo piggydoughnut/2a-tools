@@ -34,7 +34,7 @@ const InvoicePreview = ({
         ref={invoicePreviewRef}
       >
         <Button
-          onClick={() => setPdfUrl(null)}
+          onClick={() => setPdfUrl("")}
           label={"Edit document"}
           color={Colors.GRAY}
         />
