@@ -4,7 +4,7 @@ import { Button } from "./General/Button";
 import { Colors } from "util/defines";
 import { Error } from "../components/Input";
 import { Messages } from "config";
-import { Rings } from "react-loader-spinner";
+import Spinner from "./General/Spinner";
 import { useState } from "react";
 
 export default function Submission({
@@ -29,22 +29,6 @@ export default function Submission({
   };
   const thereAreErrors = Object.keys(errors).length > 0;
   console.log(thereAreErrors);
-
-  const Spinner = ({ message }: { message: string }) => (
-    <div className="flex flex-col justify-center">
-      <p className="text-center">{message}</p>
-      <Rings
-        height="80"
-        width="80"
-        color="#fabb92"
-        radius="6"
-        wrapperStyle={{ margin: "auto" }}
-        wrapperClass=""
-        visible={true}
-        ariaLabel="rings-loading"
-      />
-    </div>
-  );
 
   const Buttons = () => (
     <div className="flex flex-row gap-8 justify-center">
