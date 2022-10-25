@@ -55,7 +55,6 @@ export const Button = ({
         break;
     }
   }
-  console.log("buttonssss ");
   return (
     <button
       className={`pr-4 pl-4 pt-2 pb-2 w-48 border rounded-md text-tiny font-bold ease-in-out duration-300 hover:bg-transparent uppercase ${colorStyle} `}

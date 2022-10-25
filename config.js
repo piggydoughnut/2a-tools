@@ -28,7 +28,7 @@ export const paymentValues = [
 
 export const contact = [
   "2A Design Studio",
-  "709 Rolleston St, Thames",
+  "209 Rolleston St, Thames",
   "office@2adesign.co.nz",
   "021 780 989",
 ];
