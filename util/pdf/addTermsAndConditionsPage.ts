@@ -1,6 +1,7 @@
 import {
   Colors,
   FontSize,
+  Fonts,
   Padding,
   PageParams,
   REM,
@@ -62,7 +63,7 @@ export const addTermsAndConditionsPage = (
     doc.list(
       [
         "Building Consent lodgement and processing fees.",
-        "Documents required by TCDC e.g. Certificate of Title.",
+        "Documents required by territorial authority e.g. Certificate of Title.",
         "Resource Consent fees (if required.)",
         "Additional site visits over and above those allowed for in quote.",
       ],
@@ -82,21 +83,31 @@ export const addTermsAndConditionsPage = (
     );
 
     doc.fontSize(FontSize.H4);
-    doc.text("CONSULTANTS", PageParams.MARGIN * 8, subHeaderLevel, {
-      align: "left",
-    });
+    doc.text(
+      "OTHER CONSULTANTS INPUT ( if required )",
+      PageParams.MARGIN * 8,
+      subHeaderLevel,
+      {
+        align: "left",
+      }
+    );
 
     doc.fontSize(FontSize.P);
-    doc.text(
-      `Structural Engineer Design / Geotech. PS1 / PS4 fees (if required.)`,
+    doc.list(
+      [
+        `Structural Engineer Design / Geotechnical reports / Foundation design / On site Wastewater Design and associated PS1 / PS4 fees`,
+        `Site Surveying`,
+        `Fire Reports and/or Emergency Lighting Design`,
+      ],
       PageParams.MARGIN * 8,
       textLevel - Padding.small,
       {
+        bulletRadius: 1,
         width: columnWidth,
       }
     );
     doc.text(
-      `You will be advised of the need for any other consultants, as it arises, and fee proposals will be sought by us from them for your consideration before engagement by you.`,
+      `You will be advised of the need for any other consultants, should it arise, and fee proposals will be sought by us from them for your consideration before engagement by you. `,
       PageParams.MARGIN * 8,
       doc.y + Padding.medium,
       {
@@ -131,12 +142,18 @@ export const addTermsAndConditionsPage = (
     doc.fontSize(FontSize.P);
     doc.moveDown();
     const termsStartY = doc.y + Padding.medium;
-    doc.text("1. Payment terms: ", PageParams.MARGIN, termsStartY, {
-      continued: true,
-    });
-    writeBold(doc);
-    doc.text("20% required upon acceptance. ");
-    writeText(doc);
+    doc
+      .text("1. Retainer fee: ", PageParams.MARGIN, termsStartY, {
+        continued: true,
+      })
+      .font(Fonts.inriaBold)
+      .text("50% of Concept phase fee required", {
+        width: columnWidth,
+        continued: true,
+      })
+      .font(Fonts.inriaRegular)
+      .text(" upon");
+    doc.text("acceptance of our proposal.");
     doc.fontSize(FontSize.H4);
     doc.moveDown();
     paymentValues.map((value) => {
@@ -149,11 +166,11 @@ export const addTermsAndConditionsPage = (
     doc.moveDown();
     doc.list(
       [
-        "2. The balance of our fee is invoiced on stage completion and is payable on receipt of the invoice.",
+        "2. The balance of our fee is invoiced fortnightly as work progresses and is payable on receipt of the invoice.",
         "",
-        `3. Any additional design work as a result of a significant change of scope after concept and developed design stages have been signed off and any associated application work is charged at $${hourlyRate} + gst per hr.`,
+        `3. This fee proposal has been prepared based on our previous experience with similar scale, design and documentation projects.`,
         "",
-        "4. This fee proposal has been prepared based on our previous experience with similar scale, design and documentation projects.",
+        "4. Each project is typically broken down into 4 phases as per the project deliverables table on the previous page.",
       ],
       PageParams.MARGIN,
       doc.y,
@@ -167,17 +184,11 @@ export const addTermsAndConditionsPage = (
     );
     doc.list(
       [
-        "5. Each project is broken down into 4 phases:",
+        "5. Some overlap of the first 2 stages is usual as concept ideas are adjusted in relation to client feedback.  Client meetings / discussions are an important part of the process.",
         "",
-        "Brief phase - definition of the brief, signing the contract. 5 revisions are allowed during this phase.",
+        `6. It is important to arrive at an agreed scheme by the end of the Developed Design phase as the Architectural Documentation phase is concerned only with preparing working drawings for building consent application purposes.  Any changes in scope initiated by the client at this stage push the project back into the design phases and will incur additional design fees on a time charge basis at $${hourlyRate} + gst per hr.`,
         "",
-        "Concept phase - 3 revisions are allowed during this phase.",
-        "",
-        "Development phase - 3 revisions are allowed during this phase. At this stage the design is agreed upon and the documentation phase will begin.",
-        "",
-        `Documentation phase - Any significant changes that modify the design will be charged per hour at $${hourlyRate} + gst per hr.`,
-        "",
-        `Additional revisions will be charged per hour at $${hourlyRate} + gst per hr`,
+        `7. Answering requests for further information during building consent processing are charged at $${hourlyRate} + gst per hr.`,
       ],
       PageParams.MARGIN * 8,
       termsStartY,

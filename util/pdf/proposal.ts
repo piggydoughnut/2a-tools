@@ -11,8 +11,8 @@ import {
   writeBold,
   writeText,
 } from "../pdfHelpers/pdfStyleConfig";
-import { ProposalType, specs } from "../defines";
 
+import { ProposalType } from "../defines";
 import { addFooter } from "../pdfHelpers/addFooter";
 import { addHeader } from "../pdfHelpers/addHeader";
 import { addTermsAndConditionsPage } from "./addTermsAndConditionsPage";
@@ -50,7 +50,7 @@ export const generateProposal = async ({
     doc
       .image(
         SIDE_DECORATION,
-        PageParams.A4_WIDTH - 2 * PageParams.MARGIN,
+        PageParams.A4_WIDTH - 1.75 * PageParams.MARGIN,
         PageParams.MARGIN * 7,
         {
           width: 70,
@@ -127,30 +127,6 @@ export const generateProposal = async ({
       ["", "", Labels.GST, `$${gst}`],
       ["", "", Labels.TOTAL, `$${amountDue}`]
     );
-    console.log(tableData);
-    const renderFees = (
-      value: string,
-      indexColumn: number,
-      indexRow: number,
-      row: Array<string | number>,
-      rectRow: specs,
-      rectCell: specs
-    ) => {
-      let { x, y, width, height } = rectCell;
-      let padding = 0;
-      const indexes = [
-        tableData.length - 1,
-        tableData.length - 2,
-        tableData.length - 3,
-      ];
-      if (indexes.indexOf(indexRow) !== -1) {
-        padding = -10;
-      }
-      doc.text(value, x + padding, y + 5, {
-        width,
-        height,
-      });
-    };
     const table = {
       headers: [
         {
@@ -180,7 +156,6 @@ export const generateProposal = async ({
           align: "right",
           headerAlign: "right",
           headerColor: "white",
-          // renderer: renderFees,
         },
       ],
       rows: tableData,

@@ -35,7 +35,6 @@ export const generatePdf = async ({
     const doc = getNewDoc();
     let bufferChunks: any = [];
     const discountAdded = discount !== "0" && discountVal !== "0";
-    console.log(discountAdded, "discountAdded");
     doc.on("readable", function () {
       // Store buffer chunk to array
       bufferChunks.push(doc.read());

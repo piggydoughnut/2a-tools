@@ -2,43 +2,43 @@ export const predefined = [
   {
     description: "Preliminary and Concept Design",
     workInvolved: `- Confirmation of the scope & brief
-  - Preliminary research of TCDC compliance requirements
-  - Site visit / physical site research
-  - Design checks and evaluation in relation to the brief`,
+- Preliminary research of TCDC compliance requirements
+- Site visit / physical site research
+- Design checks and evaluation in relation to the brief`,
     outcome: `- List of relevant building and planning requirements
-  - Site plan drawing
-  - Concept scheme/s for discussion and approval 
-  - Floor plans`,
+- Site plan drawing
+- Concept scheme/s for discussion and approval 
+- Floor plans`,
     fees: 0,
   },
   {
     description: "Developed Design",
     workInvolved: `- Incorporation of any additional client feedback into scheme
-  - Refinement of spatial planning and functional requirements
-  - Outline specification of materials and finishes`,
+- Refinement of spatial planning and functional requirements
+- Outline specification of materials and finishes`,
     outcome: `- Updated plans and details
-  - Developed proposal for discussion / approval`,
+- Developed proposal for discussion / approval`,
     fees: 0,
   },
   {
     description: "Architectural Documentation",
     workInvolved: `- Architectural details & specifications in accordance with NZ Building code
-  - Materials - decisions relating to finishes and other aspects
-  - Producing and collating all necessary documentation including meetings with TA personnel, engineer or other consultants if required`,
+- Materials - decisions relating to finishes and other aspects
+- Producing and collating all necessary documentation including meetings with TA personnel, engineer or other consultants if required`,
     outcome: `- Site and services plans
-  - Architectural drawings, Plans, Elevations as required, Sections, Details
-  - Schedules
-  - Specification
-  - Integration of other consultants’
+- Architectural drawings, Plans, Elevations as required, Sections, Details
+- Schedules
+- Specification
+- Integration of other consultants’
   information as required
-  - Building Consent application
+- Building Consent application
   documents`,
     fees: 0,
   },
   {
     description: "Contract Works Administration",
     workInvolved: `Site observations
-  - 5 site visits are allowed within quote (excluding site visit already made`,
+- 5 site visits are allowed within quote (excluding site visit already made`,
     outcome: `Administration documents and record-keeping `,
     fees: 0,
   },

@@ -39,7 +39,7 @@ const initialValues: ProposalType = {
   amountDue: "",
   gst: "",
   subtotal: "",
-  hourlyRate: 160,
+  hourlyRate: 180,
 };
 
 export default function Proposal() {
@@ -80,7 +80,6 @@ export default function Proposal() {
           enableReinitialize
           validationSchema={ProposalSchema}
           onSubmit={async (vs: ProposalType) => {
-            console.log("me clickit");
             setShowSpinner(true);
             setProjectName(vs.projectName);
             setParams(vs);
