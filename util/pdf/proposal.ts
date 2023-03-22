@@ -47,17 +47,6 @@ export const generateProposal = async ({
       width: 150,
     });
 
-    doc
-      .image(
-        SIDE_DECORATION,
-        PageParams.A4_WIDTH - 1.75 * PageParams.MARGIN,
-        PageParams.MARGIN * 7,
-        {
-          width: 70,
-        }
-      )
-      .opacity(0.8);
-
     writeBold(doc, 10);
     doc.opacity(0.7);
     doc.text("CLIENT", HEADER_X + 90, HEADER_YY, { align: "right" });
