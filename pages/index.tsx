@@ -1,33 +1,54 @@
-import * as c from "../config";
+import { Button } from "../components/General/Button";
+import { Colors } from "../util/defines";
+import DocumentRootLayout from "../components/DocumentRootLayout";
+import Restore from "components/Restore";
+import { useRouter } from "next/router";
 
-import Image from "next/image";
-import Router from "next/router";
-import logo from "../public/logov2-1.svg";
-
-export default function Home() {
+export default function Tools() {
+  const router = useRouter();
   return (
-    <div className="font-inriaSans flex flex-col justify-center text-midnight-black mx-4 xl:mx-40 mt-10 mb-10">
-      <div className="mx-auto">
-        <Image
-          alt="2aLogo"
-          src={logo}
-          onClick={() => Router.push("/")}
-          width="300"
-        />
+    <DocumentRootLayout title="">
+      <div>
+        <div className="flex justify-start align-start gap-6">
+          <div className="flex flex-col gap-4 mt-4">
+            <p className="text-sm uppercase">Invoice</p>
+            <Button
+              label={"Create new"}
+              onClick={() => router.push("invoice")}
+              color={Colors.ORANGE}
+            />
+            <Button
+              label={"Mark as Paid"}
+              onClick={() => router.push("paidInvoice")}
+              color={Colors.RED}
+            />
+            <Restore
+              onClick={() =>
+                router.push({
+                  pathname: "invoice",
+                  query: { restore: true, draftName: "invoice-draft" },
+                })
+              }
+            />
+          </div>
+          <div>
+            <p className="text-sm uppercase mt-4 mb-4">Proposal</p>
+            <Button
+              label={"Create new"}
+              onClick={() => router.push("proposal")}
+              color={Colors.BLUE}
+            />
+            <Restore
+              onClick={() =>
+                router.push({
+                  pathname: "proposal",
+                  query: { restore: true, draftName: "proposal-draft" },
+                })
+              }
+            />
+          </div>
+        </div>
       </div>
-      <div className="mx-auto">
-        <h1 className="text-md mt-10 mb-4">
-          Website is coming soon... <br /> For now please contact us at
-        </h1>
-        {c.contact.map(
-          (val, idx) =>
-            idx !== 0 && (
-              <p className="text-sm" key={val}>
-                {val}
-              </p>
-            )
-        )}
-      </div>
-    </div>
+    </DocumentRootLayout>
   );
 }
