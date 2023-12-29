@@ -29,7 +29,7 @@ export default function Submission({
   const thereAreErrors = Object.keys(errors).length > 0;
 
   const Buttons = () => (
-    <div className="flex flex-row gap-8 justify-center">
+    <div className="flex flex-col sm:flex-row gap-8 justify-center">
       <div>
         <Button
           type="button"

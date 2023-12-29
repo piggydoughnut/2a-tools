@@ -24,7 +24,7 @@ export default function Header({ title }: { title: string | undefined }) {
                 className="underline rounded-sm text-sm hover:text-blue-500 transition-all text-left ml-1"
                 onClick={() => router.back()}
               >
-                Go to Tools
+                Go Back
               </button>
             )}
         </div>

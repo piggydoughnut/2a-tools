@@ -9,7 +9,7 @@ export default function Tools() {
   return (
     <DocumentRootLayout title="">
       <div>
-        <div className="flex justify-start align-start gap-6">
+        <div className="flex flex-col sm:flex-row justify-start align-start gap-6">
           <div className="flex flex-col gap-4 mt-4">
             <p className="text-sm uppercase">Invoice</p>
             <Button
