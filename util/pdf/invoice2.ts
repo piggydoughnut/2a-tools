@@ -186,15 +186,8 @@ export const generatePdf = async ({
       rows: tableData,
     };
 
-    // if (jobTitle) {
     writeText(doc, FontSize.P);
-    doc.text(
-      // ` for ${jobTitle}`,"",
-      "",
-      PageParams.MARGIN + Padding.small,
-      INVOICE_Y + REM * 3.125
-    );
-    // }
+    doc.text("", PageParams.MARGIN + Padding.small, INVOICE_Y + REM * 3.125);
 
     doc.text("", 205 + Padding.big, SECTION_2);
     // @ts-ignore
@@ -270,9 +263,6 @@ export const generatePdf = async ({
     doc.text("thank you for choosing us.", doc.x, PageParams.FOOTER_HEIGHT, {
       align: "right",
     });
-
-    writeBold(doc);
-    const COEF = 0.7;
 
     doc.end();
 
