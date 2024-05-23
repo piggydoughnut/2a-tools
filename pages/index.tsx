@@ -14,7 +14,7 @@ export default function Tools() {
             <p className="text-sm uppercase">Invoice</p>
             <Button
               label={"Create new"}
-              onClick={() => router.push("invoice")}
+              onClick={() => router.push("invoice2")}
               color={Colors.ORANGE}
             />
             <Button

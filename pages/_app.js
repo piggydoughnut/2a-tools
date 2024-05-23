@@ -1,7 +1,14 @@
-import '../styles/globals.css'
+import "../styles/globals.css";
+
+import { Theme } from "@radix-ui/themes";
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  return (
+    <Theme>
+      {" "}
+      <Component {...pageProps} />
+    </Theme>
+  );
 }
 
-export default MyApp
+export default MyApp;

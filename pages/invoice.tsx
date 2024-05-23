@@ -103,15 +103,18 @@ export default function InvoiceGeneratorPage() {
   return (
     <DocumentRootLayout title={layoutTitle}>
       {pdfUrl !== "" ? (
-        <InvoicePreview
-          setPdfUrl={(s: string) => {
-            setShowSpinner(false);
-            setPdfUrl(s);
-          }}
-          pdfUrl={pdfUrl}
-          projectName={params.projectName}
-          invoiceNumber={params.invoiceNumberFull}
-        />
+        <div className="">
+          <div></div>
+          <InvoicePreview
+            setPdfUrl={(s: string) => {
+              setShowSpinner(false);
+              setPdfUrl(s);
+            }}
+            pdfUrl={pdfUrl}
+            projectName={params.projectName}
+            invoiceNumber={params.invoiceNumberFull}
+          />
+        </div>
       ) : (
         <Formik
           initialValues={params}
@@ -185,10 +188,10 @@ export default function InvoiceGeneratorPage() {
                   <div className="bg-slate-100 p-14">
                     <div className="flex flex-col sm:flex-row justify-between">
                       <Image
-                        src="/logov2-1.svg"
-                        width="250"
+                        src={"/sva_logo_text.png"}
+                        width="150"
                         height="100"
-                        alt="2aLogo"
+                        alt="SVALogo"
                         className="-ml-3"
                       />
                       <div className="flex flex-col sm:flex-row gap-4">

@@ -25,30 +25,36 @@ const InvoicePreview = ({
       : "SVADesign-Proposal-"
   }${fileName}.pdf`;
   return (
-    <div>
+    <div className="flex gap-10">
       {" "}
-      <h3 className="text-center">Document filename: {invoiceFileName}</h3>
-      <div
-        className="flex flex-row justify-center mt-8 mb-6 gap-4"
-        // @ts-ignore
-        ref={invoicePreviewRef}
-      >
-        <Button
-          onClick={() => setPdfUrl("")}
-          label={"Edit document"}
-          color={Colors.GRAY}
-        />
-        <DownloadLink
-          url={pdfUrl}
-          fileName={invoiceFileName}
-          title={"Download"}
-        />
+      <div>
+        <div
+          className="flex flex-col justify-center mt-8 mb-6 gap-4"
+          // @ts-ignore
+          ref={invoicePreviewRef}
+        >
+          <p className="font-bold">Invoice Preview</p>
+          <div className="flex-col gap-2">
+            <p className="opacity-70">Filename:</p>
+            <p className="text-left">{invoiceFileName}</p>
+          </div>
+          <Button
+            onClick={() => setPdfUrl("")}
+            label={"Edit document"}
+            color={Colors.GRAY}
+          />
+          <DownloadLink
+            url={pdfUrl}
+            fileName={invoiceFileName}
+            title={"Download"}
+          />
+        </div>
       </div>
       <Iframe
         id="pdfPreviewFrame"
         url={pdfUrl}
-        width="100%"
-        height="800px"
+        width="70%"
+        height="500px"
         position="relative"
         // @ts-ignore
         onLoad={(e: any) => {

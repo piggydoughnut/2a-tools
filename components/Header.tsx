@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { getTodayDate } from "util/helpers";
-import logo from "../public/logov2-1.svg";
 import { useRouter } from "next/router";
 
 export default function Header({ title }: { title: string | undefined }) {
@@ -11,13 +10,14 @@ export default function Header({ title }: { title: string | undefined }) {
       <div className="flex justify-between">
         <div className="flex flex-col">
           <Image
-            alt="2aLogo"
-            src={logo}
+            alt="SVALogo"
+            src={"/sva_logo.png"}
             onClick={() => router.push("/")}
-            width="200px"
+            width="100px"
+            height="100px"
             className="hover:cursor-pointer"
           />
-          {router.pathname !== "/" &&
+          {/* {router.pathname !== "/" &&
             router.pathname !== "/tools" &&
             title !== "New Invoice Preview" && (
               <button
@@ -26,14 +26,12 @@ export default function Header({ title }: { title: string | undefined }) {
               >
                 Go Back
               </button>
-            )}
+            )} */}
         </div>
         <div className="mt-2">Today is {d}</div>
       </div>
 
-      <h1 className="font-inriaSans text-md mb-12 text-center mt-24">
-        {title}
-      </h1>
+      <h1 className="font-inriaSans text-md mb-12 text-center mt-4">{title}</h1>
     </div>
   );
 }

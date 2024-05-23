@@ -33,6 +33,13 @@ export const contact = [
   "0276 933 040",
 ];
 
+export const studioContact = {
+  studioName: "SVA Design Studio",
+  address: "PO Box 460, Thames",
+  email: "scott@svadesign.co.nz",
+  phone: "0276 933 040",
+};
+
 export const inputKeysMap = {
   projectNumber: "Project number",
   projectName: "Project name",

@@ -7,17 +7,19 @@ export const PageParams = {
   A4_WIDTH: 595.28,
   A4_HEIGHT: 841.89,
   LINE_HEIGHT: 20,
-  FOOTER_HEIGHT: 680,
+  FOOTER_HEIGHT: 720,
 };
 
 export const Colors = {
   BLACK: "#000000",
+  WHITE: "FFFFFF",
   GRAY: "#6F6E70",
   LIGHT_ORANGE: "#FAE1CD",
+  LIGHT_GREEN: [243, 255, 246],
 };
 
 export const FontSize = {
-  P: 10,
+  P: 12,
   H1: 40,
   H2: 18,
   H3: 16,
@@ -35,7 +37,7 @@ export const Fonts = {
   inriaRegular: readFileSync(path.join(fontsPath, "InriaSans-Regular.ttf")),
 };
 
-export const LOGO_IMAGE = path.join(mainPath, "logov2.png");
+export const LOGO_IMAGE = path.join(mainPath, "sva_logo_text.png");
 
 export const SIDE_DECORATION = path.join(mainPath, "sideDecor.png");
 
@@ -78,9 +80,10 @@ export const getNewDoc = () =>
     bufferPages: true,
     size: "A4",
     // @ts-ignore
+    backgroundColor: "F3FFF6",
     margins: {
       top: PageParams.MARGIN,
-      // bottom: PageParams.MARGIN,
+      bottom: PageParams.MARGIN,
       left: PageParams.MARGIN,
       right: PageParams.MARGIN,
     },
