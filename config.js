@@ -1,8 +1,8 @@
 export const payableTo = {
   bankName: "Kiwi Bank",
-  accountName: "2A Design ltd",
-  accountNumber: "38-9023-0249205-00",
-  gst: "134-555-726",
+  accountName: "SVA Design ltd",
+  accountNumber: "38-9017-0659929-00",
+  gst: "119-391-652",
 };
 
 export const paymentValues = [
@@ -27,10 +27,10 @@ export const paymentValues = [
 ];
 
 export const contact = [
-  "2A Design Studio",
-  "209 Rolleston St, Thames",
-  "office@2adesign.co.nz",
-  "021 780 989",
+  "SVA Design Studio",
+  "PO Box 460, Thames",
+  "scott@svadesign.co.nz",
+  "0276 933 040",
 ];
 
 export const inputKeysMap = {

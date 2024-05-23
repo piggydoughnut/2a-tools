@@ -22,7 +22,7 @@ const InvoicePreview = ({
   const invoiceFileName = `${
     invoiceNumber
       ? invoiceNumber.replace("#", "").concat("-")
-      : "2ADesign-Proposal-"
+      : "SVADesign-Proposal-"
   }${fileName}.pdf`;
   return (
     <div>

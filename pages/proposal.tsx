@@ -39,7 +39,7 @@ const initialValues: ProposalType = {
   amountDue: "",
   gst: "",
   subtotal: "",
-  hourlyRate: 180,
+  hourlyRate: 140,
 };
 
 export default function Proposal() {
