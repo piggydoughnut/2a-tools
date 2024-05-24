@@ -60,6 +60,7 @@ export const generateProposal = async ({
       lineGap: 2,
     });
 
+    // @ts-ignore
     doc.rect(0, 170, PageParams.A4_WIDTH, 70).fill(Colors.LIGHT_GREEN);
     doc.fill(Colors.BLACK);
 

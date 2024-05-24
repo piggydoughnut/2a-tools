@@ -1,4 +1,3 @@
-import { Button, CustomLink } from "components/General/Button";
 import {
   CustomPdfDocumentType,
   ProposalItem,
@@ -7,17 +6,16 @@ import {
 import { FieldArray, Form, Formik } from "formik";
 import { deliverablesNote, predefined } from "../util/data/termsAndConditions";
 import { getPDF, getTotalProposal, processNumber } from "util/helpers";
-import ls, { get, set } from "local-storage";
 
-import { Colors } from "util/defines";
+import { CustomLink } from "components/General/Button";
 import DocumentRootLayout from "components/DocumentRootLayout";
 import Image from "next/image";
 import { Input } from "components/Input";
 import InvoicePreview from "components/InvoicePreview";
 import { ProposalSchema } from "util/invoiceValidationSchemas";
-import Restore from "components/Restore";
 import Submission from "components/Submission";
 import add from "../public/icon-add.svg";
+import { get } from "local-storage";
 import remove from "../public/icon-remove.svg";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -39,7 +37,7 @@ const initialValues: ProposalType = {
   amountDue: "",
   gst: "",
   subtotal: "",
-  hourlyRate: 180,
+  hourlyRate: 140,
 };
 
 export default function Proposal() {

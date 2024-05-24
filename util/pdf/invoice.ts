@@ -96,7 +96,7 @@ export const generatePdf = async ({
     writeBold(doc, FontSize.H1);
     doc.text("INVOICE", PageParams.MARGIN, INVOICE_Y, {
       align: "left",
-      characterSpacing: 10,
+      characterSpacing: 9,
     });
     //230
     writeText(doc, FontSize.P);
