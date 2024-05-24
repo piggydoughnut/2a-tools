@@ -2,7 +2,7 @@ import {
   Colors,
   DATE_FORMAT,
   FontSize,
-  LOGO_IMAGE,
+  LOGO_IMAGE_BOTTOM_TEXT,
   Labels,
   Padding,
   PageParams,
@@ -41,13 +41,14 @@ export const generatePdf = async ({
     });
     doc
       .rect(0, 0, PageParams.A4_WIDTH, 240 + Padding.big)
+      // @ts-ignore
       .fill(Colors.LIGHT_GREEN)
       .opacity(1)
 
       .fill(Colors.BLACK);
 
-    doc.image(LOGO_IMAGE, PageParams.MARGIN, PageParams.MARGIN, {
-      width: 100,
+    doc.image(LOGO_IMAGE_BOTTOM_TEXT, PageParams.MARGIN, PageParams.MARGIN, {
+      width: 80,
     });
 
     const HEADER_X = 400;

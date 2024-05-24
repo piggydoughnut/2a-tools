@@ -1,5 +1,6 @@
 import {
   LOGO_IMAGE,
+  LOGO_IMAGE_SIDE_TEXT,
   Padding,
   PageParams,
   REM,
@@ -10,8 +11,8 @@ import PDFDocument from "pdfkit-table";
 
 export const addHeader = (doc: PDFDocument, projectName: string): void => {
   try {
-    doc.image(LOGO_IMAGE, PageParams.MARGIN, PageParams.MARGIN, {
-      width: 5 * REM,
+    doc.image(LOGO_IMAGE_SIDE_TEXT, PageParams.MARGIN, PageParams.MARGIN, {
+      width: 100,
     });
 
     writeText(doc);

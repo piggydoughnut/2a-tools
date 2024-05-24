@@ -13,7 +13,7 @@ export const PageParams = {
 export const Colors = {
   BLACK: "#000000",
   GRAY: "#6F6E70",
-  LIGHT_GREEN: [243, 255, 246],
+  LIGHT_GREEN: [232, 247, 233],
   LIGHT_ORANGE: "#FAE1CD",
 };
 
@@ -37,6 +37,12 @@ export const Fonts = {
 };
 
 export const LOGO_IMAGE = path.join(mainPath, "logo.png");
+
+export const LOGO_IMAGE_BOTTOM_TEXT = path.join(
+  mainPath,
+  "logo_bottom_text.png"
+);
+export const LOGO_IMAGE_SIDE_TEXT = path.join(mainPath, "logo_side_text.png");
 
 export const SIDE_DECORATION = path.join(mainPath, "sideDecor.png");
 

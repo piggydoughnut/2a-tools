@@ -2,6 +2,8 @@ import {
   Colors,
   FontSize,
   LOGO_IMAGE,
+  LOGO_IMAGE_BOTTOM_TEXT,
+  LOGO_IMAGE_SIDE_TEXT,
   Labels,
   Padding,
   PageParams,
@@ -43,8 +45,8 @@ export const generateProposal = async ({
     const HEADER_YY = PageParams.MARGIN + 2;
     const HEADER_Y = HEADER_YY + PageParams.LINE_HEIGHT * 0.75;
 
-    doc.image(LOGO_IMAGE, PageParams.MARGIN, PageParams.MARGIN, {
-      width: 150,
+    doc.image(LOGO_IMAGE_BOTTOM_TEXT, PageParams.MARGIN, PageParams.MARGIN, {
+      width: 80,
     });
 
     writeBold(doc, 10);
@@ -58,7 +60,7 @@ export const generateProposal = async ({
       lineGap: 2,
     });
 
-    doc.rect(0, 170, PageParams.A4_WIDTH, 70).fill(Colors.LIGHT_ORANGE);
+    doc.rect(0, 170, PageParams.A4_WIDTH, 70).fill(Colors.LIGHT_GREEN);
     doc.fill(Colors.BLACK);
 
     writeBold(doc, FontSize.H1);
