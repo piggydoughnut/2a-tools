@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTodayDate } from "util/helpers";
-import logo from "../public/logov2-1.svg";
+import logo from "../public/logo.svg";
 import { useRouter } from "next/router";
 
 export default function Header({ title }: { title: string | undefined }) {
@@ -11,10 +11,11 @@ export default function Header({ title }: { title: string | undefined }) {
       <div className="flex justify-between">
         <div className="flex flex-col">
           <Image
-            alt="2aLogo"
+            alt="svaLogo"
             src={logo}
             onClick={() => router.push("/")}
-            width="200px"
+            width="100px"
+            height="100px"
             className="hover:cursor-pointer"
           />
           {router.pathname !== "/" &&

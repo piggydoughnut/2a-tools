@@ -13,6 +13,7 @@ export const PageParams = {
 export const Colors = {
   BLACK: "#000000",
   GRAY: "#6F6E70",
+  LIGHT_GREEN: [243, 255, 246],
   LIGHT_ORANGE: "#FAE1CD",
 };
 
@@ -35,7 +36,7 @@ export const Fonts = {
   inriaRegular: readFileSync(path.join(fontsPath, "InriaSans-Regular.ttf")),
 };
 
-export const LOGO_IMAGE = path.join(mainPath, "logov2.png");
+export const LOGO_IMAGE = path.join(mainPath, "logo.png");
 
 export const SIDE_DECORATION = path.join(mainPath, "sideDecor.png");
 

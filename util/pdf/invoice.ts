@@ -40,13 +40,14 @@ export const generatePdf = async ({
       bufferChunks.push(doc.read());
     });
     doc
-      .opacity(0.05)
       .rect(0, 0, PageParams.A4_WIDTH, 240 + Padding.big)
-      .fill(Colors.BLACK)
-      .opacity(1);
+      .fill(Colors.LIGHT_GREEN)
+      .opacity(1)
+
+      .fill(Colors.BLACK);
 
     doc.image(LOGO_IMAGE, PageParams.MARGIN, PageParams.MARGIN, {
-      width: 150,
+      width: 100,
     });
 
     const HEADER_X = 400;

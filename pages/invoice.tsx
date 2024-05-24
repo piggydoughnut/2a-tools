@@ -185,10 +185,10 @@ export default function InvoiceGeneratorPage() {
                   <div className="bg-slate-100 p-14">
                     <div className="flex flex-col sm:flex-row justify-between">
                       <Image
-                        src="/logov2-1.svg"
+                        src="/logo.svg"
                         width="250"
                         height="100"
-                        alt="2aLogo"
+                        alt="svaLogo"
                         className="-ml-3"
                       />
                       <div className="flex flex-col sm:flex-row gap-4">
