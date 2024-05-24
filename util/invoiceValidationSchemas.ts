@@ -10,10 +10,7 @@ const ItemSchema = Yup.object().shape({
     .max(1000)
     .min(1, "Minimum 1")
     .typeError("A number is required"),
-  price: Yup.number()
-    .required("Required")
-    .min(1, "Minimum 1")
-    .typeError("A number is required"),
+  price: Yup.number().required("Required").typeError("A number is required"),
 });
 
 const ProposalItemSchema = Yup.object().shape({
