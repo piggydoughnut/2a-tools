@@ -21,25 +21,32 @@ const InvoicePreview = ({
   projectNumber?: string;
 }) => {
   const invoicePreviewRef = React.createRef();
-  const invoiceNumberEdited = invoiceNumber
-    ? invoiceNumber.replace("#", "").concat("-")
-    : "SVADesign-Proposal-";
   const projectNameEdited = projectName
     .replace(/\b\w/g, (l) => l.toUpperCase())
-    .replaceAll(" ", "-");
-  // project number - date - - name of project
-  // const invoiceFileName = `${
-  //   invoiceNumber
-  //     ? invoiceNumber.replace("#", "").concat("-")
-  //     : "SVADesign-Proposal-"
-  // }${fileName}.pdf`;
+    .replaceAll(" ", "_");
 
   const dateToFormat = date ? new Date(date) : new Date();
   const isValidDate = !isNaN(dateToFormat.getTime());
-  const invoiceFileName = `${invoiceNumberEdited}${format(
+  const formattedDate = format(
     isValidDate ? dateToFormat : new Date(),
     "dd-MM-yyyy"
-  )}${projectNameEdited}`;
+  );
+  
+  const invoiceNumberEdited = invoiceNumber
+    ? invoiceNumber.replace("#", "")
+    : "";
+  
+  let invoiceFileName: string;
+  if (invoiceNumberEdited && projectNumber) {
+    // Invoice format: ProjectNo_INV<inv_number>_projectName_date
+    invoiceFileName = `${projectNumber}_INV${invoiceNumberEdited}_${projectNameEdited}_${formattedDate}`;
+  } else if (projectNumber) {
+    // Proposal with project number: ProjectNo_projectName_date
+    invoiceFileName = `${projectNumber}_${projectNameEdited}_${formattedDate}`;
+  } else {
+    // Proposal without project number: projectName_date
+    invoiceFileName = `${projectNameEdited}_${formattedDate}`;
+  }
   return (
     <div>
       {" "}
