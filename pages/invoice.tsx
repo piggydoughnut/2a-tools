@@ -110,7 +110,9 @@ export default function InvoiceGeneratorPage() {
           }}
           pdfUrl={pdfUrl}
           projectName={params.projectName}
+          projectNumber={params.projectNumber.toString()}
           invoiceNumber={params.invoiceNumberFull}
+          date={params.issueDate}
         />
       ) : (
         <Formik
@@ -125,17 +127,16 @@ export default function InvoiceGeneratorPage() {
             vs.subtotal = processNumber(subtotal);
             vs.gst = processNumber(gst);
             if (vs.discount && vs.discount !== "0") {
-              vs.discountVal = getDiscountValue(
-                vs.items,
-                vs.discount
-              ).toString();
+              vs.discountVal = processNumber(
+                getDiscountValue(vs.items, vs.discount)
+              );
             } else {
               vs.discount = "0";
-              vs.discountVal = "0";
+              vs.discountVal = "0.00";
             }
             vs.items = vs.items.map((item) => {
               item.priceFormatted = processNumber(item.price);
-              item.total = processNumber(Math.ceil(item.qty * item.price));
+              item.total = processNumber(item.qty * item.price);
               return item;
             });
             vs.invoiceNumberFull = getInvoiceNumber(
@@ -315,9 +316,7 @@ export default function InvoiceGeneratorPage() {
                             </div>
                             <div className="w-10 justify-self-end">
                               $
-                              {processNumber(
-                                Number(Math.ceil(val.qty * val.price))
-                              )}
+                              {processNumber(val.qty * val.price)}
                             </div>
                             {values.items.length > 1 && (
                               <CustomLink

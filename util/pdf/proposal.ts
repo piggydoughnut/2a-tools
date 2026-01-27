@@ -18,6 +18,7 @@ import { ProposalType } from "../defines";
 import { addFooter } from "../pdfHelpers/addFooter";
 import { addHeader } from "../pdfHelpers/addHeader";
 import { addTermsAndConditionsPage } from "./addTermsAndConditionsPage";
+import { processNumber } from "../helpers";
 import { pEvent } from "p-event";
 
 export const generateProposal = async ({
@@ -101,7 +102,7 @@ export const generateProposal = async ({
         field.description,
         field.workInvolved,
         field.outcome,
-        `$${field.fees}`,
+        `$${processNumber(field.fees)}`,
       ]);
     });
     tableData.push(["", "", "", ""], ["", "", Labels.SUBTOTAL, `$${subtotal}`]);

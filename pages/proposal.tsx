@@ -80,15 +80,15 @@ export default function Proposal() {
           onSubmit={async (vs: ProposalType) => {
             setShowSpinner(true);
             setProjectName(vs.projectName);
-            setParams(vs);
             const tot = getTotalProposal(vs.items);
-            const gst = Math.ceil(tot * 0.15);
+            const gst = tot * 0.15;
             vs.subtotal = processNumber(tot);
             vs.amountDue = processNumber(tot + gst);
             vs.gst = processNumber(gst);
             const pdfData: string | undefined = await getPDF(vs);
             if (pdfData) {
               setPdfUrl(pdfData);
+              setParams(vs);
             } else {
               // @to-do add error handling
             }

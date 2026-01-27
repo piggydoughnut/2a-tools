@@ -7,35 +7,38 @@ import {
 import axios from "axios";
 import { format } from "date-fns";
 
-export const processNumber = (n: string | number) =>
-  n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+export const processNumber = (n: string | number) => {
+  const num = typeof n === "string" ? parseFloat(n) : n;
+  const formatted = num.toFixed(2);
+  const parts = formatted.split(".");
+  const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `${integerPart}.${parts[1]}`;
+};
 
 export const getTotal = (val: any): number =>
-  Math.ceil(
-    val.reduce(
-      (t: number, curr: InvoiceEntryType) => t + curr.qty * curr.price,
-      0
-    )
+  val.reduce(
+    (t: number, curr: InvoiceEntryType) => t + curr.qty * curr.price,
+    0
   );
 
 export const getTotalProposal = (items: Array<ProposalItem>) =>
   items.reduce((t: number, curr: any) => t + curr.fees, 0);
 
 export const getTotalInvoiceValue = (items: any, discount: string) =>
-  Math.ceil(getSubtotal(items, Number(discount)) * 1.15);
+  getSubtotal(items, Number(discount)) * 1.15;
 
 export const getGSTValue = (items: any, discount: string) =>
-  Math.ceil(getSubtotal(items, Number(discount)) * 0.15);
+  getSubtotal(items, Number(discount)) * 0.15;
 
 const getSubtotal = (items: any, discount: number) =>
-  Math.ceil(Number(getTotal(items)) - getDiscountValue(items, discount));
+  Number(getTotal(items)) - getDiscountValue(items, discount);
 
 export const getDiscountValue = (
   items: Array<ProcessedInvoiceEntryType>,
   discount: number | string
 ) => {
   const total = getTotal(items);
-  return Math.ceil(Number(total) * (Number(discount) / 100));
+  return Number(total) * (Number(discount) / 100);
 };
 
 export const getInvoiceNumber = (
