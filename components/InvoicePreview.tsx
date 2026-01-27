@@ -18,7 +18,7 @@ const InvoicePreview = ({
   setPdfUrl: any;
   pdfUrl: string;
   date?: string;
-  projectNumber: string;
+  projectNumber?: string;
 }) => {
   const invoicePreviewRef = React.createRef();
   const invoiceNumberEdited = invoiceNumber
